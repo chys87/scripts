@@ -3,7 +3,7 @@
 # vim:ts=4 sts=4 sw=4 expandtab
 
 #
-# Copyright (c) 2013, chys <admin@CHYS.INFO>
+# Copyright (c) 2009, 2010, 2011, 2012, 2013, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -36,7 +36,7 @@ usage() {
 Usage: ${0##*/} [-l|-g] [-c] [<category>/]<package>[-<version>]
 
 View an ebuild file in the Gentoo portage tree.
-You must have eix installed to run this script.
+You must have app-portage/eix installed to run this script.
 
 -l      View ebuilds in overlays only
 -g      View ebuilds in official portage tree (/usr/portage) only
