@@ -2,6 +2,8 @@
 
 ## 列表 ##
 
+* `config`: 配置文件
+    + `vimrc`: VIM - Vi IMproved
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
 * `view-ebuild.sh` (bash): 快速查看Gentoo的ebuild文件
 
@@ -9,6 +11,8 @@
 
 ## List ##
 
+* `config/vimrc`: configuration files
+    + `vimrc`: VIM - Vi IMproved
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
 * `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 
