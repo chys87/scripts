@@ -36,7 +36,7 @@ if (has("gui_running"))
 	set guioptions-=m "Hide menu
 endif
 
-"set nohlsearch
+set hlsearch     " Debian/Ubuntu turns it off by default
 set modeline     " Override Gentoo default and enable modeline
 set noswapfile
 set incsearch
@@ -103,3 +103,9 @@ endfunction
 
 " Strip trailing spaces
 "autocmd FileType c,cpp,python,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
+
+
+" Source configurations specific to one machine
+if filereadable(expand("~/.vimrc.local"))
+	source ~/.vimrc.local
+endif
