@@ -166,6 +166,7 @@ class SocialSecurity:
 def wcwidth(s):
     return len(s) + sum((unicodedata.east_asian_width(c) in 'WF') for c in s)
 
+
 def txtl(s, wid):
     return s + ' ' * max(0, wid - wcwidth(s))
 
