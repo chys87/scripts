@@ -175,6 +175,19 @@ def txtr(s, wid):
     return ' ' * max(0, wid - wcwidth(s)) + s
 
 
+def _get_config_files():
+    '''Return a list of possible config file names.'''
+    exe = __file__
+
+    # Same dir as this script
+    yield os.path.join(os.path.dirname(exe), CONFIG_FILE)
+
+    # Perhaps this script is run through a symlink..
+    if os.path.islink(exe):
+        exe = os.path.realpath(exe)
+        yield os.path.join(os.path.dirname(exe), CONFIG_FILE)
+
+
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "hc:", ["help", "city="])
@@ -200,11 +213,14 @@ def main():
         security_base = salary
 
     config = configparser.RawConfigParser()
-    config_file = os.path.join(os.path.dirname(__file__), CONFIG_FILE)
-    try:
-        with open(config_file, 'r') as f:
-            config.readfp(f)
-    except IOError:
+    for config_file in _get_config_files():
+        try:
+            with open(config_file, 'r') as f:
+                config.readfp(f)
+                break
+        except IOError:
+            pass
+    else:
         fatal('找不到配置文件: {}'.format(config_file))
 
     if not city:
@@ -219,6 +235,10 @@ def main():
     security_sum = security_employee_sum + security_employer_sum
     taxable = salary - security_employee_sum
     tax = Tax(config).calc(taxable)
+
+    print('== 所在城市 ==')
+    print(city)
+    print()
 
     print('== 税前工资 ==')
     print('{:.2f}'.format(salary))
