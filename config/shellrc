@@ -1,0 +1,263 @@
+alias ls='ls --color=auto --file-type'
+alias ll='ls -l --time-style=long-iso'
+#alias rm='rm -i'
+#alias cp='cp -ip'
+#alias mv='mv -i'
+#alias convmv='convmv -i'
+alias cdp='cd -P'
+alias lsof='lsof -n'
+alias traceroute='traceroute -n'
+alias netstat='netstat -n'
+grep_options='--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude-dir=.hg'
+alias grep='grep '"$grep_options"
+alias egrep='egrep '"$grep_options"
+alias fgrep='fgrep '"$grep_options"
+alias make='make </dev/null'
+unset -v grep_options
+
+_warn_dangerous_command() {
+	echo "Command $1 is aliased because it can be dangerous."
+	return 1
+}
+
+add_dangerous() {
+	local r
+	for r; do
+		r="${r##*/}"
+		alias $r="_warn_dangerous_command $r"
+	done
+}
+
+add_dangerous startx unlink shred enconv
+[ "$EUID" = 0 ] && add_dangerous mkswap /sbin/mk*fs*
+unset -f add_dangerous
+
+
+
+[ -d ~/bin  ] && export PATH="${HOME}/bin:${PATH}"
+[ -d ~/bin2 ] && export PATH="${HOME}/bin2:${PATH}"
+
+path_removedup() {
+	local newpath=
+	local IFS=:
+	local p
+	for p in ${ZSH_VERSION:+${path}}${BASH_VERSION:+${PATH}}; do
+		case "$newpath" in
+			$p|$p:*|*:$p|*:$p:*);;
+			?*) newpath+=":$p";;
+			'') newpath="$p";;
+		esac
+	done
+	export PATH="$newpath"
+}
+
+path_removedup
+unset -f path_removedup
+
+unset -v MAIL MAILPATH MAILCHECK
+if [ "$EUID" = 0 ]; then
+	if [ -n "$ZSH_VERSION" ]; then
+		eval 'temp=(/var/mail/*(N))' # Prevent bash from complaining
+	else
+		temp=(/var/mail/*)
+	fi
+	temp="${temp[*]}"
+	[ -n "$temp" ] && MAILPATH="${temp// /:}"
+	unset -v temp
+else
+	[ -f "/var/mail/$USER" ] && MAIL="/var/mail/$USER"
+fi
+[ -n "$MAIL" -o -n "$MAILPATH" ] && MAILCHECK=60
+
+if [[ "$USER" != 'root' && -n "$USER" && -d /run/"$USER" && "$LESSHISTFILE" = '-' ]]; then
+	export LESSHISTFILE="/run/$USER/lesshst"
+fi
+
+svn ()
+{
+	if [ -t 1 ] && [[ "$1" =~ ^di(ff)?$ ]]; then
+		/usr/bin/svn "$@" | colordiff | less -R
+	else
+		/usr/bin/svn "$@"
+	fi
+}
+
+#if [ "${0:0:1}" = '-' ] && [ -n "$SSH_TTY" ] &&
+#		[ "$SSH_TTY" = "`/usr/bin/tty`" ]; then
+#	sshantiidle &
+#fi
+
+# It's weird that I always have problems defining local arrays in zsh
+precmd_showstatus() {
+	local tmp
+	local q=$1
+	shift
+	local r
+	local msg=
+	for r; do :; done
+	if ((q != 0 && q != r)); then
+		if ((q > 128)); then
+			if [ -n "$ZSH_VERSION" ]; then # This is worthwhile because it prevents a fork
+				tmp=${signals[q-127]:+SIG${signals[q-127]}}
+			else
+				tmp=$(builtin kill -l "$q" 2>/dev/null)
+			fi
+			q=${tmp:-$q}
+		fi
+		msg="[$q]"
+	fi
+	if [[ "$*" == *[^0\ ]* ]]; then # At least one non-zero value
+		msg+=' ['
+		for r; do
+			if ((r > 128)); then
+				if [ -n "$ZSH_VERSION" ]; then
+					tmp=${signals[r-127]:+SIG${signals[r-127]}}
+				else
+					tmp=$(builtin kill -l "$r" 2>/dev/null)
+				fi
+				r=${tmp:-$r}
+			fi
+			msg+="$r "
+		done
+		msg="${msg% }]"
+	fi
+	msg="${msg# }"
+	[ -n "$msg" ] && builtin echo -e "\033[31;1m$msg\033[0m"
+}
+
+case "$TERM" in
+	xterm*|rxvt*|[akE]term|gnome*|interix|screen)
+		precmd_maketitle()
+		{
+			local host="${HOST:-${HOSTNAME}}" # zsh:HOST; bash:HOSTNAME
+			local pwd="${PWD}/"
+			pwd="${pwd/#"${HOME}"\//~/}"
+			pwd="${pwd%/}"
+			if ((${#pwd} >= 10)) && [[ "$pwd" == */*/* ]]; then
+				pwd="*/${pwd##*/}"
+			fi
+			local sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
+			builtin echo -ne "\033]0;[$sh] ${USER}@${host%%.*}: ${pwd}\007"
+		}
+		;;
+	*)
+		precmd_maketitle() { :; }
+		;;
+esac
+
+precmd() {
+	# If either $? or any component of PIPESTATUS is nonzero, display it.
+	precmd_showstatus $? ${BASH_VERSION:+${PIPESTATUS[@]}} ${ZSH_VERSION:+${pipestatus[@]}}
+	# Write window title if the terminal supports it.
+	precmd_maketitle
+}
+
+[ -n "$BASH_VERSION" ] && PROMPT_COMMAND='precmd'
+
+# Set locales
+if [ -n "$DISPLAY" ] || [ -n "$SSH_TTY" ] || [[ "$LC_ALL" == *UTF* ]]; then
+	unset -v LC_ALL
+	export LANG='en_US.UTF-8' LC_COLLATE='zh_CN.UTF-8' LC_CTYPE='zh_CN.UTF-8'
+fi
+
+if [ -n "$BASH_VERSION" ]; then
+
+	#Workaround for the poor design of new versions of bash-completion
+	if ! complete -p cd &>/dev/null; then
+		[ -f /etc/profile.d/bash-completion.sh ] && . /etc/profile.d/bash-completion.sh
+	fi
+
+	for i in {/usr/local,"$HOME"}/bin*/bashcomp*.sh; do
+		[ -f "$i" ] && . "$i"
+	done
+	unset -v i
+
+	# Bash options
+	#set -C
+	# histappend: It appears bash has some heuristics to determine whether to append
+	shopt -s autocd extglob cmdhist no_empty_cmd_completion checkwinsize
+	shopt -u sourcepath dotglob nullglob
+
+	if [ "$UID" = 0 ]; then
+		if [ -n "$SSH_TTY" ]; then
+			PS1='\[\033[01;31m\]\h\[\033[01;34m\] \w \[\033[1;$((31+3*!$?))m\]\$\[\033[00m\] '
+		else
+			PS1='\[\033[01;31m\]\w \[\033[1;$((31+!$?))m\]\$\[\033[00m\] '
+		fi
+	else
+		if [ -n "$SSH_TTY" ]; then
+			PS1='\[\033[01;32m\]\h\[\033[01;34m\] \w \[\033[1;$((31+3*!$?))m\]\$\[\033[00m\] ' 
+		else
+			PS1='\[\033[01;34m\]\w \[\033[1;$((31+!$?))m\]\$\[\033[00m\] ' 
+		fi
+	fi
+	if [ $SHLVL -gt 1 ]; then
+		PS1="[$SHLVL] $PS1"
+	fi
+
+fi # Bash-specific
+
+
+if [ -n "$ZSH_VERSION" ]; then
+
+	autoload -Uz compinit
+	compinit
+
+	PS1='%(2L.[%L] .)%B%(!.%F{red}.%F{blue})%~%f%(1j. (%j job%(2j.s.)%).) %(!.%F{red}.%F{blue})%#%f%b '
+#	RPS1='%T'
+	[ -n "$SSH_TTY" ] && PS1="%B[SSH $HOST]%b $PS1"
+
+	setopt   notify pushdtohome autolist
+	setopt   autocd longlistjobs
+	setopt   clobber
+	# Don't turn on ksh_glob, which contradicts "(N)" etc.
+	setopt   pushdminus extended_glob rcquotes mailwarning
+	unsetopt cdablevars # It's very annoying that "cd username" goes to a home dir
+	unsetopt nomatch # I can't get used to nomatch
+	unsetopt bgnice pushdsilent autopushd
+	unsetopt correct correctall globdots
+
+	zstyle ':completion:*' verbose yes
+
+	bindkey -e
+
+	# Fix Home/End keys
+	bindkey '\e[H' beginning-of-line
+	bindkey '\eOH' beginning-of-line
+	bindkey '\e[1~' beginning-of-line
+	bindkey '\e[F' end-of-line
+	bindkey '\eOF' end-of-line
+	bindkey '\e[4~' end-of-line
+	# Fix Delete key
+	bindkey '\e[3~' delete-char
+	# TODO?: Fix PageUp/PageDown keys
+
+	# It appears LS_COLORS is not set by default.
+	[ -z "$LS_COLORS" ] && eval "$(dircolors)"
+
+fi # Zsh-specific
+
+
+# Support nohist
+if [ -n "$Shell_NoHistory" ]; then
+	PS1="(nohist) $PS1"
+	unset -v HISTFILE
+else
+	nohist() {
+		Shell_NoHistory=1 ${BASH_VERSION:+bash}${ZSH_VERSION:+zsh}
+	}
+	HISTSIZE=10000
+	if [ -n "$BASH_VERSION" ]; then
+		HISTCONTROL='ignorespace:erasedups'
+		HISTFILESIZE='10000'
+	else # zsh
+		HISTFILE="$HOME/.zsh_history"
+		SAVEHIST=10000
+		setopt append_history hist_ignore_all_dups hist_ignore_space
+		setopt hist_expire_dups_first hist_fcntl_lock
+		setopt hist_reduce_blanks hist_save_no_dups
+		unsetopt hist_verify
+	fi
+fi
+
+:

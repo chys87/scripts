@@ -3,6 +3,7 @@
 ## 列表 ##
 
 * `config`: 配置文件
+    + `shellrc`: 我的 .bashrc 和 .zshrc 文件 (bash/zsh 通用)
     + `vimrc`: VIM - Vi IMproved
 * `detailed_size.py`: 增强版 [size](http://linux.die.net/man/1/size)
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
@@ -14,6 +15,7 @@
 ## List ##
 
 * `config/vimrc`: configuration files
+    + `shellrc`: My .bashrc and .zsh file (compatible with both bash and zsh)
     + `vimrc`: VIM - Vi IMproved
 * `detailed_size.py`: Improved version of [size](http://linux.die.net/man/1/size)
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
