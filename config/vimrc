@@ -135,6 +135,8 @@ endfunction
 " Strip trailing spaces
 "autocmd FileType c,cpp,python,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
 
+autocmd FileType markdown setl ts=8 sts=4 sw=4 expandtab
+
 
 " Source configurations specific to one machine
 if filereadable(expand("~/.vimrc.local"))
