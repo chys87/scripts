@@ -29,6 +29,16 @@
 " POSSIBILITY OF SUCH DAMAGE.
 "
 
+
+" Enable Pathogen (https://github.com/tpope/vim-pathogen) if we have it.
+" Also see my question on StackOverflow:
+" http://stackoverflow.com/questions/18576651/check-whether-pathogen-is-installed-in-vimrc
+runtime! autoload/pathogen.vim
+if exists("*pathogen#infect")
+	call pathogen#infect()
+endif
+
+
 syntax on
 
 "let Tlist_Use_Right_Window=1
