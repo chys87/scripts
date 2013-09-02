@@ -191,6 +191,15 @@ if [ -n "$DISPLAY" ] || [ -n "$SSH_TTY" ] || [[ "$LC_ALL" == *UTF* ]]; then
 	export LANG='en_US.UTF-8' LC_COLLATE='zh_CN.UTF-8' LC_CTYPE='zh_CN.UTF-8'
 fi
 
+# Assert my terminal emulator supports 256 colors
+if [[ "$TERM" == 'xterm' ]]; then
+	export TERM=xterm-256color
+elif [[ "$TERM" == 'screen' && -n "$DISPLAY" ]]; then
+	# Screen and tmux support 256 colors at least when it's running within
+	# a modern X terminal emulator
+	export TERM=screen-256color
+fi
+
 if [ -n "$BASH_VERSION" ]; then
 
 	#Workaround for the poor design of new versions of bash-completion
