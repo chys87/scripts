@@ -69,7 +69,6 @@ endif
 
 set hlsearch     " Debian/Ubuntu turns it off by default
 set modeline     " Override Gentoo default and enable modeline
-set noswapfile
 set incsearch
 set smartcase
 
