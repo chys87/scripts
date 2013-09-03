@@ -114,11 +114,6 @@ svn ()
 	fi
 }
 
-#if [ "${0:0:1}" = '-' ] && [ -n "$SSH_TTY" ] &&
-#		[ "$SSH_TTY" = "`/usr/bin/tty`" ]; then
-#	sshantiidle &
-#fi
-
 # It's weird that I always have problems defining local arrays in zsh
 precmd_showstatus() {
 	local tmp
