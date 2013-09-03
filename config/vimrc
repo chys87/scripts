@@ -141,6 +141,11 @@ function SessionSaveAndExit()
 endfunction
 
 
+" localvimrc (https://github.com/embear/vim-localvimrc) config
+let g:localvimrc_ask=0  "Silently load local vimrc files
+let g:localvimrc_sandbox=0  " Don't run them in a sand box
+
+
 " Strip trailing spaces
 "autocmd FileType c,cpp,python,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
 
