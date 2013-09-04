@@ -105,14 +105,33 @@ if [[ "$USER" != 'root' && -n "$USER" && -d /run/"$USER" && "$LESSHISTFILE" = '-
 	export LESSHISTFILE="/run/$USER/lesshst"
 fi
 
-svn ()
-{
-	if [ -t 1 ] && [[ "$1" =~ ^di(ff)?$ ]]; then
-		/usr/bin/svn "$@" | colordiff | less -R
-	else
-		/usr/bin/svn "$@"
-	fi
+
+# which behaves differently on bash and zsh
+have_executable() {
+	local IFS=:
+	for p in ${BASH_VERSION:+${PATH}}${ZSH_VERSION:+${path}}; do
+		if [[ -x "$p/$1" ]]; then
+			return 0
+		fi
+	done
+	return 1
 }
+
+if have_executable svn && have_executable colordiff; then
+
+	_svn_wrapper() {
+		if [[ -t 1 && "$1" =~ ^di(ff)?$ ]]; then
+			'svn' "$@" | colordiff | less -R
+		else
+			'svn' "$@"
+		fi
+	}
+
+	alias svn=_svn_wrapper
+
+fi
+
+unset -f have_executable
 
 # It's weird that I always have problems defining local arrays in zsh
 precmd_showstatus() {
