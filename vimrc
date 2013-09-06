@@ -62,6 +62,7 @@ set showmode           " On by default. Reiterate.
 set wildmenu           " Show a menu of files then pressing tab
 set wildmode=full
 set mouse=a
+set backspace=indent,eol,start " More liberal use of backspace
 
 colorscheme delek
 "colorscheme louver
