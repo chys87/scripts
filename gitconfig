@@ -1,0 +1,10 @@
+# Include this file from ~/.gitconfig:
+# [include]
+#     path = /path/to/this/file
+[color]
+	ui = auto
+[diff]
+	renames = true
+	renameLimit = 512
+[core]
+	pager = less -+$LESS -isR

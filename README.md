@@ -5,6 +5,7 @@
 * `config`: 配置文件
 * `detailed_size.py`: 增强版 [size](http://linux.die.net/man/1/size)
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
+* `gitconfig`: 我的 [Git 配置文件](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `mdqp.py` (Python 2.7/3.3): [Markdown](http://en.wikipedia.org/wiki/Markdown) 格式文档快速查看器
 * `salary-calc.py` (Python 3.2+): 一个简单的中国社保、个人所得税计算器
 * `shellrc`: 我的 shell 配置文件 (bash/[zsh](http://www.zsh.org) 通用)
@@ -19,6 +20,7 @@
 
 * `detailed_size.py`: Improved version of [size](http://linux.die.net/man/1/size)
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
+* `gitconfig`: My [Git config file](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `mdqp.py` (Python 2.7/3.3): A quick previewer for [Markdown](http://en.wikipedia.org/wiki/Markdown) documentation
 * `salary-calc.py` (Python 3.2+): A simple Chinese social security and income tax calculator
 * `shellrc`: My shell configuration file (compatible with both bash and [zsh](http://www.zsh.org))
