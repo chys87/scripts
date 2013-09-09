@@ -49,6 +49,7 @@ unset -v grep_options
 
 _warn_dangerous_command() {
 	echo "Command $1 is aliased because it can be dangerous."
+	echo "Use \\\\$1 if you really want to use it."
 	return 1
 }
 
