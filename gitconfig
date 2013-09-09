@@ -8,5 +8,6 @@
 	renameLimit = 512
 [core]
 	pager = less -+$LESS -isR
+	quotepath = off
 [push]
 	default = simple
