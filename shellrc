@@ -75,6 +75,9 @@ path_removedup() {
 	local IFS=:
 	local p
 	for p in ${ZSH_VERSION:+${path}}${BASH_VERSION:+${PATH}}; do
+		if [[ "$p" != /* ]]; then
+			continue
+		fi
 		case "$newpath" in
 			$p|$p:*|*:$p|*:$p:*);;
 			?*) newpath+=":$p";;
