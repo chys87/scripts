@@ -92,7 +92,7 @@ def detailed_size(file):
     return data
 
 
-if __name__ == '__main__':  # If run as an independent script
+def main():
     if len(sys.argv) < 2:
         print (__doc__)
         sys.exit(0)
@@ -108,3 +108,7 @@ if __name__ == '__main__':  # If run as an independent script
             # readelf already prints error info
             error = 1
     sys.exit(error)
+
+
+if __name__ == '__main__':  # If run as an independent script
+    main()
