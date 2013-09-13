@@ -176,7 +176,7 @@ precmd_showstatus() {
 }
 
 case "$TERM" in
-	xterm*|rxvt*|[akE]term|gnome*|interix|screen)
+	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
 		precmd_maketitle()
 		{
 			local host="${HOST:-${HOSTNAME}}" # zsh:HOST; bash:HOSTNAME
