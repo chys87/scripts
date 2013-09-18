@@ -135,6 +135,13 @@ if have_executable svn && have_executable colordiff; then
 
 fi
 
+if have_executable tmux; then
+	_tmux_wrapper() {
+		SHLVL= 'tmux' "$@"
+	}
+	alias tmux=_tmux_wrapper
+fi
+
 unset -f have_executable
 
 # It's weird that I always have problems defining local arrays in zsh
