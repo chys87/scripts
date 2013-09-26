@@ -66,9 +66,15 @@ add_dangerous startx unlink shred enconv
 unset -f add_dangerous
 
 
-
-[ -d ~/bin  ] && export PATH="${HOME}/bin:${PATH}"
-[ -d ~/bin2 ] && export PATH="${HOME}/bin2:${PATH}"
+if [ -n "$ZSH_VERSION" ]; then
+	unsetopt nomatch
+fi
+for dir in ~/{bin,bin2} {~,/usr/local}/bin.d/*; do
+	if [[ -d "$dir" ]]; then
+		export PATH="$dir:$PATH"
+	fi
+done
+unset -v dir
 
 path_removedup() {
 	local newpath=
