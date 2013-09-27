@@ -221,7 +221,7 @@ def main():
         except IOError:
             pass
     else:
-        fatal('找不到配置文件: {}'.format(config_file))
+        fatal('找不到配置文件: {}'.format(CONFIG_FILE))
 
     if not city:
         try:
