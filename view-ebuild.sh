@@ -181,20 +181,6 @@ else
 				pkgs=("$installedpkgs")
 			fi
 		fi
-		# If we found two, and only one is non-virtual, choose the non-virtual version
-		if ((${#pkgs[@]} == 2)); then
-			first_virtual=0
-			second_virtual=0
-			[[ "${pkgs[0]}" == */virtual/* ]] && first_virtual=1
-			[[ "${pkgs[1]}" == */virtual/* ]] && second_virtual=1
-			if ((first_virtual != second_virtual)); then
-				if ((first_virtual)); then
-					pkgs=("${pkgs[1]}")
-				else
-					pkgs=("${pkgs[0]}")
-				fi
-			fi
-		fi
 		# Number still not right?
 		case "${#pkgs[@]}" in
 			0)	return 1;;
