@@ -119,6 +119,7 @@ fi
 # which behaves differently on bash and zsh
 have_executable() {
 	local IFS=:
+	local p
 	for p in ${BASH_VERSION:+${PATH}}${ZSH_VERSION:+${path}}; do
 		if [[ -x "$p/$1" ]]; then
 			return 0
