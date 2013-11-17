@@ -289,6 +289,7 @@ if [ -n "$ZSH_VERSION" ]; then
 	unsetopt nomatch # I can't get used to nomatch
 	unsetopt bgnice pushdsilent autopushd
 	unsetopt correct correctall globdots
+	unsetopt multios
 
 	zstyle ':completion:*' verbose yes
 
