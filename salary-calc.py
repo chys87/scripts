@@ -215,7 +215,7 @@ def main():
     config = configparser.RawConfigParser()
     for config_file in _get_config_files():
         try:
-            with open(config_file, 'r') as f:
+            with open(config_file, 'r', encoding='utf-8') as f:
                 config.readfp(f)
                 break
         except IOError:
