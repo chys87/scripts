@@ -14,6 +14,7 @@
 * `tmux.conf`: 我的 [tmux](http://tmux.sourceforge.net/) 配置文件
 * `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `vimrc`: 我的 `.vimrc` 文件
+* `external/*`: 其他人写的有用脚本 (版权属于原作者)
 
 更多信息，请参见脚本源代码及帮助信息。
 
@@ -30,6 +31,7 @@
 * `tmux.conf`: My [tmux](http://tmux.sourceforge.net/) configuration file
 * `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `vimrc`: My `.vimrc` file
+* `external/*`: Useful scripts written by others (copyright may be reserved by the original authors)
 
 For more information, please refer to the source code and help info of the scripts.
 
