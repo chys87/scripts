@@ -44,14 +44,20 @@ import optparse
 import string
 import subprocess
 import sys
-import tempfile
+import threading
 import time
+from wsgiref.simple_server import make_server
+try:
+    from queue import Queue  # Python 3
+except ImportError:
+    from Queue import Queue  # Python 2
 
 import markdown
 
 
 DEFAULT_FILE = 'README.md'
 OPEN_COMMAND = 'xdg-open'
+ATTEMPT_PORTS = [80, 8000, 8080, 12345, 25054]
 TEMPLATE = '''<!DOCTYPE html>
 <html>
     <head>
@@ -63,6 +69,41 @@ TEMPLATE = '''<!DOCTYPE html>
     </body>
 </html>
 '''
+
+
+def httpd_main(html, q):
+
+    def wsgiapp(environ, start_response):
+        headers = [('Content-Type', 'text/html; charset=utf-8'),
+                ('Cache-Control', 'no-cache'),
+                ]
+        start_response('200 OK', headers)
+        return [html.encode('utf-8')]
+
+    for port in ATTEMPT_PORTS:
+        try:
+            httpd = make_server('localhost', port, wsgiapp)
+        except (IOError, OSError, ):
+            continue
+        q.put(port)
+        httpd.timeout = 10
+        httpd.handle_request()
+        break
+    else:
+        q.put(0)
+
+
+def send_to_browser(html):
+    q = Queue()
+    httpd_thread = threading.Thread(target=httpd_main, args=(html, q))
+    httpd_thread.start()
+    port = q.get()
+    if port == 0:
+        sys.exit("Failed to start a minimal HTTP server")
+    url = 'http://localhost:{}/'.format(port)
+    print('Opening {}'.format(url))
+    subprocess.Popen([OPEN_COMMAND, url])
+    httpd_thread.join()
 
 
 def main():
@@ -97,13 +138,7 @@ def main():
     html = markdown.markdown(unictxt, output_format='html')
     html = string.Template(TEMPLATE).substitute(title=filename,
                                                 main=html)
-
-    tmp = tempfile.NamedTemporaryFile(prefix='markdown.', suffix='.html')
-    tmp.write(html.encode('utf-8'))
-    tmp.flush()
-
-    subprocess.check_call([OPEN_COMMAND, tmp.name])
-    time.sleep(1)
+    send_to_browser(html)
 
 
 if __name__ == '__main__':
