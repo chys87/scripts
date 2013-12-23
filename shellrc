@@ -191,6 +191,9 @@ precmd_showstatus() {
 
 case "$TERM" in
 	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
+		if [ -z "$__login_shell" ]; then
+			__login_shell="$(sed -n -e "/^$USER:/ "'s!.*/\(.*\)!\1! p' /etc/passwd)"
+		fi
 		precmd_maketitle()
 		{
 			local host="${HOST:-${HOSTNAME}}" # zsh:HOST; bash:HOSTNAME
@@ -201,7 +204,11 @@ case "$TERM" in
 				pwd="*/${pwd##*/}"
 			fi
 			local sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
-			builtin echo -ne "\033]0;[$sh] ${USER}@${host%%.*}: ${pwd}\007"
+			if [ "$__login_shell" = "$sh" ]; then
+				builtin echo -ne "\033]0;${USER}@${host%%.*}: ${pwd}\007"
+			else
+				builtin echo -ne "\033]0;[$sh] ${USER}@${host%%.*}: ${pwd}\007"
+			fi
 		}
 		;;
 	*)
