@@ -152,9 +152,9 @@ fi
 # Set up SSH agent
 set_up_ssh_agent_from_file() {
 	[ -r "$1" ] || return 1
-	local auth_sock=$(exec 2>&1 >/dev/null; . "$1"; echo $SSH_AUTH_SOCK >&2)
+	local auth_sock=$(. "$1" >/dev/null; echo $SSH_AUTH_SOCK)
 	[ -S "$auth_sock" ] || return 1
-	local agent_pid=$(exec 2>&1 >/dev/null; . "$1"; echo $SSH_AGENT_PID >&2)
+	local agent_pid=$(. "$1" >/dev/null; echo $SSH_AGENT_PID)
 	[[ $(readlink -f /proc/$agent_pid/exe) == */ssh-agent ]] || return 1
 	export SSH_AUTH_SOCK="$auth_sock"
 	export SSH_AGENT_PID="$agent_pid"
