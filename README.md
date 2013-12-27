@@ -10,7 +10,6 @@
 * `salary-calc.py` (Python 3.2+): 一个简单的中国社保、个人所得税计算器
 * `shellrc`: 我的 shell 配置文件 (bash/[zsh](http://www.zsh.org) 通用)
     + 注: 这个文件不能直接作为 `.bashrc` 或 `.zshrc` 文件, 而应在 `.bashrc`/`.zshrc` 末尾 source
-* `ssha.sh`: 启动 `ssh-agent` 并调用 `ssh`
 * `tmux.conf`: 我的 [tmux](http://tmux.sourceforge.net/) 配置文件
 * `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `vimrc`: 我的 `.vimrc` 文件
@@ -27,7 +26,6 @@
 * `salary-calc.py` (Python 3.2+): A simple Chinese social security and income tax calculator
 * `shellrc`: My shell configuration file (compatible with both bash and [zsh](http://www.zsh.org))
     - Note: This file shouldn't be directly used as `.bashrc` or `.zshrc`, but sourced at the end of them.
-* `ssha.sh`: Start `ssh-agent` and call `ssh`
 * `tmux.conf`: My [tmux](http://tmux.sourceforge.net/) configuration file
 * `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `vimrc`: My `.vimrc` file
