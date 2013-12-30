@@ -103,9 +103,7 @@ com NC NeoComplCache
 "set foldmethod=syntax
 "set foldcolumn=6
 
-"if (has("gui_running"))
-"	set list listchars=tab:\>\ ,eol:$
-"endif
+set list listchars=tab:>\ ,trail:~,extends:>
 
 " Navigate between tabs more easily
 nmap <Tab> :tabn<CR>
