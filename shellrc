@@ -155,7 +155,8 @@ set_up_ssh_agent_from_file() {
 	local auth_sock=$(. "$1" >/dev/null; echo $SSH_AUTH_SOCK)
 	[ -S "$auth_sock" ] || return 1
 	local agent_pid=$(. "$1" >/dev/null; echo $SSH_AGENT_PID)
-	[[ $(readlink -f /proc/$agent_pid/exe) == */ssh-agent ]] || return 1
+	# ssh-agent uses PR_SET_DUMPABLE to protect itself and /proc/pid/exe is not readable
+	[[ `</proc/$agent_pid/comm` == 'ssh-agent' ]] || return 1
 	export SSH_AUTH_SOCK="$auth_sock"
 	export SSH_AGENT_PID="$agent_pid"
 	return 0
