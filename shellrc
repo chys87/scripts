@@ -156,10 +156,22 @@ set_up_ssh_agent_from_file() {
 	[ -S "$auth_sock" ] || return 1
 	local agent_pid=$(. "$1" >/dev/null; echo $SSH_AGENT_PID)
 	# ssh-agent uses PR_SET_DUMPABLE to protect itself and /proc/pid/exe is not readable
-	[[ `</proc/$agent_pid/comm` == 'ssh-agent' ]] || return 1
-	export SSH_AUTH_SOCK="$auth_sock"
-	export SSH_AGENT_PID="$agent_pid"
-	return 0
+	local ok=0
+	if [ -n "$agent_pid" ]; then
+		if [ -r /proc/$agent_pid/comm ]; then  # Linux
+			[[ `</proc/$agent_pid/comm` == 'ssh-agent' ]] && ok=1
+		elif [ -r /proc/$agent_pid/exename ]; then  # Cygwin
+			[[ `</proc/$agent_pid/exename` =~ ^(.*/)?ssh-agent$ ]] && ok=1
+		fi
+	fi
+
+	if ((ok)); then
+		export SSH_AUTH_SOCK="$auth_sock"
+		export SSH_AGENT_PID="$agent_pid"
+		return 0
+	else
+		return 1
+	fi
 }
 
 set_up_ssh_agent() {
