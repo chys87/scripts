@@ -44,12 +44,11 @@ if [[ "$1" == '--help' ]]; then
 	usage "$0" 0
 fi
 
-if [[ "$OSTYPE" == 'cygwin' ]]; then
-	# Assume we are calling a Windows version of adb, which
-	# does LF => CR+LF translation.
-	# We have to convert it back.
-	adb shell /system/bin/screencap -p | sed -z -e 's/\r\n/\n/g' > "$1"
-else
-	# Assume Linux.
-	exec adb shell /system/bin/screencap -p > "$1"
-fi
+# Even Linux version of adb does LF => CR+LF translation.
+# We have to convert it back.
+do_dos2unix() {
+	# It appears "-z" is only found on sed for Cygwin??
+	dos2unix || perl -p -e 's/\r$//' || sed -z -e 's/\r\n/\n/g'
+}
+
+adb shell /system/bin/screencap -p | do_dos2unix > "$1"
