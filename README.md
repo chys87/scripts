@@ -3,6 +3,7 @@
 ## 列表 ##
 
 * `android-power.sh`: 通过ADB模拟按Android的电源键
+* `android-screencap.sh`: 通过ADB对Android进行截屏
 * `detailed_size.py`: 增强版 [size](http://linux.die.net/man/1/size)
 * `gitconfig`: 我的 [Git 配置文件](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
@@ -20,6 +21,7 @@
 ## List ##
 
 * `android-power.sh`: Send the power button event to Android via ADB
+* `android-screencap.sh`: Make screenshot of Android via ADB
 * `detailed_size.py`: Improved version of [size](http://linux.die.net/man/1/size)
 * `gitconfig`: My [Git config file](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
