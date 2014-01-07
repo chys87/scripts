@@ -47,8 +47,14 @@ fi
 # Even Linux version of adb does LF => CR+LF translation.
 # We have to convert it back.
 do_dos2unix() {
-	# It appears "-z" is only found on sed for Cygwin??
-	dos2unix || perl -p -e 's/\r$//' || sed -z -e 's/\r\n/\n/g'
+	if [[ "$OSTYPE" == 'cygwin' ]]; then
+		sed -z -e 's/\r\n/\n/g'
+	else
+		# Assume Linux.  Assume perl is installed everywhere
+		# Note that we can't use this perl one-liner on cygwin
+		# because perl breaks file into lines by '\r\n'!
+		perl -p -e 's/\r$//'
+	fi
 }
 
 adb shell /system/bin/screencap -p | do_dos2unix > "$1"
