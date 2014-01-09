@@ -60,7 +60,7 @@ add_dangerous() {
 	done
 }
 
-add_dangerous startx unlink shred enconv
+add_dangerous startx shred enconv
 [ "$EUID" = 0 ] && add_dangerous mkswap /sbin/mk*fs*
 unset -f add_dangerous
 
