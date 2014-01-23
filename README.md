@@ -12,6 +12,7 @@
 * `shellrc`: 我的 shell 配置文件 (bash/[zsh](http://www.zsh.org) 通用)
     + 注: 这个文件不能直接作为 `.bashrc` 或 `.zshrc` 文件, 而应在 `.bashrc`/`.zshrc` 末尾 source
 * `tmux.conf`: 我的 [tmux](http://tmux.sourceforge.net/) 配置文件
+* `urlunescape.py` (Python 3): 一个简单的 URL 解码脚本，支持 UTF-8 和 GB18030
 * `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `vimrc`: 我的 `.vimrc` 文件
 * `external/*`: 其他人写的有用脚本 (版权属于原作者)
@@ -30,6 +31,7 @@
 * `shellrc`: My shell configuration file (compatible with both bash and [zsh](http://www.zsh.org))
     - Note: This file shouldn't be directly used as `.bashrc` or `.zshrc`, but sourced at the end of them.
 * `tmux.conf`: My [tmux](http://tmux.sourceforge.net/) configuration file
+* `urlunescape.py` (Python 3): A simple URL decoder, supporting UTF-8 and GB18030
 * `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `vimrc`: My `.vimrc` file
 * `external/*`: Useful scripts written by others (copyright may be reserved by the original authors)
