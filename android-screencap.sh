@@ -57,4 +57,7 @@ do_dos2unix() {
 	fi
 }
 
+set -e
+
+adb start-server
 adb shell /system/bin/screencap -p | do_dos2unix > "$1"
