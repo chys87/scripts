@@ -76,6 +76,11 @@ if (has("gui_running"))
 	" General options
 	set guioptions-=T "Hide toolbar
 	set guioptions-=m "Hide menu
+else
+
+	" Reduce delay after Esc
+	set ttimeout ttimeoutlen=50
+
 endif
 
 set hlsearch     " Debian/Ubuntu turns it off by default
