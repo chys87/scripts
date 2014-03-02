@@ -187,12 +187,13 @@ set_up_ssh_agent() {
 	fi
 }
 
-if [[ -z "$SSH_AUTH_SOCK" && -z "$SSH_CLIENT" && -r ~/.ssh/id_rsa ]] && \
+if [[ -z "$skip_ssh_agent" && -z "$SSH_AUTH_SOCK" && -z "$SSH_CLIENT" && -r ~/.ssh/id_rsa ]] && \
 		have_executable ssh-agent && have_executable ssh-add; then
 	set_up_ssh_agent
 fi
 unset -f set_up_ssh_agent_from_file
 unset -f set_up_ssh_agent
+unset -v skip_ssh_agent
 
 unset -f have_executable
 
