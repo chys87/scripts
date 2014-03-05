@@ -1,0 +1,100 @@
+#!/bin/bash
+export LC_ALL=C
+
+# Some packages (such as xmlto) use $BASH
+# We explicitly set this so that they use "/bin/bash" instead of "/bin/sh"
+# even if /bin/sh is also bash
+export BASH=/bin/bash
+
+if [[ "$CATEGORY" == cross-* ]] || [[ "$PF" == gcc-4.[012].* ]] || [[ "$PF" == gcc-3.* ]]; then
+	export CFLAGS='-O2'
+	export CXXFLAGS='-O2'
+elif [[ "$PF" == gcc-4.[345].* ]]; then
+	# Doesn't support corei7. -march=native resolves to -march=core2, which doesn't work well.
+	export CFLAGS='-O2 -march=core2 -mtune=generic'
+	export CXXFLAGS='-O2 -march=core2 -mtune=generic'
+fi
+# Known to fail
+# Some packages fail if FFLAGS is set. So set it only if really needed
+case "$CATEGORY/$PN" in
+	sci-libs/*-reference) # Reference blas/lapack can definitely compile at O3
+		export CFLAGS="${CFLAGS/-O2/-O3}"
+		export FFLAGS="${CFLAGS}"
+		;;
+	sci-mathematics/scilab|sci-libs/*-atlas|sci-libs/fftw|dev-python/numpy)
+		export FFLAGS="${CFLAGS}"
+		;;
+esac
+
+if [[ -f ${ROOT}/etc/portage/x32list ]]; then
+	# Don't use fgrep. Portage warns about it.
+	while read -r x32package; do
+		case "$x32package" in
+			"$CATEGORY/$PN")
+				export CC="${CHOST}-gcc -mx32"
+				export CXX="${CHOST}-g++ -mx32"
+				export DEFAULT_ABI="x32"
+				export ABI="x32"
+				break
+				;;
+		esac
+	done < ${ROOT}/etc/portage/x32list
+	unset -v x32package
+fi
+
+# This function seeks to work like epatch, which is now
+# merged into eutils.eclass and not so simple to extract
+# $1 = full path of patch file;
+# $2 = work dir ($S or $S + multilib suffix)
+autoepatch() {
+	local level
+	for level in 0 1; do
+		if patch --dry-run -f -d$2 -p$level <"$1" &>/dev/null; then
+			if patch -f -d$2 -p$level <"$1"; then
+				return 0
+			else
+				break
+			fi
+		fi
+	done
+	die "Failed to apply patch $1 to $2"
+}
+
+# $1 = work dir ($S or $S + multilib suffix)
+autopatch_dir() {
+
+	local p patch
+
+	local PATCH_OVERLAY=${ROOT%/}/etc/portage/autopatch
+
+	for patch in "$PATCH_OVERLAY/$CATEGORY.$PN".*.{patch,diff}; do
+		[ -f "$patch" ] || continue
+		p="${patch##*/}"
+		if ! [ -e $1/.autopatched.${p} ]; then
+			einfo "Applying $patch to $1"
+			autoepatch "$patch" "$1"
+			: > $1/.autopatched.${p}
+		fi
+	done
+}
+
+autopatch() {
+	autopatch_dir "$S"
+	local abi
+	for abi in amd64 64 x86 32 x32; do
+		if [ -d "$S-$abi" ]; then
+			autopatch_dir "$S-$abi"
+		fi
+	done
+}
+
+# Don't do it in prepare.
+# First, EAPI<2 has no prepare or configure phase;
+# Second. It's better to wait until all ebuild patches have been applied.
+einfo "Ebuild Phase: $EBUILD_PHASE"
+case "$EBUILD_PHASE" in
+	configure|compile)
+		autopatch;;
+esac
+
+:

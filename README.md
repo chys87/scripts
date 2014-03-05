@@ -6,6 +6,7 @@
 * `android-screencap.sh`: 通过ADB对Android进行截屏
 * `detailed_size.py`: 增强版 [size](http://linux.die.net/man/1/size)
 * `gentoo`: [Gentoo](http://gentoo.org/) 专用脚本
+    * `etc-portage-bashrc`: 我的 `/etc/portage/bashrc` 文件
     + `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `gitconfig`: 我的 [Git 配置文件](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
@@ -27,6 +28,7 @@
 * `android-screencap.sh`: Make screenshot of Android via ADB
 * `detailed_size.py`: Improved version of [size](http://linux.die.net/man/1/size)
 * `gentoo`: [Gentoo](http://gentoo.org/)-specific scripts
+    * `etc-portage-bashrc`: My `/etc/portage/bashrc`
     + `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `gitconfig`: My [Git config file](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
