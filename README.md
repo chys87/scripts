@@ -5,6 +5,8 @@
 * `android-power.sh`: 通过ADB模拟按Android的电源键
 * `android-screencap.sh`: 通过ADB对Android进行截屏
 * `detailed_size.py`: 增强版 [size](http://linux.die.net/man/1/size)
+* `gentoo`: [Gentoo](http://gentoo.org/) 专用脚本
+    + `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `gitconfig`: 我的 [Git 配置文件](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
 * `json_pprint.py` (Python 2.7/3.2): 简单粗暴的 JSON 格式化工具，支持一部分非标准 JSON 格式
@@ -14,7 +16,6 @@
     + 注: 这个文件不能直接作为 `.bashrc` 或 `.zshrc` 文件, 而应在 `.bashrc`/`.zshrc` 末尾 source
 * `tmux.conf`: 我的 [tmux](http://tmux.sourceforge.net/) 配置文件
 * `urlunescape.py` (Python 3): 一个简单的 URL 解码脚本，支持 UTF-8 和 GB18030
-* `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `vimrc`: 我的 `.vimrc` 文件
 * `external/*`: 其他人写的有用脚本 (版权属于原作者)
 
@@ -25,6 +26,8 @@
 * `android-power.sh`: Send the power button event to Android via ADB
 * `android-screencap.sh`: Make screenshot of Android via ADB
 * `detailed_size.py`: Improved version of [size](http://linux.die.net/man/1/size)
+* `gentoo`: [Gentoo](http://gentoo.org/)-specific scripts
+    + `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `gitconfig`: My [Git config file](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
 * `json_pprint.py` (Python 2.7/3.2): Quick and dirty JSON pretty printer, supporing some nonstandard JSON
@@ -34,7 +37,6 @@
     - Note: This file shouldn't be directly used as `.bashrc` or `.zshrc`, but sourced at the end of them.
 * `tmux.conf`: My [tmux](http://tmux.sourceforge.net/) configuration file
 * `urlunescape.py` (Python 3): A simple URL decoder, supporting UTF-8 and GB18030
-* `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `vimrc`: My `.vimrc` file
 * `external/*`: Useful scripts written by others (copyright may be reserved by the original authors)
 
