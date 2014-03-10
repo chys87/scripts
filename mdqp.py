@@ -3,7 +3,7 @@
 # vim:ts=8 sts=4 sw=4 expandtab ft=python
 
 #
-# Copyright (c) 2013, chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2014, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -56,7 +56,10 @@ import markdown
 
 
 DEFAULT_FILE = 'README.md'
-OPEN_COMMAND = 'xdg-open'
+OPEN_COMMAND = {
+        'cygwin': 'cygstart',
+        'linux2': 'xdg-open',
+        }
 ATTEMPT_PORTS = [80, 8000, 8080, 12345, 25054]
 TEMPLATE = '''<!DOCTYPE html>
 <html>
@@ -94,6 +97,9 @@ def httpd_main(html, q):
 
 
 def send_to_browser(html):
+    open_command = OPEN_COMMAND.get(sys.platform)
+    if not open_command:
+        sys.exit("Don't know how to start a browser in your platform.")
     q = Queue()
     httpd_thread = threading.Thread(target=httpd_main, args=(html, q))
     httpd_thread.start()
@@ -102,7 +108,7 @@ def send_to_browser(html):
         sys.exit("Failed to start a minimal HTTP server")
     url = 'http://localhost:{}/'.format(port)
     print('Opening {}'.format(url))
-    subprocess.Popen([OPEN_COMMAND, url])
+    subprocess.Popen([open_command, url])
     httpd_thread.join()
 
 
