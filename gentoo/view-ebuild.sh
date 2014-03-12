@@ -75,12 +75,20 @@ for o; do
 	fi
 done
 
+set_portage_overlays() {
+    PORTDIRS=" $(portageq repositories_configuration / | sed -n -e '/^location =/s/^location = \(.*\)/\1/p') "
+    PORTDIRS="${PORTDIRS/ \/usr\/portage / /}"
+    PORTDIRS="${PORTDIRS# }"
+    PORTDIRS="${PORTDIRS% }"
+}
+
 if [ "$PORTDIRS" = g ]; then
 	PORTDIRS='/usr/portage'
 elif [ "$PORTDIRS" = a ]; then
-	PORTDIRS="/usr/portage $(portageq envvar PORTDIR_OVERLAY)"
+    set_portage_overlays
+    PORTDIRS="/usr/portage $PORTDIRS"
 else
-	PORTDIRS="$(portageq envvar PORTDIR_OVERLAY)"
+    set_portage_overlays
 fi
 
 tmp="$PACKAGE"
