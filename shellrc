@@ -405,3 +405,4 @@ else
 fi
 
 :
+# vim: filetype=sh
