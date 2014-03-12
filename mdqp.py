@@ -118,6 +118,9 @@ def main():
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-e', '--encoding', dest='encoding', default='utf-8',
                       help='Source encoding. Defaults to UTF-8.')
+    parser.add_option('--fix-id', dest='fixid', action='store_true',
+                      default=False,
+                      help='Support [text](id:tag)')
     (options, args) = parser.parse_args()
     if len(args) > 1:
         print('Too many filenames', file=sys.stderr)
@@ -144,6 +147,8 @@ def main():
     html = markdown.markdown(unictxt, output_format='html')
     html = string.Template(TEMPLATE).substitute(title=filename,
                                                 main=html)
+    if options.fixid:
+        html = html.replace('href="id:', 'name="')
     send_to_browser(html)
 
 
