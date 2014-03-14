@@ -33,6 +33,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
+import argparse
 import json
 import pprint
 import re
@@ -49,16 +50,31 @@ def fix_json(src):
 
 
 def main():
-    src = sys.stdin.read()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--file', default=None,
+                        help='Input file. Default is standard input.')
+    parser.add_argument('-F', '--format', type=str, default='python',
+                        help='Output format: python (default) or json')
+    options = parser.parse_args()
+
+    if options.file:
+        with open(options.file, 'r') as f:
+            src = f.read()
+    else:
+        src = sys.stdin.read()
+
     try:
         data = json.loads(src, strict=False)
     except ValueError:
         data = None
     if not data:
         data = json.loads(fix_json(src), strict=False)
-    pprint.pprint(data)
-#    dst = json.dumps(data, ensure_ascii=False, indent=4)
-#    print(dst)
+
+    fmt = options.format.lower()
+    if fmt == 'json':
+        json.dump(data, sys.stdout, ensure_ascii=False, indent=4)
+    else:
+        pprint.pprint(data)
 
 
 if __name__ == '__main__':
