@@ -41,6 +41,7 @@ If no filename is given, it attempts to use README.md
 from __future__ import print_function
 
 import optparse
+import os
 import string
 import subprocess
 import sys
@@ -61,11 +62,15 @@ OPEN_COMMAND = {
         'linux2': 'xdg-open',
         }
 ATTEMPT_PORTS = [80, 8000, 8080, 12345, 25054]
+CSS_FILE = 'mdqp.css'
 TEMPLATE = '''<!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>$title</title>
+        <style>
+        $css
+        </style>
     </head>
     <body>
         $main
@@ -112,12 +117,32 @@ def send_to_browser(html):
     httpd_thread.join()
 
 
+def get_default_css_file():
+    exe = __file__
+
+    # Same dir as this script
+    name = os.path.join(os.path.dirname(exe), CSS_FILE)
+    if os.access(name, os.R_OK):
+        return name
+
+    # Perhaps this script is run through a symlink..
+    if os.path.islink(exe):
+        exe = os.path.realpath(exe)
+        name = os.path.join(os.path.dirname(exe), CSS_FILE)
+        if os.access(name, os.R_OK):
+            return name
+
+    return None
+
+
 def main():
     usage = '''Usage: %prog [options] [filename]
         default filename is {}'''.format(DEFAULT_FILE)
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-e', '--encoding', dest='encoding', default='utf-8',
                       help='Source encoding. Defaults to UTF-8.')
+    parser.add_option('-c', '--css', dest='cssfile', default=None,
+                      help='Specify CSS filename.')
     parser.add_option('--fix-id', dest='fixid', action='store_true',
                       default=False,
                       help='Support [text](id:tag)')
@@ -144,8 +169,18 @@ def main():
               file=sys.stderr)
         sys.exit(1)
 
+    cssfile = options.cssfile
+    if not cssfile:
+        cssfile = get_default_css_file()
+    if cssfile:
+        with open(cssfile) as f:
+            css = f.read()
+    else:
+        css = ''
+
     html = markdown.markdown(unictxt, output_format='html')
     html = string.Template(TEMPLATE).substitute(title=filename,
+                                                css=css,
                                                 main=html)
     if options.fixid:
         html = html.replace('href="id:', 'name="')
