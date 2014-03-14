@@ -146,6 +146,8 @@ def main():
     parser.add_option('--fix-id', dest='fixid', action='store_true',
                       default=False,
                       help='Support [text](id:tag)')
+    parser.add_option('-s', '--save', dest='savefile', default=None,
+                      help='Save to a file instead of opening in a browser.')
     (options, args) = parser.parse_args()
     if len(args) > 1:
         print('Too many filenames', file=sys.stderr)
@@ -173,8 +175,8 @@ def main():
     if not cssfile:
         cssfile = get_default_css_file()
     if cssfile:
-        with open(cssfile) as f:
-            css = f.read()
+        with open(cssfile, 'rb') as f:
+            css = f.read().decode('utf-8')
     else:
         css = ''
 
@@ -184,7 +186,11 @@ def main():
                                                 main=html)
     if options.fixid:
         html = html.replace('href="id:', 'name="')
-    send_to_browser(html)
+
+    if options.savefile:
+        open(options.savefile, 'wb').write(html.encode('utf-8'))
+    else:
+        send_to_browser(html)
 
 
 if __name__ == '__main__':
