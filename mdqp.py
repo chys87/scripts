@@ -58,10 +58,10 @@ import markdown
 
 DEFAULT_FILE = 'README.md'
 OPEN_COMMAND = {
-        'cygwin': 'cygstart',
-        'linux': 'xdg-open',
-        'linux2': 'xdg-open',
-        }
+    'cygwin': 'cygstart',
+    'linux': 'xdg-open',
+    'linux2': 'xdg-open',
+    }
 ATTEMPT_PORTS = [80, 8000, 8080, 12345, 25054]
 CSS_FILE = 'mdqp.css'
 TEMPLATE = '''<!DOCTYPE html>
@@ -83,9 +83,10 @@ TEMPLATE = '''<!DOCTYPE html>
 def httpd_main(html, q):
 
     def wsgiapp(environ, start_response):
-        headers = [('Content-Type', 'text/html; charset=utf-8'),
-                ('Cache-Control', 'no-cache'),
-                ]
+        headers = [
+            ('Content-Type', 'text/html; charset=utf-8'),
+            ('Cache-Control', 'no-cache'),
+            ]
         start_response('200 OK', headers)
         return [html.encode('utf-8')]
 

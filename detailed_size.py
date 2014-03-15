@@ -94,16 +94,16 @@ def detailed_size(file):
 
 def main():
     if len(sys.argv) < 2:
-        print (__doc__)
+        print(__doc__)
         sys.exit(0)
-    print (''.join('{:>10}'.format(col) for col in _col_names) +
-           '    filename')
+    print(''.join('{:>10}'.format(col) for col in _col_names) +
+          '    filename')
     error = 0
     for filename in sys.argv[1:]:
         try:
             data = detailed_size(filename)
-            print (''.join('{:10}'.format(v) for v in data) +
-                   '    ' + filename)
+            print(''.join('{:10}'.format(v) for v in data) +
+                  '    ' + filename)
         except subprocess.CalledProcessError:
             # readelf already prints error info
             error = 1

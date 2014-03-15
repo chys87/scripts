@@ -99,7 +99,7 @@ class Tax:
                     try:
                         item = Tax.Item()
                         item.lo, item.hi, item.pp = \
-                                [float(v) for v in value.split()]
+                            [float(v) for v in value.split()]
                     except ValueError:
                         fatal('配置文件错误: {}'.format(value))
                     self._table.append(item)
@@ -121,7 +121,7 @@ class Tax:
         for item in self._table:
             if salary > item.lo:
                 tax += min(item.hi - item.lo, salary - item.lo) * \
-                       item.pp / 100
+                    item.pp / 100
         return tax
 
 
@@ -139,8 +139,8 @@ class SocialSecurity:
                     item = SocialSecurity.Item()
                     item.name = name
                     item.employee_percent, item.employer_percent, \
-                            item.upper, item.lower = \
-                            [float(v) for v in data.split()]
+                        item.upper, item.lower = \
+                        [float(v) for v in data.split()]
                     self._items.append(item)
                 except ValueError:
                     fatal('配置文件错误: {} = {}'.format(name, data))
@@ -266,7 +266,7 @@ def main():
     print('{}{:>15.2f}'.format(txtl('税前工资', 20), salary))
     print('{}{:>15.2f}'.format(txtl('到手工资', 20), taxable - tax))
     print('{}{:>15.2f}'.format(txtl('单位总支出', 20),
-                            salary + security_employer_sum))
+                               salary + security_employer_sum))
 
 
 if __name__ == '__main__':
