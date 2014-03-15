@@ -59,6 +59,7 @@ import markdown
 DEFAULT_FILE = 'README.md'
 OPEN_COMMAND = {
         'cygwin': 'cygstart',
+        'linux': 'xdg-open',
         'linux2': 'xdg-open',
         }
 ATTEMPT_PORTS = [80, 8000, 8080, 12345, 25054]
