@@ -1,4 +1,7 @@
-#
+#!/bin/bash
+# NOTE: The she-bang is the most portable way to tell editor to use
+# bash syntax highlight
+
 # Copyright (c) 2013, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -405,4 +408,3 @@ else
 fi
 
 :
-# vim: filetype=sh
