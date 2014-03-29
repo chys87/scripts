@@ -153,6 +153,10 @@ if have_executable tmux; then
 	alias tmux=_tmux_wrapper
 fi
 
+if have_executable journalctl; then
+	alias journalctl='journalctl -o short-precise'
+fi
+
 # Set up SSH agent
 set_up_ssh_agent_from_file() {
 	[ -r "$1" ] || return 1
