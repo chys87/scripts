@@ -9,6 +9,7 @@
     * `etc-portage-bashrc`: 我的 `/etc/portage/bashrc` 文件
     + `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `gitconfig`: 我的 [Git 配置文件](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
+* `githooks`: 一些有用的 [git hooks](http://www.git-scm.com/book/en/Customizing-Git-Git-Hooks)
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
 * `json_pprint.py` (Python 3.2+): 简单粗暴的 JSON 格式化工具，支持一部分非标准 JSON 格式
 * `mdqp.py` (Python 2.7/3.3): [Markdown](http://en.wikipedia.org/wiki/Markdown) 格式文档快速查看器
@@ -31,6 +32,7 @@
     * `etc-portage-bashrc`: My `/etc/portage/bashrc`
     + `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `gitconfig`: My [Git config file](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
+* `githooks`: Some useful [git hooks](http://www.git-scm.com/book/en/Customizing-Git-Git-Hooks)
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
 * `json_pprint.py` (Python 3.2+): Quick and dirty JSON pretty printer, supporing some nonstandard JSON
 * `mdqp.py` (Python 2.7/3.3): A quick previewer for [Markdown](http://en.wikipedia.org/wiki/Markdown) documentation
