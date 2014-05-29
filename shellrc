@@ -148,6 +148,9 @@ fi
 
 if have_executable tmux; then
 	_tmux_wrapper() {
+		if [[ -n "$TMUX" ]]; then
+			return 1
+		fi
 		SHLVL= 'tmux' "$@"
 	}
 	alias tmux=_tmux_wrapper
