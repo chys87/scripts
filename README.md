@@ -10,6 +10,7 @@
     + `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
 * `gitconfig`: 我的 [Git 配置文件](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `githooks`: 一些有用的 [git hooks](http://www.git-scm.com/book/en/Customizing-Git-Git-Hooks)
+* `guess-ssh-agent.sh`: 在 [tmux](http://tmux.sourceforge.net/) 或 [screen](http://www.gnu.org/software/screen/) 中使用正确的 `$SSH_AUTH_SOCK` 调用其他程序
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
 * `json_pprint.py` (Python 3.2+): 简单粗暴的 JSON 格式化工具，支持一部分非标准 JSON 格式
 * `mdqp.py` (Python 2.7/3.3): [Markdown](http://en.wikipedia.org/wiki/Markdown) 格式文档快速查看器
@@ -33,6 +34,7 @@
     + `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
 * `gitconfig`: My [Git config file](https://www.kernel.org/pub/software/scm/git/docs/git-config.html)
 * `githooks`: Some useful [git hooks](http://www.git-scm.com/book/en/Customizing-Git-Git-Hooks)
+* `guess-ssh-agent.sh`: Call external progrms with correct `$SSH_AUTH_SOCK` from [tmux](http://tmux.sourceforge.net/) 或 [screen](http://www.gnu.org/software/screen/) sessions
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
 * `json_pprint.py` (Python 3.2+): Quick and dirty JSON pretty printer, supporing some nonstandard JSON
 * `mdqp.py` (Python 2.7/3.3): A quick previewer for [Markdown](http://en.wikipedia.org/wiki/Markdown) documentation

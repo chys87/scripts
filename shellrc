@@ -156,6 +156,16 @@ if have_executable tmux; then
 	alias tmux=_tmux_wrapper
 fi
 
+if [[ -n "$TMUX" || -n "$STY" || "$TERM" == screen* ]]; then
+	for guesser in guess-ssh-agent guess-ssh-agent.sh; do
+		if have_executable "$guesser"; then
+			alias git="$guesser git"
+			break
+		fi
+	done
+	unset -v guesser
+fi
+
 if have_executable journalctl; then
 	alias journalctl='journalctl -o short-precise'
 fi
