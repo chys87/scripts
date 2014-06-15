@@ -301,6 +301,17 @@ if [ -n "$DISPLAY" ] || [ -n "$SSH_TTY" ] || [[ "$LC_ALL" == *[Uu][Tt][Ff]* ]]; 
 	export LANG='en_US.UTF-8' LC_COLLATE='zh_CN.UTF-8' LC_CTYPE='zh_CN.UTF-8'
 fi
 
+# Modern Linux consoles assume UTF-8. We want to set locales
+if [[ "$TERM" == 'linux' && -z "$SSH_TTY" && -z "$LC_ALL" && -z "$LANG" ]]; then
+	for try_tty in /dev/tty*; do
+		if [ /proc/self/fd/0 -ef "$try_tty" ]; then
+			export LANG='en_US.UTF-8' LC_COLLATE='zh_CN.UTF-8' LC_CTYPE='zh_CN.UTF-8'
+			break
+		fi
+	done
+	unset -v try_tty
+fi
+
 # Assert my terminal emulator supports 256 colors
 if [[ "$TERM" == 'xterm' ]]; then
 	export TERM=xterm-256color
