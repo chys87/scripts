@@ -40,7 +40,7 @@ If no filename is given, it attempts to use README.md
 
 from __future__ import print_function
 
-import optparse
+import argparse
 import os
 import string
 import subprocess
@@ -138,42 +138,36 @@ def get_default_css_file():
 
 
 def main():
-    usage = '''Usage: %prog [options] [filename]
-        default filename is {}'''.format(DEFAULT_FILE)
-    parser = optparse.OptionParser(usage=usage)
-    parser.add_option('-e', '--encoding', dest='encoding', default='utf-8',
-                      help='Source encoding. Defaults to UTF-8.')
-    parser.add_option('-c', '--css', dest='cssfile', default=None,
-                      help='Specify CSS filename.')
-    parser.add_option('--fix-id', dest='fixid', action='store_true',
-                      default=False,
-                      help='Support [text](id:tag)')
-    parser.add_option('-s', '--save', dest='savefile', default=None,
-                      help='Save to a file instead of opening in a browser.')
-    (options, args) = parser.parse_args()
-    if len(args) > 1:
-        print('Too many filenames', file=sys.stderr)
-        sys.exit(1)
-    if args:
-        filename = args[0]
-    else:
-        filename = DEFAULT_FILE
+    parser = argparse.ArgumentParser(description='View a markdown file',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-e', '--encoding', dest='encoding', default='utf-8',
+                        help='Source encoding.')
+    parser.add_argument('-c', '--css', dest='cssfile', default=None,
+                        help='Specify CSS filename.')
+    parser.add_argument('--fix-id', dest='fixid', action='store_true',
+                        default=False,
+                        help='Support [text](id:tag)')
+    parser.add_argument('-s', '--save', dest='savefile', default=None,
+                        help='Save to a file instead of opening in a browser.')
+    parser.add_argument('filename', default=DEFAULT_FILE, nargs='?',
+                        help='Markdown filename')
+    args = parser.parse_args()
 
     try:
-        with open(filename, 'rb') as fp:
+        with open(args.filename, 'rb') as fp:
             bintxt = fp.read()
     except IOError:
-        print('Failed to read from {}'.format(filename), file=sys.stderr)
+        print('Failed to read from {}'.format(args.filename), file=sys.stderr)
         sys.exit(1)
 
     try:
-        unictxt = bintxt.decode(options.encoding)
+        unictxt = bintxt.decode(args.encoding)
     except UnicodeDecodeError:
-        print('Failed to decode text from {}'.format(options.encoding),
+        print('Failed to decode text from {}'.format(args.encoding),
               file=sys.stderr)
         sys.exit(1)
 
-    cssfile = options.cssfile
+    cssfile = args.cssfile
     if not cssfile:
         cssfile = get_default_css_file()
     if cssfile:
@@ -183,14 +177,14 @@ def main():
         css = ''
 
     html = markdown.markdown(unictxt, output_format='html')
-    html = string.Template(TEMPLATE).substitute(title=filename,
+    html = string.Template(TEMPLATE).substitute(title=args.filename,
                                                 css=css,
                                                 main=html)
-    if options.fixid:
+    if args.fixid:
         html = html.replace('href="id:', 'name="')
 
-    if options.savefile:
-        open(options.savefile, 'wb').write(html.encode('utf-8'))
+    if args.savefile:
+        open(args.savefile, 'wb').write(html.encode('utf-8'))
     else:
         send_to_browser(html)
 
