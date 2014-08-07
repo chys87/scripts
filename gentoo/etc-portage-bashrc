@@ -1,5 +1,8 @@
 #!/bin/bash
-export LC_ALL=C
+
+# We no longer set LC_ALL=C. Normally portage handles this.
+# Some packages actually want UTF-8 and fail strangely if we force C locale.
+#export LC_ALL=C
 
 # Some packages (such as xmlto) use $BASH
 # We explicitly set this so that they use "/bin/bash" instead of "/bin/sh"
