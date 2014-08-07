@@ -43,10 +43,6 @@ if (( $# == 0 )); then
 	echo "Example usage: alias git='$1 git'"
 fi
 
-if [[ -z "$TMUX" && -z "$STY" && "$TERM" != screen* ]]; then
-	exec "$@"
-fi
-
 if [[ -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]]; then
 	exec "$@"
 fi
