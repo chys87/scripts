@@ -76,11 +76,18 @@ def _print_dependency(args):
             print('\t', path, ' \\')
     print()
 
+    if args.dummy:
+        for path in files:
+            if ' ' not in path:
+                print(path, ':')
+
 
 def main():
     parser = argparse.ArgumentParser(
         description="Build Makefile-style dependency for Python")
     parser.add_argument('-t', '--target', help='Target name', required=True)
+    parser.add_argument('--no-dummy', help='Don\'t add dummy rules',
+                        dest='dummy', default=True, action='store_false')
     parser.add_argument('filename', help='Python filename')
     args = parser.parse_args()
 
