@@ -40,7 +40,7 @@ if (( $# == 0 )); then
 	echo "\$SSH_AUTH_SOCK is no longer valid (inherited from an"
 	echo "earlier SSH session)."
 	echo
-	echo "Example usage: alias git='$1 git'"
+	echo "Example usage: alias git='${0##*/} git'"
 fi
 
 if [[ -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]]; then
