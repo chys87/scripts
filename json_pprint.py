@@ -50,7 +50,8 @@ def fix_json(src):
 
 
 def main():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('file', nargs='?',
                         help='Input file. Default is standard input.')
     parser.add_argument('-F', '--format', type=str, default='python',

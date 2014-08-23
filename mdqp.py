@@ -138,8 +138,9 @@ def get_default_css_file():
 
 
 def main():
-    parser = argparse.ArgumentParser(description='View a markdown file',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description='View a markdown file',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-e', '--encoding', dest='encoding', default='utf-8',
                         help='Source encoding.')
     parser.add_argument('-c', '--css', dest='cssfile', default=None,
