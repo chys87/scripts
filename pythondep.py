@@ -50,6 +50,17 @@ def _check_python_version(args):
 
     shebang = line[2:].split()
 
+    if not shebang or not shebang[0].startswith('/'):
+        return True, None
+
+    interpreter = shebang[0]
+    if interpreter == '/usr/bin/env' and len(shebang) > 1:
+        interpreter = shebang[1]
+
+    # This is not a completely reliable examination, but usually OK
+    if interpreter == sys.argv[0]:
+        return True, None
+
     return False, shebang + [__file__] + sys.argv[1:]
 
 
@@ -88,12 +99,17 @@ def main():
     parser.add_argument('-t', '--target', help='Target name', required=True)
     parser.add_argument('--no-dummy', help='Don\'t add dummy rules',
                         dest='dummy', default=True, action='store_false')
+    parser.add_argument('--no-shebang',
+                        help='Don\t examine the she-bang line. '
+                             'Instead, assume we\'re running the right '
+                             'interpreter.',
+                        action='store_true', default=False)
     parser.add_argument('filename', help='Python filename')
     args = parser.parse_args()
 
     PYTHON_VERSION_OK_MAGIC = 'pythondep_PYTHON_VERSION_OK'
 
-    if not os.environ.get(PYTHON_VERSION_OK_MAGIC):
+    if not args.no_shebang and not os.environ.get(PYTHON_VERSION_OK_MAGIC):
         version_ok, cmdline = _check_python_version(args)
         if not version_ok:
             os.environ[PYTHON_VERSION_OK_MAGIC] = '1'
