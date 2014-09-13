@@ -121,7 +121,14 @@ if [[ -n "$temp" ]]; then
 	MAILPATH="${temp// /:}"
 fi
 unset -v temp
-[[ -n "$MAIL" || -n "$MAILPATH" ]] && MAILCHECK=60
+if [[ -n "$MAILPATH" ]]; then
+	MAILCHECK=60
+	if [[ -n "$ZSH_VERSION" ]]; then
+		unsetopt mail_warning
+	else
+		shopt -u mailwarn
+	fi
+fi
 
 if [[ "$USER" != 'root' && -n "$USER" && -d /run/"$USER" && "$LESSHISTFILE" = '-' ]]; then
 	export LESSHISTFILE="/run/$USER/lesshst"
@@ -380,7 +387,7 @@ if [ -n "$ZSH_VERSION" ]; then
 	setopt   autocd longlistjobs
 	setopt   clobber
 	# Don't turn on ksh_glob, which contradicts "(N)" etc.
-	setopt   pushdminus extended_glob rcquotes mailwarning
+	setopt   pushdminus extended_glob rcquotes
 	unsetopt cdablevars # It's very annoying that "cd username" goes to a home dir
 	unsetopt nomatch # I can't get used to nomatch
 	unsetopt bgnice pushdsilent autopushd
