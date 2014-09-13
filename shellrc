@@ -102,8 +102,8 @@ unset -f path_removedup
 
 unset -v MAIL MAILPATH MAILCHECK
 temp=()
-if [ -d "$HOME/Mail/new" ]; then
-	export MAIL="$HOME/Mail"
+if [ -d "$HOME/Maildir/new" ]; then
+	export MAIL="$HOME/Maildir"
 	if [[ -h "$MAIL" ]]; then
 		if [[ -n "$ZSH_VERSION" ]]; then
 			export MAIL="${MAIL:A}"
@@ -111,7 +111,7 @@ if [ -d "$HOME/Mail/new" ]; then
 			export MAIL="$(readlink -f "$MAIL")"
 		fi
 	fi
-	temp+=("$HOME/Mail")
+	temp+=("$HOME/Maildir")
 fi
 if [ -f "/var/spool/mail/$USER" ]; then
 	temp+=("/var/spool/mail/$USER")
