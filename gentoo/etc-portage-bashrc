@@ -29,6 +29,17 @@ case "$CATEGORY/$PN" in
 		;;
 esac
 
+# Some packages refuse to build if CFLAGS/CXXFLAGS contains macro arguments
+if [[ "$CFLAGS" == *-U_FORTIFY_SOURCE* ]]; then
+	case "$CATEGORY/$PN" in
+		net-dns/c-ares|net-misc/curl)
+			export CPPFLAGS="$CPPFLAGS -U_FORTIFY_SOURCE"
+			export CFLAGS="${CFLAGS/-U_FORTIFY_SOURCE/}"
+			export CXXFLAGS="${CXXFLAGS/-U_FORTIFY_SOURCE/}"
+			;;
+	esac
+fi
+
 if [[ -f ${ROOT}/etc/portage/x32list ]]; then
 	# Don't use fgrep. Portage warns about it.
 	while read -r x32package; do
