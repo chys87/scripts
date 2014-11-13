@@ -130,8 +130,8 @@ if [[ -n "$MAILPATH" ]]; then
 	fi
 fi
 
-if [[ "$USER" != 'root' && -n "$USER" && -d /run/"$USER" && "$LESSHISTFILE" = '-' ]]; then
-	export LESSHISTFILE="/run/$USER/lesshst"
+if [[ "$USER" != 'root' && -n "$USER" && -d /run/U/"$USER" && "$LESSHISTFILE" = '-' ]]; then
+	export LESSHISTFILE="/run/U/$USER/lesshst"
 fi
 
 
