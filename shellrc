@@ -311,21 +311,51 @@ precmd() {
 [ -n "$BASH_VERSION" ] && PROMPT_COMMAND='precmd'
 
 # Set locales
-if [ -n "$DISPLAY" ] || [ -n "$SSH_TTY" ] || [[ "$LC_ALL" == *[Uu][Tt][Ff]* ]]; then
-	unset -v LC_ALL
-	export LANG='en_US.UTF-8' LC_COLLATE='zh_CN.UTF-8' LC_CTYPE='zh_CN.UTF-8'
-fi
+guess_and_set_locales() {
+	local preset="${LC_ALL:-${LC_CTYPE:-${LANG}}}"
+	local charset
+	case "$preset" in
+		*.[Uu][Tt][Ff]-8|*.[Uu][Tt][Ff]8)
+			charset='UTF-8'
+			;;
+		*.[Gg][Bb][Kk]|*.[Gg][Bb]2312|*.[Gg][Bb]18030)
+			charset="${preset##*.}"
+			;;
+		zh_CN)
+			charset='GBK'
+			;;
+	esac
 
-# Modern Linux consoles assume UTF-8. We want to set locales
-if [[ "$TERM" == 'linux' && -z "$SSH_TTY" && -z "$LC_ALL" && -z "$LANG" ]]; then
-	for try_tty in /dev/tty*; do
-		if [ /proc/self/fd/0 -ef "$try_tty" ]; then
-			export LANG='en_US.UTF-8' LC_COLLATE='zh_CN.UTF-8' LC_CTYPE='zh_CN.UTF-8'
-			break
+	# If there's no clue, but DISPLAY or SSH_TTY is set, let's guess UTF-8
+	if [[ -z "$preset" && ( -n "$DISPLAY" || -n "$SSH_TTY" ) ]]; then
+		charset='UTF-8'
+	fi
+
+	# Modern Linux consoles assume UTF-8.
+	if [[ "$TERM" == 'linux' && -z "$preset" && -z "$charset" ]]; then
+		local try_tty
+		for try_tty in /dev/tty*; do
+			if [ /proc/self/fd/0 -ef "$try_tty" ]; then
+				charset='UTF-8'
+				break
+			fi
+		done
+	fi
+
+	if [[ -n "$charset" ]]; then
+		unset -v LC_ALL
+		export LC_COLLATE="zh_CN.$charset" LC_CTYPE="zh_CN.$charset"
+		if [[ "$charset" == UTF-8 ]]; then
+			export LANG='en_US.UTF-8'
+		else
+			export LANG="zh_CN.$charset"
 		fi
-	done
-	unset -v try_tty
-fi
+	fi
+
+}
+
+guess_and_set_locales
+unset -f guess_and_set_locales
 
 # Assert my terminal emulator supports 256 colors
 if [[ "$TERM" == 'xterm' ]]; then
