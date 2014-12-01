@@ -480,4 +480,6 @@ else
 	fi
 fi
 
+set -o emacs
+
 :
