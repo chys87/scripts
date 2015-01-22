@@ -45,11 +45,12 @@ alias cdp='cd -P'
 alias lsof='lsof -n'
 alias traceroute='traceroute -n'
 alias netstat='netstat -n'
+grep_options='--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude-dir=.hg'
+alias grep='grep '"$grep_options"
+alias egrep='egrep '"$grep_options"
+alias fgrep='fgrep '"$grep_options"
 alias make='make </dev/null'
-
-if [[ -z "$GREP_OPTIONS" ]]; then
-	export GREP_OPTIONS='--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude-dir=.hg'
-fi
+unset -v grep_options
 
 _warn_dangerous_command() {
 	echo "Command $1 is aliased because it can be dangerous."
