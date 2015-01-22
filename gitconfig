@@ -11,3 +11,6 @@
 	quotepath = off
 [push]
 	default = simple
+[gc]
+	auto = 32768
+	autopacklimit = 256
