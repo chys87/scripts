@@ -318,7 +318,11 @@ guess_and_set_locales() {
 	if [[ "$preset" =~ .*\.[Uu][Tt][Ff]-?8$ ]]; then
 		charset='UTF-8'
 	elif [[ "$preset" =~ .*\.[Uu][Tt][Ff]-?8@cjknarrow$ ]]; then
-		charset='UTF-8@cjknarrow'
+		if [[ "$OSTYPE" == *cygwin* ]]; then
+			charset='UTF-8@cjknarrow'
+		else
+			charset='UTF-8'
+		fi
 	elif [[ "$preset" =~ .*\.[Gg][Bb]([Kk]|2312|18030)$ ]]; then
 		charset="${preset##*.}"
 	elif [[ "$preset" == zh_CN ]]; then
