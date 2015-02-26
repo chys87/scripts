@@ -14,3 +14,7 @@
 [gc]
 	auto = 32768
 	autopacklimit = 256
+[alias]
+	fgrep = grep -F
+	egrep = grep -E
+	pgrep = grep -P
