@@ -33,13 +33,11 @@
 
 usage() {
 	cat >&2 << EOF
-Usage: ${0##*/} [-l|-g] [-c] [<category>/]<package>[-<version>]
+Usage: ${0##*/} [-c] [<category>/]<package>[-<version>]
 
 View an ebuild file in the Gentoo portage tree.
 You must have app-portage/eix installed to run this script.
 
--l      View ebuilds in overlays only
--g      View ebuilds in official portage tree (/usr/portage) only
 -i      View the lastest of installed versions (if any)
 -c      View ChangeLog instead of ebuild
 The pager is view or \$PAGER or less.
@@ -75,21 +73,7 @@ for o; do
 	fi
 done
 
-set_portage_overlays() {
-    PORTDIRS=" $(portageq repositories_configuration / | sed -n -e '/^location =/s/^location = \(.*\)/\1/p') "
-    PORTDIRS="${PORTDIRS/ \/usr\/portage / /}"
-    PORTDIRS="${PORTDIRS# }"
-    PORTDIRS="${PORTDIRS% }"
-}
-
-if [ "$PORTDIRS" = g ]; then
-	PORTDIRS='/usr/portage'
-elif [ "$PORTDIRS" = a ]; then
-    set_portage_overlays
-    PORTDIRS="/usr/portage $PORTDIRS"
-else
-    set_portage_overlays
-fi
+PORTDIRS="$(portageq repositories_configuration / | sed -n -e '/^location =/s/^location = \(.*\)/\1/p')"
 
 tmp="$PACKAGE"
 PACKAGE="${tmp%%-[0-9]*}"
