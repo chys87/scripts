@@ -102,10 +102,14 @@ autopatch() {
 	done
 }
 
+# Outputing depend oftens disrupts normal portage output
+if [ "$EBUILD_PHASE" != 'depend' ]; then
+	einfo "Ebuild phase: $EBUILD_PHASE"
+fi
+
 # Don't do it in prepare.
 # First, EAPI<2 has no prepare or configure phase;
 # Second. It's better to wait until all ebuild patches have been applied.
-einfo "Ebuild Phase: $EBUILD_PHASE"
 case "$EBUILD_PHASE" in
 	configure|compile)
 		autopatch;;
