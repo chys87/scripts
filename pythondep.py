@@ -100,7 +100,7 @@ def main():
     parser.add_argument('--no-dummy', help='Don\'t add dummy rules',
                         dest='dummy', default=True, action='store_false')
     parser.add_argument('--no-shebang',
-                        help='Don\t examine the she-bang line. '
+                        help='Don\'t examine the she-bang line. '
                              'Instead, assume we\'re running the right '
                              'interpreter.',
                         action='store_true', default=False)
