@@ -40,6 +40,24 @@ import re
 import sys
 
 
+def lpc_2_json(lpc_str):
+    # I deal with some lpc data. Convert them to JSON
+    convert_dict = [
+        ('([', '{'),
+        (',])', '}'),
+        ('])', '}'),
+
+        ('({', '['),
+        (',})', ']'),
+        ('})', ']'),
+    ]
+
+    for old, new in convert_dict:
+        lpc_str = lpc_str.replace(old, new)
+
+    return lpc_str
+
+
 def fix_json(src):
     # I have to deal with a lot of non-standard JSON.
     # Try to fix them whenever possible.
@@ -69,8 +87,15 @@ def main():
         data = json.loads(src, strict=False)
     except ValueError:
         data = None
-    if not data:
-        data = json.loads(fix_json(src), strict=False)
+
+    if data is None:
+        try:
+            data = json.loads(fix_json(src), strict=False)
+        except ValueError:
+            data = None
+
+    if data is None:
+        data = json.loads(fix_json(lpc_2_json(src)), strict=False)
 
     fmt = options.format.lower()
     if fmt == 'json':
