@@ -170,6 +170,7 @@ if have_executable tmux; then
 		SHLVL= 'tmux' "$@"
 	}
 	alias tmux=_tmux_wrapper
+	alias tmuxu='_tmux_wrapper -u -Lutf8'
 fi
 
 if [[ -n "$TMUX" || -n "$STY" || "$TERM" == screen* ]]; then
@@ -346,7 +347,7 @@ guess_and_set_locales() {
 	fi
 
 	if [[ -n "$charset" ]]; then
-		unset -v LC_ALL
+		unset -v LC_ALL LC_MESSAGES
 		export LC_COLLATE="zh_CN.$charset" LC_CTYPE="zh_CN.$charset"
 		case "$charset" in
 			UTF-8|UTF-8@cjknarrow)
