@@ -41,6 +41,7 @@ if (( $# == 0 )); then
 	echo "earlier SSH session)."
 	echo
 	echo "Example usage: alias git='${0##*/} git'"
+	exit
 fi
 
 if [[ -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]]; then
