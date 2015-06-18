@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014, chys <admin@CHYS.INFO>
+# Copyright (c) 2014, 2015, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -57,8 +57,14 @@ def _check_python_version(args):
     if interpreter == '/usr/bin/env' and len(shebang) > 1:
         interpreter = shebang[1]
 
-    # This is not a completely reliable examination, but usually OK
-    if interpreter == sys.argv[0]:
+    if not os.path.isabs(interpreter):
+        from distutils.spawn import find_executable
+        full_interpreter = find_executable(interpreter) or interpreter
+    else:
+        full_interpreter = interpreter
+
+    if full_interpreter == sys.executable or interpreter == sys.argv[0] \
+            or full_interpreter == sys.argv[0]:
         return True, None
 
     return False, shebang + [__file__] + sys.argv[1:]
@@ -107,12 +113,10 @@ def main():
     parser.add_argument('filename', help='Python filename')
     args = parser.parse_args()
 
-    PYTHON_VERSION_OK_MAGIC = 'pythondep_PYTHON_VERSION_OK'
-
-    if not args.no_shebang and not os.environ.get(PYTHON_VERSION_OK_MAGIC):
+    if not args.no_shebang:
         version_ok, cmdline = _check_python_version(args)
         if not version_ok:
-            os.environ[PYTHON_VERSION_OK_MAGIC] = '1'
+            cmdline.append('--no-shebang')
             import subprocess
             sys.exit(subprocess.call(cmdline))
 
