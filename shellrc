@@ -354,6 +354,7 @@ guess_and_set_locales() {
 				export LANG="en_US.$charset"
 				;;
 			*)
+				export LC_MESSAGES=C LC_NUMERIC=C LC_MONETARY=C
 				export LANG="zh_CN.$charset"
 				;;
 		esac
