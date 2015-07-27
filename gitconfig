@@ -1,20 +1,9 @@
 # Include this file from ~/.gitconfig:
 # [include]
 #     path = /path/to/this/file
-[color]
-	ui = auto
-[diff]
-	renames = copy
-	renameLimit = 512
-[core]
-	pager = less -+$LESS -isR
-	quotepath = off
+# Because git-1.7 doesn't recognize push.default=simple,
+# we split the file
+[include]
+	path = gitconfig-compat
 [push]
 	default = simple
-[gc]
-	auto = 32768
-	autopacklimit = 256
-[alias]
-	fgrep = grep -F
-	egrep = grep -E
-	pgrep = grep -P
