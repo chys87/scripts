@@ -10,8 +10,8 @@
 	pager = less -+$LESS -isR
 	quotepath = off
 [gc]
-	auto = 32768
-	autopacklimit = 256
+	auto = 16384
+	autopacklimit = 128
 [alias]
 	fgrep = grep -F
 	egrep = grep -E
