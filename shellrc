@@ -488,6 +488,10 @@ else
 	fi
 fi
 
+if [[ -z "$GOPATH" && -d ~/go ]]; then
+	export GOPATH=~/go
+fi
+
 set -o emacs
 
 :
