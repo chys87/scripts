@@ -16,3 +16,5 @@
 	fgrep = grep -F
 	egrep = grep -E
 	pgrep = grep -P
+[fetch]
+	prune = true
