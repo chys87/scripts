@@ -48,11 +48,17 @@ if [[ -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]]; then
 	exec "$@"
 fi
 
+got_sock=
 for try_sock in /tmp/ssh-*/agent.*; do
-	if [[ -S "$try_sock" ]]; then
-		export SSH_AUTH_SOCK="$try_sock"
-		exec "$@"
+	if [[ -S "$try_sock" && ( -z "$got_sock" || "$try_sock" -nt "$got_sock" ) ]]; then
+		got_sock="$try_sock"
 	fi
 done
 
-echo "Failed to guess a usable ssh auth socket." >&2
+if [[ -z "$got_sock" ]]; then
+	echo "Failed to guess a usable ssh auth socket." >&2
+	exit 1
+else
+	export SSH_AUTH_SOCK="$got_sock"
+	exec "$@"
+fi
