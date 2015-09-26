@@ -71,7 +71,14 @@ autoepatch() {
 			fi
 		fi
 	done
-	die "Failed to apply patch $1 to $2"
+
+	# For some packages, e.g. libpng, abi directories contain no source files
+	if [[ "$2" == *-abi_* ]]; then
+		einfo "Failed to apply patch $1 to $2, but probably that's not important"
+	else
+		eerror "Failed to apply patch $1 to $2"
+		die
+	fi
 }
 
 # $1 = work dir ($S or $S + multilib suffix)
@@ -81,23 +88,35 @@ autopatch_dir() {
 
 	local PATCH_OVERLAY=${ROOT%/}/etc/portage/autopatch
 
-	for patch in "$PATCH_OVERLAY/$CATEGORY.$PN".*.{patch,diff}; do
-		[ -f "$patch" ] || continue
-		p="${patch##*/}"
-		if ! [ -e $1/.autopatched.${p} ]; then
-			einfo "Applying $patch to $1"
-			autoepatch "$patch" "$1"
-			: > $1/.autopatched.${p}
-		fi
+	local -a version_specs=('' ":$SLOT")
+	local spec
+
+	local pv="$PV"
+
+	while [[ "$pv" == *.* ]]; do
+		version_specs+=("-$pv")
+		pv="${pv%.*}!"
+	done
+	version_specs+=("-$pv!")
+
+	for spec in "${version_specs[@]}"; do
+		for patch in "$PATCH_OVERLAY/$CATEGORY.$PN$spec".*.{patch,diff}; do
+			[ -f "$patch" ] || continue
+			p="${patch##*/}"
+			if ! [ -e $1/.autopatched.${p} ]; then
+				einfo "Applying $patch to $1"
+				autoepatch "$patch" "$1"
+				: > $1/.autopatched.${p}
+			fi
+		done
 	done
 }
 
 autopatch() {
-	autopatch_dir "$S"
-	local abi
-	for abi in amd64 64 x86 32 x32; do
-		if [ -d "$S-$abi" ]; then
-			autopatch_dir "$S-$abi"
+	local subdir
+	for subdir in "$S" "$S"-abi_*; do
+		if [ -d "$subdir" ]; then
+			autopatch_dir "$subdir"
 		fi
 	done
 }
