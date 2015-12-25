@@ -14,6 +14,7 @@
 * `idfinal.py` (Python 2.7/3.2): 计算或验证中国身份证号码的最后一位
 * `json_pprint.py` (Python 3.2+): 简单粗暴的 JSON 格式化工具，支持一部分非标准 JSON 格式
 * `mdqp.py` (Python 2.7/3.3): [Markdown](http://en.wikipedia.org/wiki/Markdown) 格式文档快速查看器
+* `passgen.py` (Python 2.7/3): 随机密码生成器
 * `pythondep.py` (Python 2.7/3.2+): 从 Python 文件生成 Makefile 风格的依赖
 * `salary-calc.py` (Python 3.2+): 一个简单的中国社保、个人所得税计算器
 * `shellrc`: 我的 shell 配置文件 (bash/[zsh](http://www.zsh.org) 通用)
@@ -39,6 +40,7 @@
 * `idfinal.py` (Python 2.7/3.2): Calculate or verify the last digit of a Chinese ID number
 * `json_pprint.py` (Python 3.2+): Quick and dirty JSON pretty printer, supporing some nonstandard JSON
 * `mdqp.py` (Python 2.7/3.3): A quick previewer for [Markdown](http://en.wikipedia.org/wiki/Markdown) documentation
+* `passgen.py` (Python 2.7/3): Random password generator
 * `pythondep.py` (Python 2.7/3.2+): Build Makefile-style dependency for Python
 * `salary-calc.py` (Python 3.2+): A simple Chinese social security and income tax calculator
 * `shellrc`: My shell configuration file (compatible with both bash and [zsh](http://www.zsh.org))
