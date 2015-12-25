@@ -3,7 +3,7 @@
 # vim:ts=8 sts=4 sw=4 expandtab ft=python
 
 #
-# Copyright (c) 2014, chys <admin@CHYS.INFO>
+# Copyright (c) 2014, 2015, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #
 
 import argparse
+from collections import OrderedDict
 import json
 import pprint
 import re
@@ -67,6 +68,10 @@ def fix_json(src):
     return src
 
 
+def json_loads(s):
+    return json.loads(s, strict=False, object_pairs_hook=OrderedDict)
+
+
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -84,18 +89,18 @@ def main():
         src = sys.stdin.read()
 
     try:
-        data = json.loads(src, strict=False)
+        data = json_loads(src)
     except ValueError:
         data = None
 
     if data is None:
         try:
-            data = json.loads(fix_json(src), strict=False)
+            data = json_loads(fix_json(src))
         except ValueError:
             data = None
 
     if data is None:
-        data = json.loads(fix_json(lpc_2_json(src)), strict=False)
+        data = json_loads(fix_json(lpc_2_json(src)))
 
     fmt = options.format.lower()
     if fmt == 'json':
