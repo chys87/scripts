@@ -275,7 +275,7 @@ precmd_showstatus() {
 case "$TERM" in
 	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
 		if [ -z "$__login_shell" ]; then
-			__login_shell="$(sed -n -e "/^$USER:/ "'s!.*/\(.*\)!\1! p' /etc/passwd)"
+			__login_shell="$(sed -n -e '/^[^:]\+:[^:]\+:'$UID':/ { s!.*/\(.*\)!\1!p; q }' /etc/passwd)"
 			if [ "$__login_shell" = sh -a -L /bin/sh ]; then
 				__login_shell=$(readlink -f /bin/sh)
 				__login_shell="${__login_shell##*/}"
