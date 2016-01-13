@@ -285,7 +285,10 @@ case "$TERM" in
 		{
 			local host="${HOST:-${HOSTNAME}}" # zsh:HOST; bash:HOSTNAME
 			local pwd="${PWD}/"
-			pwd="${pwd/#"${HOME}"\//~/}"
+			# pwd="${pwd/#"${HOME}"\//~/}" confuses some versions of VIM highlight
+			if [ "${pwd##$HOME/}" != "$pwd" ]; then
+				pwd="~${pwd##$HOME}"
+			fi
 			pwd="${pwd%/}"
 			if ((${#pwd} >= 10)) && [[ "$pwd" == */*/* ]]; then
 				pwd="*/${pwd##*/}"
