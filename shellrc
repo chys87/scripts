@@ -344,7 +344,7 @@ if [ -n "$ZSH_VERSION" ]; then
 		elif ((SECONDS > __last_vcs_info_time + 60)); then
 			# Run at least every minute
 			likely_changed=1
-		elif [[ "$(fc -ln $((HISTCMD-1)))" == (git[\- ]|svn)* ]]; then
+		elif [[ "$(fc -ln $((HISTCMD-1)))" =~ ^(git[\- ]|svn ) ]]; then
 			# Run if any relevant command has intervened
 			likely_changed=1
 		fi
