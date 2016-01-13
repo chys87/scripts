@@ -274,11 +274,13 @@ precmd_showstatus() {
 
 case "$TERM" in
 	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
-		if [ -z "$__login_shell" ]; then
-			__login_shell="$(sed -n -e '/^[^:]\+:[^:]\+:'$UID':/ { s!.*/\(.*\)!\1!p; q }' /etc/passwd)"
-			if [ "$__login_shell" = sh -a -L /bin/sh ]; then
-				__login_shell=$(readlink -f /bin/sh)
-				__login_shell="${__login_shell##*/}"
+		if [ -n "$TMUX" -a "$SHLVL" -eq 1 ]; then
+			__default_shell="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
+		elif [ -z "$__default_shell" ]; then
+			__default_shell="$(sed -n -e '/^[^:]\+:[^:]\+:'$UID':/ { s!.*/\(.*\)!\1!p; q }' /etc/passwd)"
+			if [ "$__default_shell" = sh -a -L /bin/sh ]; then
+				__default_shell=$(readlink -f /bin/sh)
+				__default_shell="${__default_shell##*/}"
 			fi
 		fi
 		precmd_maketitle()
@@ -294,7 +296,7 @@ case "$TERM" in
 				pwd="*/${pwd##*/}"
 			fi
 			local sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
-			if [ "$__login_shell" = "$sh" ]; then
+			if [ "$__default_shell" = "$sh" ]; then
 				builtin echo -ne "\033]0;${USER}@${host%%.*}: ${pwd}\007"
 			else
 				builtin echo -ne "\033]0;[$sh] ${USER}@${host%%.*}: ${pwd}\007"
