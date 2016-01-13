@@ -2,7 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013, chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2014, 2015, 2016 chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -313,8 +313,47 @@ if [ -n "$ZSH_VERSION" ]; then
 	zstyle ':vcs_info:*' formats \
 		'%F{5}(%f%s%F{5})%F{3}-%F{5}[%F{2}%b%F{5}]%f '
 	zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
-	zstyle ':vcs_info:*' disable *
 	zstyle ':vcs_info:*' enable git svn
+
+	__last_vcs_info_pwd=
+	__last_vcs_info_time=0
+
+	precmd_vcs_info() {
+		# Let's detect .git and .svn dirs ourselves without invoking any
+		# external command
+		local pwd="$PWD"
+		local found=0
+		while [ -n "$pwd" -a "$pwd" != '/' ]; do
+			if [ -d "$pwd/.git" -o -d "$pwd/.svn" ]; then
+				found=1
+				break
+			fi
+			pwd="${pwd%/*}"
+		done
+
+		if ! ((found)); then
+			vcs_info_msg_0_=
+			__last_vcs_info_pwd=
+			return
+		fi
+
+		# Does it appear that anything has changed?
+		local likely_changed=0
+		if [ "$PWD" != "$__last_vcs_info_pwd" ]; then
+			likely_changed=1
+		elif ((SECONDS > __last_vcs_info_time + 60)); then
+			# Run at least every minute
+			likely_changed=1
+		elif [[ "$(fc -ln $((HISTCMD-1)))" == (git[\- ]|svn)* ]]; then
+			# Run if any relevant command has intervened
+			likely_changed=1
+		fi
+		if ((likely_changed)); then
+			__last_vcs_info_pwd="$PWD"
+			__last_vcs_info_time=$SECONDS
+			vcs_info
+		fi
+	}
 fi
 
 precmd() {
@@ -324,7 +363,7 @@ precmd() {
 	precmd_maketitle
 	# Show current git branch
 	if [ -n "$ZSH_VERSION" ]; then
-		vcs_info
+		precmd_vcs_info
 	fi
 }
 
