@@ -325,7 +325,7 @@ if [ -n "$ZSH_VERSION" ]; then
 			return 1
 		elif [[ "$1" =~ ^\ *(git|svn)\ +(blame|diff|log|status)(\ |$) ]]; then
 			return 1
-		elif [[ "$1" =~ ^\ *git\ +(gc|show)(\ |$) ]]; then
+		elif [[ "$1" =~ ^\ *git\ +(cat-file|describe|gc|grep|show|whatchanged)(\ |$) ]]; then
 			return 1
 		elif [[ "$1" =~ ^\ *svn\ +(info|cat)(\ |$) ]]; then
 			return 1
