@@ -7,8 +7,6 @@
 	pager = less -+$LESS -isR
 	quotepath = off
 [gc]
-	auto = 16384
-	autopacklimit = 128
 	autoDetach = false
 [alias]
 	br = branch
