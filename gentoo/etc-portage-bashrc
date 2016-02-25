@@ -94,8 +94,8 @@ autopatch_dir() {
 	local pv="$PV"
 
 	while [[ "$pv" == *.* ]]; do
-		version_specs+=("-$pv")
-		pv="${pv%.*}!"
+		version_specs+=("-$pv!")
+		pv="${pv%.*}"
 	done
 	version_specs+=("-$pv!")
 
