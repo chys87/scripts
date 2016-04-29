@@ -276,7 +276,7 @@ case "$TERM" in
 	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
 		if [ -n "$TMUX" -a "$SHLVL" -eq 1 ]; then
 			__default_shell="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
-		elif [ -z "$__default_shell" ]; then
+		elif [ -z "$__default_shell" -a -r /etc/passwd ]; then
 			__default_shell="$(sed -n -e '/^[^:]\+:[^:]\+:'$UID':/ { s!.*/\(.*\)!\1!p; q }' /etc/passwd)"
 			if [ "$__default_shell" = sh -a -L /bin/sh ]; then
 				__default_shell=$(readlink -f /bin/sh)
