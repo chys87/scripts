@@ -295,6 +295,9 @@ case "$TERM" in
 			if ((${#pwd} >= 10)) && [[ "$pwd" == */*/* ]]; then
 				pwd="*/${pwd##*/}"
 			fi
+			if [ -n "$Shell_NoHistory" ]; then
+				pwd="${pwd//[^\/A-Za-z0-9\ \.\-_]/*}"
+			fi
 			local sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
 			if [ "$__default_shell" = "$sh" ]; then
 				builtin echo -ne "\033]0;${USER}@${host%%.*}: ${pwd}\007"
