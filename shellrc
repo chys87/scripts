@@ -403,8 +403,11 @@ guess_and_set_locales() {
 		else
 			charset='UTF-8'
 		fi
-	elif [[ "$preset" =~ .*\.[Gg][Bb]([Kk]|2312|18030)$ ]]; then
+	elif [[ "$preset" =~ .*\.[Gg][Bb]([Kk]|2312|18030)(@cjknarrow)?$ ]]; then
 		charset="${preset##*.}"
+		if [[ "$OSTYPE" != *cygwin* ]]; then
+			charset="${charset%@cjknarrow}"
+		fi
 	elif [[ "$preset" == zh_CN ]]; then
 		charset='GBK'
 	fi
