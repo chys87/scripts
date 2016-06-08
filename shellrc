@@ -299,11 +299,17 @@ case "$TERM" in
 				pwd="${pwd//[^\/A-Za-z0-9\ \.\-_]/*}"
 			fi
 			local sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
-			if [ "$__default_shell" = "$sh" ]; then
-				builtin echo -ne "\033]0;${USER}@${host%%.*}: ${pwd}\007"
-			else
-				builtin echo -ne "\033]0;[$sh] ${USER}@${host%%.*}: ${pwd}\007"
+			local prefix=
+			if [ "$__default_shell" != "$sh" ]; then
+				prefix="[$sh]"
 			fi
+			if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
+				prefix="[GB]$prefix"
+			fi
+			if [[ -n "$prefix" ]]; then
+				prefix+=' '
+			fi
+			builtin echo -ne "\033]0;${prefix}${USER}@${host%%.*}: ${pwd}\007"
 		}
 		;;
 	*)
@@ -491,6 +497,10 @@ if [ -n "$BASH_VERSION" ]; then
 		PS1="[$SHLVL] $PS1"
 	fi
 
+	if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
+		PS1="[GB] $PS1"
+	fi
+
 fi # Bash-specific
 
 
@@ -502,6 +512,10 @@ if [ -n "$ZSH_VERSION" ]; then
 	PS1='%(2L.[%L] .)%B%(!.%F{red}.%F{blue})%~%f%(1j. (%j job%(2j.s.)%).) ${vcs_info_msg_0_}%(!.%F{red}.%F{blue})%#%f%b '
 #	RPS1='%T'
 	[ -n "$SSH_TTY" ] && PS1="%B[SSH $HOST]%b $PS1"
+
+	if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
+		PS1="[GB] $PS1"
+	fi
 
 	setopt   prompt_subst
 	setopt   notify pushdtohome autolist
