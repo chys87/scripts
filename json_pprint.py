@@ -77,12 +77,13 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('file', nargs='?',
                         help='Input file. Default is standard input.')
-    parser.add_argument('-F', '--format', type=str, default='python',
-                        choices=['python', 'json'],
+    parser.add_argument('-F', '--format', type=str, default='json',
+                        choices=['python', 'json', 'keys'],
                         help='Output format')
+    parser.add_argument('key', nargs='*')
     options = parser.parse_args()
 
-    if options.file:
+    if options.file and options.file != '-':
         with open(options.file, 'r') as f:
             src = f.read()
     else:
@@ -102,8 +103,19 @@ def main():
     if data is None:
         data = json_loads(fix_json(lpc_2_json(src)))
 
+    for key in options.key:
+        try:
+            data = data[key]
+        except KeyError:
+            try:
+                data = data[int(key)]
+            except (KeyError, ValueError):
+                sys.exit('{0} not found'.format(key))
+
     fmt = options.format.lower()
-    if fmt == 'json':
+    if fmt == 'keys':
+        print('\n'.join(data.keys()))
+    elif fmt == 'json':
         json.dump(data, sys.stdout, ensure_ascii=False, indent=4)
     else:
         pprint.pprint(data)
