@@ -1,5 +1,5 @@
 "
-" Copyright (c) 2013, chys <admin@CHYS.INFO>
+" Copyright (c) 2013, 2014, 2015, 2016, chys <admin@CHYS.INFO>
 "
 " Redistribution and use in source and binary forms, with or without
 " modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ endif
 
 syntax on
 set noexpandtab
+set noundofile
 
 "let Tlist_Use_Right_Window=1
 "let Tlist_File_Fold_Auto_Close=0
