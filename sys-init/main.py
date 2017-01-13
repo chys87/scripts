@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+
+import argparse
+import os
+import sys
+
+import system_init
+import user_init
+import utils
+
+
+def main():
+    registry = utils.Task.registry
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('tasks', metavar='TASK', nargs='*',
+                        help='Valid values: {}'.format(
+                            ' '.join(registry.keys())))
+    args = parser.parse_args()
+
+    task_id_list = args.tasks
+    if task_id_list:
+        task_cls_list = [registry[task_id] for task_id in task_id_list]
+    else:
+        task_cls_list = list(registry.values())
+
+    env = utils.Environment()
+
+    if os.getuid() == 0:
+        task_cls_list = [cls for cls in task_cls_list if cls.root]
+    else:
+        task_cls_list = [cls for cls in task_cls_list if cls.normal_user]
+
+    tasks = [cls(env) for cls in task_cls_list]
+
+    for task in tasks:
+        if not task.precheck():
+            sys.exit(1)
+
+    for task in tasks:
+        task.run()
+
+
+if __name__ == '__main__':
+    main()
