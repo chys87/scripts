@@ -99,3 +99,22 @@ class Gitconfig(utils.Task):
             with open(including_file, 'a') as f:
                 print('[include]', file=f)
                 print('\tpath = {}'.format(included_file), file=f)
+
+
+class InstallScripts(utils.Task):
+    root = False
+
+    _scripts = {
+        'guess-ssh-agent': 'guess-ssh-agent.sh',
+    }
+
+    def run(self):
+        bin_dir = os.path.join(self.env.home, 'bin')
+
+        utils.mkdirp(bin_dir)
+
+        for link, target in self._scripts.items():
+            link = os.path.join(bin_dir, link)
+            target = os.path.join(self.env.base, target)
+            if not os.path.exists(link):
+                utils.auto_symlink(target, link)
