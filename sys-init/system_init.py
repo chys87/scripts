@@ -70,6 +70,8 @@ class InstallPackages(utils.Task):
         'strace',
         'tmux',
         'tree',
+        'unzip',
+        'zip',
         'zsh',
     ]
 
