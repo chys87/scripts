@@ -56,6 +56,7 @@ class InstallPackages(utils.Task):
         'bvi',
         'ccache',
         'convmv',
+        'git',
         {'apt': 'glibc-doc'},
         'htop',
         'ipython',
@@ -110,3 +111,21 @@ class InstallPackages(utils.Task):
         if to_install:
             print('Installing: {}'.format(' '.join(sorted(to_install))))
             pkg_mgr.install(to_install)
+
+
+class DefaultEditor(utils.Task):
+    normal_user = False
+    _preferred = '/usr/bin/vim.basic'
+
+    def run(self):
+        try:
+            editor = os.readlink('/etc/alternatives/editor')
+        except FileNotFoundError:
+            return
+
+        if '/vim' in editor:
+            return
+
+        if os.access(self._preferred, os.X_OK):
+            subprocess.check_call(['update-alternatives', '--set',
+                                   'editor', self._preferred])
