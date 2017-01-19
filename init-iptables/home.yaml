@@ -1,0 +1,11 @@
+tcp:
+    ssh: accept
+    http: accept
+    distcc: accept
+    rsync: accept
+    2554-2559: accept
+    default: drop
+udp:
+    0-1023: drop
+    default: accept
+ping: drop

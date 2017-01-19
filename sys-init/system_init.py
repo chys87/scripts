@@ -67,6 +67,7 @@ class InstallPackages(utils.Task):
         {'apt': 'p7zip-full'},
         {'apt': 'pkg-config'},
         {'apt': ['pyflakes', 'pyflakes3'], 'default': 'pyflakes'},
+        {'apt': 'python3-yaml', 'default': 'pyyaml'},
         ['rar', 'unrar'],
         'strace',
         'tmux',

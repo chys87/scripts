@@ -1,0 +1,6 @@
+tcp:
+    4712: drop  # aMule cmd
+    default: accept
+udp:
+    default: accept
+ping: accept
