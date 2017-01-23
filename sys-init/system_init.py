@@ -64,7 +64,7 @@ class InstallPackages(utils.Task):
         'lftp',
         {'apt': ['manpages-dev', 'manpages-posix']},
         'p7zip',
-        {'apt': 'p7zip-full'},
+        {'apt': ['p7zip-full', 'p7zip-rar']},
         {'apt': 'pkg-config'},
         {'apt': ['pyflakes', 'pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
