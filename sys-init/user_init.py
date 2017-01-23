@@ -37,16 +37,19 @@ fi
 
 
 class DotFiles(utils.Task):
-    _files = [
-        'tmux.conf',
-        'vimrc',
-    ]
+    _files = {
+        'npmrc': '.npmrc',
+        'pip.conf': '.pip/pip.conf',
+        'tmux.conf': '.tmux.conf',
+        'vimrc': '.vimrc',
+    }
 
     def run(self):
-        for name in self._files:
-            dst = os.path.join(self.env.home, '.' + name)
+        for name, target in self._files.items():
+            dst = os.path.join(self.env.home, target)
             src = os.path.join(self.env.base, name)
             if not os.path.exists(dst):
+                utils.mkdirp(os.path.dirname(dst))
                 utils.auto_symlink(src, dst)
 
 
