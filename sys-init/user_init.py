@@ -59,21 +59,50 @@ class VimPlugin(utils.Task):
     _plugins = {
         'vim-neatstatus': 'https://github.com/maciakl/vim-neatstatus.git',
     }
+    _bundles = {
+        'typescript-vim': 'https://github.com/leafgarland/typescript-vim.git',
+    }
+    _autoloads = {
+        'vim-pathogen': {
+            'url': 'https://github.com/tpope/vim-pathogen.git',
+            'file': 'autoload/pathogen.vim',
+        },
+    }
 
     def __init__(self, env):
         super().__init__(env)
-        self.linkdir = os.path.join(env.home, '.vim', 'plugin')
+        self.autoloaddir = os.path.join(env.home, '.vim', 'autoload')
+        self.plugindir = os.path.join(env.home, '.vim', 'plugin')
+        self.bundledir = os.path.join(env.home, '.vim', 'bundle')
         self.external = os.path.join(env.home, 'external')
 
     def run(self):
-        utils.mkdirp(self.linkdir)
+        utils.mkdirp(self.autoloaddir)
+        utils.mkdirp(self.plugindir)
+        utils.mkdirp(self.bundledir)
         utils.mkdirp(self.external)
 
-        for name, url in self._plugins.items():
-            self.run_item(name, url)
+        for name, conf in self._autoloads.items():
+            self.run_autoload(name, conf['url'], conf['file'])
 
-    def run_item(self, name, url):
-        link = os.path.join(self.linkdir, name)
+        for name, url in self._plugins.items():
+            self.run_item(self.plugindir, name, url)
+        for name, url in self._bundles.items():
+            self.run_item(self.bundledir, name, url)
+
+    def run_autoload(self, name, url, loadfile):
+        link = os.path.join(self.autoloaddir, os.path.basename(loadfile))
+        if os.path.exists(link):
+            return
+
+        clone_dir = os.path.join(self.external, name)
+        if not os.path.exists(clone_dir):
+            utils.git_clone(url, clone_dir)
+
+        utils.auto_symlink(os.path.join(clone_dir, loadfile), link)
+
+    def run_item(self, linkdir, name, url):
+        link = os.path.join(linkdir, name)
         if os.path.exists(link):
             return
 
