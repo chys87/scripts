@@ -552,10 +552,22 @@ if [ -n "$ZSH_VERSION" ]; then
 fi # Zsh-specific
 
 
-# Support nohist
+# Shell history conf
+HISTSIZE=10000
+if [ -n "$BASH_VERSION" ]; then
+	HISTCONTROL='ignorespace:erasedups'
+	HISTFILESIZE='10000'
+else # zsh
+	HISTFILE="$HOME/.zsh_history"
+	SAVEHIST=10000
+	setopt append_history hist_ignore_all_dups hist_ignore_space
+	setopt hist_expire_dups_first hist_fcntl_lock
+	setopt hist_reduce_blanks hist_save_no_dups
+	unsetopt hist_verify
+fi
 if [ -n "$Shell_NoHistory" ]; then
 	PS1="(nohist) $PS1"
-	unset -v HISTFILE
+	HISTFILE=/tmp/.nohist
 else
 	nohist() {
 		(
@@ -571,19 +583,6 @@ else
 		complete -d nohist
 	elif [ -n "$ZSH_VERSION" ]; then
 		zstyle ':completion:*:nohist:*' file-patterns '*(/):directories'
-	fi
-
-	HISTSIZE=10000
-	if [ -n "$BASH_VERSION" ]; then
-		HISTCONTROL='ignorespace:erasedups'
-		HISTFILESIZE='10000'
-	else # zsh
-		HISTFILE="$HOME/.zsh_history"
-		SAVEHIST=10000
-		setopt append_history hist_ignore_all_dups hist_ignore_space
-		setopt hist_expire_dups_first hist_fcntl_lock
-		setopt hist_reduce_blanks hist_save_no_dups
-		unsetopt hist_verify
 	fi
 fi
 
