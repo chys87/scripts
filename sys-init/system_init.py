@@ -67,6 +67,7 @@ class InstallPackages(utils.Task):
         {'apt': ['p7zip-full', 'p7zip-rar']},
         {'apt': ['python-pip', 'python3-pip']},
         {'apt': 'pkg-config'},
+        'pqiv',
         {'apt': ['pyflakes', 'pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
         ['rar', 'unrar'],
