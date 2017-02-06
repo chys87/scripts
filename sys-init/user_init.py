@@ -82,34 +82,20 @@ class VimPlugin(utils.Task):
         utils.mkdirp(self.external)
 
         for name, conf in self._autoloads.items():
-            self.run_autoload(name, conf['url'], conf['file'])
+            self.run_item(self.autoloaddir, conf['url'], name, conf['file'])
 
         for name, url in self._plugins.items():
-            self.run_item(self.plugindir, name, url)
+            self.run_item(self.plugindir, url, name)
         for name, url in self._bundles.items():
-            self.run_item(self.bundledir, name, url)
+            self.run_item(self.bundledir, url, name)
 
-    def run_autoload(self, name, url, loadfile):
-        link = os.path.join(self.autoloaddir, os.path.basename(loadfile))
-        if os.path.exists(link):
-            return
+    def run_item(self, link_dir, url, clone_name, link_file='.'):
+        clone_dir = os.path.join(self.external, clone_name)
+        utils.git_clone(url, clone_dir)
 
-        clone_dir = os.path.join(self.external, name)
-        if not os.path.exists(clone_dir):
-            utils.git_clone(url, clone_dir)
-
-        utils.auto_symlink(os.path.join(clone_dir, loadfile), link)
-
-    def run_item(self, linkdir, name, url):
-        link = os.path.join(linkdir, name)
-        if os.path.exists(link):
-            return
-
-        dst = os.path.join(self.external, name)
-        if not os.path.exists(dst):
-            utils.git_clone(url, dst)
-
-        utils.auto_symlink(dst, link)
+        link_target = os.path.normpath(os.path.join(clone_dir, link_file))
+        link = os.path.join(link_dir, os.path.basename(link_target))
+        utils.auto_symlink(link_target, link)
 
 
 class Gitconfig(utils.Task):

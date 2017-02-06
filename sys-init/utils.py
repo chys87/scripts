@@ -27,6 +27,16 @@ def auto_symlink(real, link, show=True):
     else:
         target = real
 
+    if os.path.exists(link):
+        try:
+            oldtarget = os.readlink(link)
+        except OSError:
+            raise SysInitError('{} exists and is not a symlink'.format(link))
+        if os.path.abspath(oldtarget) != os.path.abspath(target):
+            raise SysInitError('Inconsistent target for {}:\nOld: {}\nNew: {}'
+                               .format(link, oldtarget, target))
+        return
+
     if show:
         print('Symlinking {} <== {}'.format(target, link))
 
@@ -40,12 +50,22 @@ def mkdirp(path, show=True):
         os.makedirs(path)
 
 
-def git_clone(url, dst):
-    subprocess.check_call(['git', 'clone', url, dst])
+def git_clone(url, dst, *, update=True):
+    if os.path.isdir(dst):
+        oldurl = check_popen(['git', 'remote', 'get-url', 'origin'], cwd=dst)
+        oldurl = oldurl.strip().decode()
+        if url != oldurl:
+            raise SysInitError('Inconsistent URL for {}\nOld: {}\nNew: {}'
+                               .format(dst, oldurl, url))
+        if update:
+            print('Updating {}'.format(dst))
+            subprocess.check_call(['git', 'pull'], cwd=dst)
+    else:
+        subprocess.check_call(['git', 'clone', url, dst])
 
 
-def check_popen(cmd):
-    pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+def check_popen(cmd, **kwargs):
+    pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE, **kwargs)
     try:
         return pipe.stdout.read()
     finally:
