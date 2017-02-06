@@ -49,7 +49,6 @@ class DotFiles(utils.Task):
             dst = os.path.join(self.env.home, target)
             src = os.path.join(self.env.base, name)
             if not os.path.exists(dst):
-                utils.mkdirp(os.path.dirname(dst))
                 utils.auto_symlink(src, dst)
 
 

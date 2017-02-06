@@ -5,6 +5,10 @@ import re
 import subprocess
 
 
+class SysInitError(Exception):
+    pass
+
+
 def find_executable(name):
     for path in os.environ['PATH'].split(os.pathsep):
         full = os.path.join(path, name)
@@ -15,6 +19,8 @@ def find_executable(name):
 
 def auto_symlink(real, link, show=True):
     linkdir = os.path.dirname(link)
+
+    mkdirp(linkdir, show=show)
 
     if real.split('/')[:2] == linkdir.split('/')[:2]:
         target = os.path.relpath(real, linkdir)
@@ -27,8 +33,10 @@ def auto_symlink(real, link, show=True):
     os.symlink(target, link)
 
 
-def mkdirp(path):
+def mkdirp(path, show=True):
     if not os.path.isdir(path):
+        if show:
+            print('Mkdir {}'.format(path))
         os.makedirs(path)
 
 
@@ -56,7 +64,7 @@ class Environment:
         while curdir != '/' and not os.path.isdir(curdir + '/.git'):
             curdir = os.path.dirname(curdir)
         if curdir == '/':
-            raise Exception('Failed to find base dir of this git repo')
+            raise SysInitError('Failed to find base dir of this git repo')
         return curdir
 
 
