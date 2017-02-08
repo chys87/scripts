@@ -57,6 +57,7 @@ class VimPlugin(utils.Task):
 
     _plugins = {
         'vim-neatstatus': 'https://github.com/maciakl/vim-neatstatus.git',
+        'vim-localvimrc': 'https://github.com/embear/vim-localvimrc.git',
     }
     _bundles = {
         'typescript-vim': 'https://github.com/leafgarland/typescript-vim.git',
