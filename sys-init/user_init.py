@@ -61,6 +61,7 @@ class VimPlugin(utils.Task):
     }
     _bundles = {
         'typescript-vim': 'https://github.com/leafgarland/typescript-vim.git',
+        'vim-less': 'https://github.com/groenewege/vim-less.git',
     }
     _autoloads = {
         'vim-pathogen': {
