@@ -56,72 +56,13 @@ if [[ -f ${ROOT}/etc/portage/x32list ]]; then
 	unset -v x32package
 fi
 
-# This function seeks to work like epatch, which is now
-# merged into eutils.eclass and not so simple to extract
-# $1 = full path of patch file;
-# $2 = work dir ($S or $S + multilib suffix)
-autoepatch() {
-	local level
-	for level in 0 1; do
-		if patch --dry-run -f -d$2 -p$level <"$1" &>/dev/null; then
-			if patch -f -d$2 -p$level <"$1"; then
-				return 0
-			else
-				break
-			fi
-		fi
-	done
-
-	# For some packages, e.g. libpng, abi directories contain no source files
-	if [[ "$2" == *-abi_* ]]; then
-		einfo "Failed to apply patch $1 to $2, but probably that's not important"
-	else
-		eerror "Failed to apply patch $1 to $2"
-		die
-	fi
-}
-
-# $1 = work dir ($S or $S + multilib suffix)
-autopatch_dir() {
-
-	local p patch
-
-	local PATCH_OVERLAY=${ROOT%/}/etc/portage/autopatch
-
-	local -a version_specs=('' ":$SLOT")
-	local spec
-
-	local pv="$PV"
-
-	while [[ "$pv" == *.* ]]; do
-		version_specs+=("-$pv!")
-		pv="${pv%.*}"
-	done
-	version_specs+=("-$pv!")
-
-	for spec in "${version_specs[@]}"; do
-		for patch in "$PATCH_OVERLAY/$CATEGORY.$PN$spec".*.{patch,diff}; do
-			[ -f "$patch" ] || continue
-			p="${patch##*/}"
-			if ! [ -e $1/.autopatched.${p} ]; then
-				einfo "Applying $patch to $1"
-				autoepatch "$patch" "$1"
-				: > $1/.autopatched.${p}
-			fi
-		done
-	done
-}
-
 autopatch() {
-	local subdir
-	for subdir in "$S" "$S"-abi_*; do
-		if [ -d "$subdir" ]; then
-			autopatch_dir "$subdir"
-		fi
-	done
+	local patcher="${ROOT%/}/etc/portage/portage-autopatch.py"
+	"$patcher" --patch-overlay="${ROOT%/}/etc/portage/autopatch" \
+		--category="$CATEGORY" --pn="$PN" --pv="$PV" --slot="$SLOT" --s="$S" || die
 }
 
-# Outputing depend oftens disrupts normal portage output
+# Outputing depends often disrupts normal portage output
 if [ "$EBUILD_PHASE" != 'depend' ]; then
 	einfo "Ebuild phase: $EBUILD_PHASE"
 fi
