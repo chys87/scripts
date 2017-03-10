@@ -1,7 +1,9 @@
+from __future__ import absolute_import, print_function
+
 import os
 import shutil
 
-import utils
+from . import utils
 
 
 class Skel(utils.Task):
@@ -71,7 +73,7 @@ class VimPlugin(utils.Task):
     }
 
     def __init__(self, env):
-        super().__init__(env)
+        super(VimPlugin, self).__init__(env)
         self.autoloaddir = os.path.join(env.home, '.vim', 'autoload')
         self.plugindir = os.path.join(env.home, '.vim', 'plugin')
         self.bundledir = os.path.join(env.home, '.vim', 'bundle')

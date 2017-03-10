@@ -1,8 +1,12 @@
+from __future__ import absolute_import, print_function
+
 from collections import OrderedDict
 import os
 import pwd
 import re
 import subprocess
+
+from . import six
 
 
 class SysInitError(Exception):
@@ -50,7 +54,7 @@ def mkdirp(path, show=True):
         os.makedirs(path)
 
 
-def git_clone(url, dst, *, update=True):
+def git_clone(url, dst, update=True):
     if os.path.isdir(dst):
         oldurl = check_popen(['git', 'ls-remote', '--get-url', 'origin'],
                              cwd=dst)
@@ -76,7 +80,7 @@ def check_popen(cmd, **kwargs):
             raise subprocess.CalledProcessError(code, cmd)
 
 
-class Environment:
+class Environment(object):
     def __init__(self):
         self.base = self.find_git_base()
         self.home = pwd.getpwuid(os.getuid()).pw_dir
@@ -104,7 +108,8 @@ class TaskMeta(type):
         return result
 
 
-class Task(metaclass=TaskMeta):
+@six.add_metaclass(TaskMeta)
+class Task(object):
     __slots__ = 'env',
     registry = OrderedDict()
     normal_user = True

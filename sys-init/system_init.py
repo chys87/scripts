@@ -1,8 +1,11 @@
+from __future__ import absolute_import, print_function
+
 import os
 import subprocess
 import sys
 
-import utils
+from . import six
+from . import utils
 
 
 
@@ -17,7 +20,8 @@ class PackageManagerMeta(type):
         return result
 
 
-class PackageManager(metaclass=PackageManagerMeta):
+@six.add_metaclass(PackageManagerMeta)
+class PackageManager(object):
     registry = []
 
     def get_installed_set(self):
