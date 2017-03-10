@@ -82,6 +82,8 @@ class InstallPackages(utils.Task):
         'zsh',
     ]
     _x_packages = [
+        'dia',
+        'gimp',
         'pqiv',
     ]
 
