@@ -71,7 +71,6 @@ class InstallPackages(utils.Task):
         {'apt': ['p7zip-full', 'p7zip-rar']},
         {'apt': ['python-pip', 'python3-pip']},
         {'apt': 'pkg-config'},
-        'pqiv',
         {'apt': ['pyflakes', 'pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
         ['rar', 'unrar'],
@@ -81,6 +80,9 @@ class InstallPackages(utils.Task):
         'unzip',
         'zip',
         'zsh',
+    ]
+    _x_packages = [
+        'pqiv',
     ]
 
     def find_package_manager(self):
@@ -97,8 +99,12 @@ class InstallPackages(utils.Task):
 
         installed = pkg_mgr.get_installed_set()
 
+        packages = self._packages
+        if self.env.X:
+            packages = packages + self._x_packages
+
         to_install = []
-        for conf in self._packages:
+        for conf in packages:
             if isinstance(conf, (str, list, tuple)):
                 pkg = conf
             else:

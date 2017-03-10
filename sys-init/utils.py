@@ -81,9 +81,10 @@ def check_popen(cmd, **kwargs):
 
 
 class Environment(object):
-    def __init__(self):
+    def __init__(self, args):
         self.base = self.find_git_base()
         self.home = pwd.getpwuid(os.getuid()).pw_dir
+        self.X = args.X
 
     def find_git_base(self):
         curdir = os.path.dirname(os.path.realpath(__file__))

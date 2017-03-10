@@ -15,6 +15,8 @@ def main():
     registry = utils.Task.registry
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('-X', action='store_true', default=False,
+                        help='Install X related packages')
     parser.add_argument('tasks', metavar='TASK', nargs='*',
                         help='Valid values: {}'.format(
                             ' '.join(registry.keys())))
@@ -26,7 +28,7 @@ def main():
     else:
         task_cls_list = list(registry.values())
 
-    env = utils.Environment()
+    env = utils.Environment(args)
 
     if os.getuid() == 0:
         task_cls_list = [cls for cls in task_cls_list if cls.root]
