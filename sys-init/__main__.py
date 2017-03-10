@@ -14,9 +14,13 @@ from . import utils
 def main():
     registry = utils.Task.registry
 
+    has_x = bool(os.environ.get('DISPLAY'))
+
     parser = argparse.ArgumentParser()
-    parser.add_argument('-X', action='store_true', default=False,
+    parser.add_argument('-X', action='store_true', default=has_x,
                         help='Install X related packages')
+    parser.add_argument('--no-X', action='store_false', dest='X',
+                        help="Don't install X related packages")
     parser.add_argument('tasks', metavar='TASK', nargs='*',
                         help='Valid values: {}'.format(
                             ' '.join(registry.keys())))
