@@ -1,6 +1,6 @@
 tcp:
     ssh: accept
-    http: accept
+    http: drop
     distcc: accept
     rsync: accept
     2554-2559: accept
