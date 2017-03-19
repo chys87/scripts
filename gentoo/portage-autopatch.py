@@ -23,23 +23,25 @@ class AutoPatcher:
     def _inclusions(self):
         filename = os.path.join(self.patch_overlay, 'inclusions.yaml')
         try:
-            return yaml.load(open(filename).read())
+            with open(filename) as f:
+                yaml_text = f.read()
         except FileNotFoundError:
             return {}
+        else:
+            return yaml.load(yaml_text)
 
     def find_patches(self, prefix):
         return (glob.glob('{}/{}.*.patch'.format(self.patch_overlay, prefix)) +
                 glob.glob('{}/{}.*.diff'.format(self.patch_overlay, prefix)))
 
-    def find_all_patches(self, prefixes, dirname):
-        for prefix in prefixes:
-            for patch in self.find_patches(prefix):
-                yield (patch, dirname)
-            inclusions = self.inclusions.get(prefix)
-            if inclusions:
-                for subprefix, subdir in inclusions.items():
-                    yield from self.find_all_patches(
-                        [subprefix], os.path.join(dirname, subdir))
+    def find_all_patches(self, prefix, dirname):
+        for patch in self.find_patches(prefix):
+            yield (patch, dirname)
+        inclusions = self.inclusions.get(prefix)
+        if inclusions:
+            for subprefix, subdir in inclusions.items():
+                yield from self.find_all_patches(
+                    subprefix, os.path.join(dirname, subdir))
 
     def make_prefixes(self):
         args = self.args
@@ -66,12 +68,13 @@ class AutoPatcher:
                 code = sp.call(['patch', '-f', '-d' + dst_dir, level],
                                stdin=open(patch))
                 if code == 0:
-                    open(tag_file, 'w')
+                    open(tag_file, 'w').close()
                     return
                 else:
                     break
 
-        # For some packages, e.g. libpng, abi directories contain no source files
+        # For some packages, e.g. libpng, abi directories contain no
+        # source files
         if '-abi_' in dst_dir:
             self.einfo("Failed to apply patch {} to {}, "
                        "but probably that's not important".format(
@@ -88,14 +91,13 @@ class AutoPatcher:
             self.auto_apply_patch(os.path.join(altdir, subdir), patch)
 
     def run(self):
-        prefixes = list(self.make_prefixes())
         s = self.args.s
-
-        for patch, subdir in self.find_all_patches(prefixes, '.'):
-            if s:
-                self.apply_patch(s, subdir, patch)
-            else:
-                print(patch, subdir)
+        for prefix in self.make_prefixes():
+            for patch, subdir in self.find_all_patches(prefix, '.'):
+                if s:
+                    self.apply_patch(s, subdir, patch)
+                else:
+                    print(patch, subdir)
 
 
 def main():
