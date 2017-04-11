@@ -9,6 +9,12 @@ import subprocess
 from . import six
 
 
+try:
+    FileNotFoundError = FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
+
 class SysInitError(Exception):
     pass
 

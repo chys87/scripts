@@ -135,7 +135,7 @@ class DefaultEditor(utils.Task):
     def run(self):
         try:
             editor = os.readlink('/etc/alternatives/editor')
-        except FileNotFoundError:
+        except utils.FileNotFoundError:
             return
 
         if '/vim' in editor:

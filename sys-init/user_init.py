@@ -112,7 +112,7 @@ class Gitconfig(utils.Task):
         try:
             with open(including_file, 'r') as f:
                 content = f.read()
-        except FileNotFoundError:
+        except utils.FileNotFoundError:
             content = ''
 
         if included_file not in content:
