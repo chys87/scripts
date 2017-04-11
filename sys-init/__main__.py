@@ -21,6 +21,8 @@ def main():
                         help='Install X related packages')
     parser.add_argument('--no-X', action='store_false', dest='X',
                         help="Don't install X related packages")
+    parser.add_argument('--no-git-pull', action='store_false', dest='git_pull',
+                        default=True, help="Don't run git pull")
     parser.add_argument('tasks', metavar='TASK', nargs='*',
                         help='Valid values: {}'.format(
                             ' '.join(registry.keys())))

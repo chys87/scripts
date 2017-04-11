@@ -95,7 +95,7 @@ class VimPlugin(utils.Task):
 
     def run_item(self, link_dir, url, clone_name, link_file='.'):
         clone_dir = os.path.join(self.external, clone_name)
-        utils.git_clone(url, clone_dir)
+        utils.git_clone(url, clone_dir, update=self.env.git_pull)
 
         link_target = os.path.normpath(os.path.join(clone_dir, link_file))
         link = os.path.join(link_dir, os.path.basename(link_target))

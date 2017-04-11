@@ -91,6 +91,7 @@ class Environment(object):
         self.base = self.find_git_base()
         self.home = pwd.getpwuid(os.getuid()).pw_dir
         self.X = args.X
+        self.git_pull = args.git_pull
 
     def find_git_base(self):
         curdir = os.path.dirname(os.path.realpath(__file__))
