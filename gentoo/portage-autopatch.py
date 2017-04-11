@@ -63,7 +63,7 @@ class AutoPatcher:
 
         for level in ('-p1', '-p0'):
             code = sp.call(['patch', '--dry-run', '-f', '-d' + dst_dir, level],
-                    stdin=open(patch), stdout=sp.DEVNULL)
+                           stdin=open(patch), stdout=sp.DEVNULL)
             if code == 0:
                 code = sp.call(['patch', '-f', '-d' + dst_dir, level],
                                stdin=open(patch))
