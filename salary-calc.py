@@ -3,7 +3,7 @@
 # vim:ts=8 sts=4 sw=4 expandtab ft=python
 
 #
-# Copyright (c) 2013, chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2017, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -50,6 +50,8 @@
 格式参见示例配置文件注释
 '''
 
+import argparse
+from collections import namedtuple
 import configparser
 import getopt
 import os
@@ -60,74 +62,79 @@ import unicodedata
 CONFIG_FILE = 'salary-calc.conf'
 
 
-def usage(code=0):
-    print(__doc__)
-    sys.exit(code)
-
-
-def fatal(*args, **kargs):
-    if 'file' not in kargs:
-        kargs['file'] = sys.stderr
-    print(*args, **kargs)
-    sys.exit(1)
-
-
-def parse_salary(s):
-    try:
-        r = float(s)
-        if r > 0:
-            return r
-    except ValueError:
-        pass
-    fatal('无效的工资: {}'.format(s))
-
-
 class Tax:
-    class Item:
-        pass
+    __slots__ = '_exempt', '_table'
+
+    Item = namedtuple('Item', 'lo pp deduct')
 
     def __init__(self, config):
         '''创建对象，从配置文件中读取税率信息
         '''
         self._exempt = None
         self._table = []
+
+        last_pp = 0
+        last_deduct = 0
+
         try:
             for (key, value) in config.items('tax'):
                 if key == 'exempt':
-                    self._exempt = parse_salary(value)
+                    self._exempt = float(value)
                 else:
                     try:
-                        item = Tax.Item()
-                        item.lo, item.hi, item.pp = \
-                            [float(v) for v in value.split()]
+                        lo, pp = [float(v) for v in value.split()]
                     except ValueError:
-                        fatal('配置文件错误: {}'.format(value))
-                    self._table.append(item)
-            if not self._exempt:
-                fatal('未指定免税额')
-        except configparser.NoSectionError:
-            fatal('配置文件中找不到个人所得税信息')
-            sys.exit(1)
-        except configparser.Error:
-            fatal('配置文件错误')
+                        sys.exit('配置文件错误: {}'.format(value))
 
-    def calc(self, salary):
+                    deduct = lo * (pp - last_pp) / 100 + last_deduct
+                    self._table.append(self.Item(lo, pp, deduct))
+                    last_pp = pp
+                    last_deduct = deduct
+
+            if not self._exempt:
+                sys.exit('未指定免税额')
+        except configparser.NoSectionError:
+            sys.exit('配置文件中找不到个人所得税信息')
+        except configparser.Error:
+            sys.exit('配置文件错误')
+
+    def calc(self, salary, year_end=False):
         '''计算个人所得税，salary为计税额
         '''
+        if year_end:
+            tax_reference = salary / 12
+            exempt = 0
+        else:
+            tax_reference = salary
+            exempt = self._exempt
+
         tax = 0
-        if salary <= self._exempt:
+        if salary <= exempt:
             return tax
-        salary -= self._exempt
-        for item in self._table:
-            if salary > item.lo:
-                tax += min(item.hi - item.lo, salary - item.lo) * \
-                    item.pp / 100
-        return tax
+        salary -= exempt
+
+        # [i].lo < tax_reference <= [j].lo
+        table = self._table
+        i = 0
+        j = len(table)
+        while j - i > 1:
+            m = (i + j) // 2
+            if table[m].lo < tax_reference:
+                i = m
+            else:
+                j = m
+
+        item = table[i]
+
+        # 年终奖：速算扣除数不乘以12（神奇的中国税务！）
+        return salary * item.pp / 100 - item.deduct
 
 
 class SocialSecurity:
-    class Item:
-        pass
+    __slots__ = '_items',
+
+    Item = namedtuple('Item',
+                      'name employee_percent employer_percent upper lower')
 
     def __init__(self, config, city):
         '''创建对象，从配置文件中读取城市信息
@@ -136,18 +143,17 @@ class SocialSecurity:
             self._items = []
             for (name, data) in config.items(city):
                 try:
-                    item = SocialSecurity.Item()
-                    item.name = name
-                    item.employee_percent, item.employer_percent, \
-                        item.upper, item.lower = \
+                    employee_percent, employer_percent, \
+                        upper, lower = \
                         [float(v) for v in data.split()]
-                    self._items.append(item)
                 except ValueError:
-                    fatal('配置文件错误: {} = {}'.format(name, data))
+                    sys.exit('配置文件错误: {} = {}'.format(name, data))
+                self._items.append(self.Item(
+                    name, employee_percent, employer_percent, upper, lower))
         except configparser.NoSectionError:
-            fatal('配置文件中找不到城市“{}”'.format(city))
+            sys.exit('配置文件中找不到城市“{}”'.format(city))
         except configparser.Error:
-            fatal('配置文件错误')
+            sys.exit('配置文件错误')
 
     def calc(self, base):
         '''计算社保，base为缴纳基数
@@ -189,28 +195,30 @@ def _get_config_files():
 
 
 def main():
-    try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], "hc:", ["help", "city="])
-    except getopt.GetoptError as e:
-        fatal(e)
+    parser = argparse.ArgumentParser(
+        description='个人所得税、社保计算器',
+        epilog='''与网上多数计算器相比，本计算器有以下特点：
+(1) 考虑社保缴纳上限；
+(2) 考虑实际工资与社保缴纳基数不一致的问题；
+(3) 通过配置文件自行设置各项缴纳比例；
+(4) 支持年终奖计算。
 
-    city = None
-    for o, a in opts:
-        if o in ('-h', '--help'):
-            usage(0)
-        elif o in ('-c', '--city'):
-            city = a
-        else:
-            assert False, "Unhandled option."
+配置文件 salary-calc.conf 放在本程序同一目录下，数据自行添加修改。
+格式参见示例配置文件注释''',
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('-c', '--city',
+                        help='城市 (默认城市可在配置文件中指定)')
+    parser.add_argument('-y', '--year-end', action='store_true', default=False,
+                        help='按年终奖计算')
+    parser.add_argument('salary', type=float, help='税前工资')
+    parser.add_argument('security_base', type=float, nargs='?',
+                        help='社保基数')
+    args = parser.parse_args()
 
-    if len(args) not in (1, 2):
-        usage(1)
-
-    salary = parse_salary(args[0])
-    if len(args) > 1:
-        security_base = parse_salary(args[1])
-    else:
-        security_base = salary
+    city = args.city
+    salary = args.salary
+    security_base = args.security_base or salary
+    year_end = args.year_end
 
     config = configparser.RawConfigParser()
     for config_file in _get_config_files():
@@ -218,48 +226,54 @@ def main():
             with open(config_file, 'r', encoding='utf-8') as f:
                 config.readfp(f)
                 break
-        except IOError:
+        except FileNotFoundError:
             pass
     else:
-        fatal('找不到配置文件: {}'.format(CONFIG_FILE))
+        sys.exit('找不到配置文件: {}'.format(CONFIG_FILE))
 
     if not city:
         try:
             city = config.get('security', 'city')
         except configparser.Error:
-            fatal('未指定城市')
+            sys.exit('未指定城市')
 
-    security = SocialSecurity(config, city).calc(security_base)
+    if year_end:
+        security = []
+    else:
+        security = SocialSecurity(config, city).calc(security_base)
     security_employee_sum = sum(a for (_, a, _) in security)
     security_employer_sum = sum(a for (_, _, a) in security)
     security_sum = security_employee_sum + security_employer_sum
     taxable = salary - security_employee_sum
-    tax = Tax(config).calc(taxable)
+    tax = Tax(config).calc(taxable, year_end=year_end)
 
-    print('== 所在城市 ==')
-    print(city)
-    print()
+    if not year_end:
+        print('== 所在城市 ==')
+        print(city)
+        print()
 
     print('== 税前工资 ==')
     print('{:.2f}'.format(salary))
     print()
 
-    print('== 社保 ==')
-    print('{}{}{}{}'.format(txtl('社保项目', 20), txtr('个人缴存额', 15),
-                            txtr('单位缴存额', 15), txtr('总计', 15)))
-    for (name, employee, employer) in security:
-        print('{}{:>15.2f}{:>15.2f}{:>15.2f}'.format(txtl(name, 20),
-                                                     employee,
-                                                     employer,
-                                                     employee + employer))
-    print('{}{:>15.2f}{:>15.2f}{:>15.2f}'.format(txtl('总和', 20),
-                                                 security_employee_sum,
-                                                 security_employer_sum,
-                                                 security_sum))
-    print()
+    if not year_end:
+        print('== 社保 ==')
+        print('{}{}{}{}'.format(txtl('社保项目', 20), txtr('个人缴存额', 15),
+                                txtr('单位缴存额', 15), txtr('总计', 15)))
+        for (name, employee, employer) in security:
+            print('{}{:>15.2f}{:>15.2f}{:>15.2f}'.format(txtl(name, 20),
+                                                         employee,
+                                                         employer,
+                                                         employee + employer))
+        print('{}{:>15.2f}{:>15.2f}{:>15.2f}'.format(txtl('总和', 20),
+                                                     security_employee_sum,
+                                                     security_employer_sum,
+                                                     security_sum))
+        print()
 
     print('== 个人所得税 ==')
-    print('{}{:>15.2f}'.format(txtl('扣除社保后工资', 20), taxable))
+    if not year_end:
+        print('{}{:>15.2f}'.format(txtl('扣除社保后工资', 20), taxable))
     print('{}{:>15.2f}'.format(txtl('个人所得税', 20), tax))
     print()
     print('== 结论 ==')
