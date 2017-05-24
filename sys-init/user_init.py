@@ -126,6 +126,8 @@ class InstallScripts(utils.Task):
     root = False
 
     _scripts = {
+    }
+    _remote_scripts = {
         'guess-ssh-agent': 'guess-ssh-agent.sh',
     }
 
@@ -134,7 +136,11 @@ class InstallScripts(utils.Task):
 
         utils.mkdirp(bin_dir)
 
-        for link, target in self._scripts.items():
+        scripts = dict(self._scripts)
+        if self.env.is_remote:
+            scripts.update(self._remote_scripts)
+
+        for link, target in scripts.items():
             link = os.path.join(bin_dir, link)
             target = os.path.join(self.env.base, target)
             if not os.path.exists(link):

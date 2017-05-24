@@ -92,6 +92,7 @@ class Environment(object):
         self.home = pwd.getpwuid(os.getuid()).pw_dir
         self.X = args.X
         self.git_pull = args.git_pull
+        self.is_remote = self.is_remote_machine()
 
     def find_git_base(self):
         curdir = os.path.dirname(os.path.realpath(__file__))
@@ -100,6 +101,9 @@ class Environment(object):
         if curdir == '/':
             raise SysInitError('Failed to find base dir of this git repo')
         return curdir
+
+    def is_remote_machine(self):
+        return 'SSH_CLIENT' in os.environ
 
 
 class TaskMeta(type):
