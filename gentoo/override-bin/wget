@@ -1,0 +1,40 @@
+#!/usr/bin/python3
+# -*- encoding: utf-8 -*-
+
+import os
+import re
+import sys
+
+
+PROXY_REGEXP = '|'.join([
+    re.escape('.google.com'),
+])
+
+PROXY_RE = re.compile(PROXY_REGEXP)
+
+PROXY = 'http://localhost:8118'
+
+
+def find_next():
+    self = os.path.realpath(__file__)
+    base = os.path.basename(sys.argv[0])
+    for p in os.environ['PATH'].split(':'):
+        exe = os.path.realpath(os.path.join(p, base))
+        if exe != self and os.access(exe, os.X_OK):
+            return exe
+    else:
+        raise FileNotFoundError('Failed to locate {}'.format(base))
+
+
+def main():
+    if PROXY_RE.search(' '.join(sys.argv[1:])):
+        for k in ['http_proxy', 'https_proxy', 'ftp_proxy']:
+            os.environ.setdefault(k, PROXY)
+        print('Using proxy', PROXY, file=sys.stderr)
+
+    wget = find_next()
+    os.execvp(wget, sys.argv)
+
+
+if __name__ == '__main__':
+    main()

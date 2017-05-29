@@ -9,6 +9,21 @@
 # even if /bin/sh is also bash
 export BASH=/bin/bash
 
+# Add override-bin
+add-override-bin() {
+	local target="$ROOT/etc/portage/override-bin"
+	local IFS=:
+	local p
+	for p in $PATH; do
+		if [[ "$p" = "$target" ]]; then
+			return
+		fi
+	done
+	export PATH="$target:$PATH"
+}
+add-override-bin
+unset -f add-override-bin
+
 if [[ "$CATEGORY" == cross-* ]] || [[ "$PF" == gcc-4.[012].* ]] || [[ "$PF" == gcc-3.* ]]; then
 	export CFLAGS='-O2'
 	export CXXFLAGS='-O2'
