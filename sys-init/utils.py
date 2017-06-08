@@ -89,7 +89,7 @@ def check_popen(cmd, **kwargs):
 class Environment(object):
     def __init__(self, args):
         self.base = self.find_git_base()
-        self.home = pwd.getpwuid(os.getuid()).pw_dir
+        self.home = os.path.realpath(pwd.getpwuid(os.getuid()).pw_dir)
         self.X = args.X
         self.git_pull = args.git_pull
         self.is_remote = self.is_remote_machine()
