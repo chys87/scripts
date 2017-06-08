@@ -77,13 +77,11 @@ class VimPlugin(utils.Task):
         self.autoloaddir = os.path.join(env.home, '.vim', 'autoload')
         self.plugindir = os.path.join(env.home, '.vim', 'plugin')
         self.bundledir = os.path.join(env.home, '.vim', 'bundle')
-        self.external = os.path.join(env.home, 'external')
 
     def run(self):
         utils.mkdirp(self.autoloaddir)
         utils.mkdirp(self.plugindir)
         utils.mkdirp(self.bundledir)
-        utils.mkdirp(self.external)
 
         for name, conf in self._autoloads.items():
             self.run_item(self.autoloaddir, conf['url'], name, conf['file'])
@@ -94,8 +92,8 @@ class VimPlugin(utils.Task):
             self.run_item(self.bundledir, url, name)
 
     def run_item(self, link_dir, url, clone_name, link_file='.'):
-        clone_dir = os.path.join(self.external, clone_name)
-        utils.git_clone(url, clone_dir, update=self.env.git_pull)
+        clone_dir = self.env.external.clone(url, clone_name,
+                                            update=self.env.git_pull)
 
         link_target = os.path.normpath(os.path.join(clone_dir, link_file))
         link = os.path.join(link_dir, os.path.basename(link_target))
@@ -132,7 +130,7 @@ class InstallScripts(utils.Task):
     }
 
     def run(self):
-        bin_dir = os.path.join(self.env.home, 'bin')
+        bin_dir = os.path.join(self.env.home, 'bin2')
 
         utils.mkdirp(bin_dir)
 

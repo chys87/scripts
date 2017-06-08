@@ -94,6 +94,8 @@ class Environment(object):
         self.git_pull = args.git_pull
         self.is_remote = self.is_remote_machine()
 
+        self._external = None
+
     def find_git_base(self):
         curdir = os.path.dirname(os.path.realpath(__file__))
         while curdir != '/' and not os.path.isdir(curdir + '/.git'):
@@ -104,6 +106,54 @@ class Environment(object):
 
     def is_remote_machine(self):
         return 'SSH_CLIENT' in os.environ
+
+    @property
+    def external(self):
+        if not self._external:
+            external_dir = os.path.join(self.home, 'external')
+            mirror_base = os.path.join(external_dir, 'awesome-mirrors')
+            if os.path.isdir(mirror_base):
+                self._external = ExternalFromMirror(external_dir, mirror_base)
+            else:
+                self._external = ExternalDir(external_dir)
+
+        return self._external
+
+
+class ExternalDir(object):
+    def __init__(self, external_dir):
+        self.external = external_dir
+        mkdirp(external_dir)
+
+    def clone(self, url, name, update=True):
+        return self.create_from_git(url, name, update)
+
+    def create_from_git(self, url, name, update=True):
+        path = os.path.join(self.external, name)
+        git_clone(url, path, update)
+        return path
+
+
+class ExternalFromMirror(ExternalDir):
+    def __init__(self, external_dir, mirror_base):
+        super(ExternalFromMirror, self).__init__(external_dir)
+        self.mirror_base = mirror_base
+
+        self._updated_mirror = False
+
+    def clone(self, url, name, update=True):
+        if update and not self._updated_mirror:
+            print('Updating {}'.format(self.mirror_base))
+            subprocess.check_call(['git', 'pull'], cwd=self.mirror_base)
+            self._updated_mirror = True
+
+        target = os.path.join(self.mirror_base, name)
+        if os.path.isdir(target):
+            path = os.path.join(self.external, name)
+            auto_symlink(target, path)
+            return path
+        else:
+            return self.create_from_git(url, name, update)
 
 
 class TaskMeta(type):
