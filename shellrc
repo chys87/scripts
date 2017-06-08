@@ -592,4 +592,8 @@ fi
 
 set -o emacs
 
+if [ -f ~/.shellrc.local ]; then
+	. ~/.shellrc.local
+fi
+
 :
