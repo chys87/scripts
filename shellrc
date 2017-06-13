@@ -303,7 +303,7 @@ case "$TERM" in
 			if [ "$__default_shell" != "$sh" ]; then
 				prefix="[$sh]"
 			fi
-			if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
+			if [[ -z "$__DONT_SCREAM_AT_GB" && ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
 				prefix="[GB]$prefix"
 			fi
 			prefix="$__CUSTOM_TITLE_PREFIX$prefix"
@@ -500,7 +500,7 @@ if [ -n "$BASH_VERSION" ]; then
 		PS1="[$SHLVL] $PS1"
 	fi
 
-	if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
+	if [[ -z "$__DONT_SCREAM_AT_GB" && ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
 		PS1="[GB] $PS1"
 	fi
 
@@ -516,7 +516,7 @@ if [ -n "$ZSH_VERSION" ]; then
 #	RPS1='%T'
 	[[ -n "$SSH_TTY" || -n "$SSH2_CLIENT" ]] && PS1="%B[SSH ${HOST%%.*}]%b $PS1"
 
-	if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
+	if [[ -z "$__DONT_SCREAM_AT_GB" && ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
 		PS1="[GB] $PS1"
 	fi
 
