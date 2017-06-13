@@ -306,6 +306,7 @@ case "$TERM" in
 			if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
 				prefix="[GB]$prefix"
 			fi
+			prefix="$__CUSTOM_TITLE_PREFIX$prefix"
 			if [[ -n "$prefix" ]]; then
 				prefix+=' '
 			fi
@@ -513,7 +514,7 @@ if [ -n "$ZSH_VERSION" ]; then
 
 	PS1='%(2L.[%L] .)%B%(!.%F{red}.%F{blue})%~%f%(1j. (%j job%(2j.s.)%).) ${vcs_info_msg_0_}%(!.%F{red}.%F{blue})%#%f%b '
 #	RPS1='%T'
-	[ -n "$SSH_TTY" ] && PS1="%B[SSH ${HOST%%.*}]%b $PS1"
+	[[ -n "$SSH_TTY" || -n "$SSH2_CLIENT" ]] && PS1="%B[SSH ${HOST%%.*}]%b $PS1"
 
 	if [[ ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
 		PS1="[GB] $PS1"
