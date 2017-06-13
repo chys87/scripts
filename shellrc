@@ -35,6 +35,10 @@
 # This script is compatible with bash and zsh
 # Source me from .bashrc or .zshrc
 
+if [ -f ~/.shellrc.pre.local ]; then
+	. ~/.shellrc.pre.local
+fi
+
 alias ls='ls --color=auto --file-type'
 alias ll='ls -l --time-style=long-iso'
 #alias rm='rm -i'
