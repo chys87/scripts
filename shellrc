@@ -484,7 +484,8 @@ if [ -n "$BASH_VERSION" ]; then
 	# Bash options
 	#set -C
 	# histappend: It appears bash has some heuristics to determine whether to append
-	shopt -s autocd extglob cmdhist no_empty_cmd_completion checkwinsize
+	shopt -s autocd 2>/dev/null  # Old versions do not support autocd
+	shopt -s extglob cmdhist no_empty_cmd_completion checkwinsize
 	shopt -u sourcepath dotglob nullglob
 
 	if [ "$UID" = 0 ]; then
