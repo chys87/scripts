@@ -167,14 +167,7 @@ if have_executable svn && have_executable colordiff; then
 fi
 
 if have_executable tmux; then
-	_tmux_wrapper() {
-		if [[ -n "$TMUX" ]]; then
-			return 1
-		fi
-		SHLVL= 'tmux' "$@"
-	}
-	alias tmux=_tmux_wrapper
-	alias tmuxu='_tmux_wrapper -u -Lutf8'
+	alias tmuxu='tmux -u -Lutf8'
 fi
 
 if [[ -n "$TMUX" || -n "$STY" || "$TERM" == screen* ]]; then
