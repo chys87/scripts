@@ -39,6 +39,19 @@ if [ -f ~/.shellrc.pre.local ]; then
 	. ~/.shellrc.pre.local
 fi
 
+# which behaves differently on bash and zsh
+has_executable() {
+	local IFS=:
+	local p
+	for p in ${BASH_VERSION:+${PATH}}${ZSH_VERSION:+${path}}; do
+		if [[ -x "$p/$1" ]]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+
 alias ls='ls --color=auto --file-type'
 alias ll='ls -l --time-style=long-iso'
 #alias rm='rm -i'
@@ -46,9 +59,9 @@ alias ll='ls -l --time-style=long-iso'
 #alias mv='mv -i'
 #alias convmv='convmv -i'
 alias cdp='cd -P'
-alias lsof='lsof -n'
-alias traceroute='traceroute -n'
-alias netstat='netstat -n'
+has_executable lsof && alias lsof='lsof -n'
+has_executable traceroute && alias traceroute='traceroute -n'
+has_executable netstat && alias netstat='netstat -n'
 grep_options='--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude-dir=.hg'
 alias grep='grep '"$grep_options"
 alias egrep='egrep '"$grep_options"
@@ -140,19 +153,7 @@ if [[ "$USER" != 'root' && -n "$USER" && -d /run/U/"$USER" && "$LESSHISTFILE" = 
 fi
 
 
-# which behaves differently on bash and zsh
-have_executable() {
-	local IFS=:
-	local p
-	for p in ${BASH_VERSION:+${PATH}}${ZSH_VERSION:+${path}}; do
-		if [[ -x "$p/$1" ]]; then
-			return 0
-		fi
-	done
-	return 1
-}
-
-if have_executable svn && have_executable colordiff; then
+if has_executable svn && has_executable colordiff; then
 
 	_svn_wrapper() {
 		if [[ -t 1 && "$1" =~ ^di(ff)?$ ]]; then
@@ -166,13 +167,13 @@ if have_executable svn && have_executable colordiff; then
 
 fi
 
-if have_executable tmux; then
+if has_executable tmux; then
 	alias tmuxu='tmux -u -Lutf8'
 fi
 
 if [[ -n "$TMUX" || -n "$STY" || "$TERM" == screen* ]]; then
 	for guesser in guess-ssh-agent guess-ssh-agent.sh; do
-		if have_executable "$guesser"; then
+		if has_executable "$guesser"; then
 			alias git="$guesser git"
 			break
 		fi
@@ -180,7 +181,7 @@ if [[ -n "$TMUX" || -n "$STY" || "$TERM" == screen* ]]; then
 	unset -v guesser
 fi
 
-if have_executable journalctl; then
+if has_executable journalctl; then
 	alias journalctl='journalctl -o short-precise'
 fi
 
@@ -222,14 +223,12 @@ set_up_ssh_agent() {
 }
 
 if [[ -z "$skip_ssh_agent" && -z "$SSH_AUTH_SOCK" && -z "$SSH_CLIENT" && -r ~/.ssh/id_rsa ]] && \
-		have_executable ssh-agent && have_executable ssh-add; then
+		has_executable ssh-agent && has_executable ssh-add; then
 	set_up_ssh_agent
 fi
 unset -f set_up_ssh_agent_from_file
 unset -f set_up_ssh_agent
 unset -v skip_ssh_agent
-
-unset -f have_executable
 
 # It's weird that I always have problems defining local arrays in zsh
 precmd_showstatus() {
