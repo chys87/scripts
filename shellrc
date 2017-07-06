@@ -234,7 +234,7 @@ set_up_ssh_agent() {
 	fi
 }
 
-if [[ -z "$skip_ssh_agent" && -z "$SSH_AUTH_SOCK" && -z "$SSH_CLIENT" && -r ~/.ssh/id_rsa ]] && \
+if [[ -z "$skip_ssh_agent" && -z "$SSH_AUTH_SOCK" && -z "$SSH2_AUTH_SOCK" && -z "$SSH_CLIENT" && -z "$SSH2_CLIENT" && -r ~/.ssh/id_rsa ]] && \
 		has_executable ssh-agent && has_executable ssh-add; then
 	set_up_ssh_agent
 fi

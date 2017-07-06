@@ -47,9 +47,12 @@ fi
 if [[ -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]]; then
 	exec "$@"
 fi
+if [[ -n "$SSH2_AUTH_SOCK" && -S "$SSH2_AUTH_SOCK" ]]; then
+	exec "$@"
+fi
 
 got_sock=
-for try_sock in /tmp/ssh-*/agent.*; do
+for try_sock in /tmp/ssh-*/agent.* /tmp/ssh-$USER/ssh2-*-agent; do
 	if [[ -S "$try_sock" && ( -z "$got_sock" || "$try_sock" -nt "$got_sock" ) ]]; then
 		got_sock="$try_sock"
 	fi
@@ -59,6 +62,10 @@ if [[ -z "$got_sock" ]]; then
 	echo "Failed to guess a usable ssh auth socket." >&2
 	exit 1
 else
-	export SSH_AUTH_SOCK="$got_sock"
+	if [[ "$got_sock" == *ssh2* ]]; then
+		export SSH2_AUTH_SOCK="$got_sock"
+	else
+		export SSH_AUTH_SOCK="$got_sock"
+	fi
 	exec "$@"
 fi
