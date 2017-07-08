@@ -23,6 +23,7 @@
     + 注: 这个文件不能直接作为 `.bashrc` 或 `.zshrc` 文件, 而应在 `.bashrc`/`.zshrc` 末尾 source
 * `sys-init`: 我的系统初始化脚本
 * `tmux.conf`: 我的 [tmux](http://tmux.sourceforge.net/) 配置文件
+* `update-cygwin-installer.py`: 自动更新Cygwin安装程序
 * `urlunescape.py` (Python 3): 一个简单的 URL 解码脚本，支持 UTF-8 和 GB18030
 * `vimrc`: 我的 `.vimrc` 文件
 * `external/*`: 其他人写的有用脚本 (版权属于原作者)
@@ -52,6 +53,7 @@
     - Note: This file shouldn't be directly used as `.bashrc` or `.zshrc`, but sourced at the end of them.
 * `sys-init`: My system initialization scripts
 * `tmux.conf`: My [tmux](http://tmux.sourceforge.net/) configuration file
+* `update-cygwin-installer.py`: Update Cygwin installer automatically
 * `urlunescape.py` (Python 3): A simple URL decoder, supporting UTF-8 and GB18030
 * `vimrc`: My `.vimrc` file
 * `external/*`: Useful scripts written by others (copyright may be reserved by the original authors)
