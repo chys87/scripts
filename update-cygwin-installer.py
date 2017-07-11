@@ -65,7 +65,10 @@ def download(url, installer):
     except AttributeError:
         content_type = obj.info().gettype()
     if content_type != 'application/octet-stream':
-        sys.exit('Got {}'.format(content_type))
+        dump_file = '/tmp/update-cygwin-installer-dump'
+        with open(dump_file, 'wb') as f:
+            f.write(content)
+        sys.exit('Got {}; dumped to {}'.format(content_type, dump_file))
     with open(installer, 'wb') as f:
         f.write(content)
 
@@ -88,7 +91,7 @@ def main():
     if not installer:
         sys.exit('Failed to locate an installer')
 
-    url = 'https://cygwin.com/' + base_name
+    url = 'http://cygwin.com/' + base_name
 
     print('Downloading {} to {}'.format(url, installer))
     download(url, installer)
