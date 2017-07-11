@@ -130,6 +130,28 @@ path_removedup() {
 path_removedup
 unset -f path_removedup
 
+ld_library_path_removedup() {
+	if [[ -z "$LD_LIBRARY_PATH" ]]; then
+		return
+	fi
+	local IFS=:
+	local new=
+	local p
+	for p in ${ZSH_VERSION:+${(s.:.)LD_LIBRARY_PATH}}${BASH_VERSION:+$LD_LIBRARY_PATH}; do
+		if [[ "$p" != /* ]]; then
+			continue
+		fi
+		case "$new" in
+			$p|$p:*|*:$p|*:$p:*);;
+			?*) new+=":$p";;
+			'') new="$p";;
+		esac
+	done
+	export LD_LIBRARY_PATH="$new"
+}
+ld_library_path_removedup
+unset -f ld_library_path_removedup
+
 unset -v MAIL MAILPATH MAILCHECK
 temp=()
 if [ -d "$HOME/Maildir/new" ]; then
