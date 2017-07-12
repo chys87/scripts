@@ -408,7 +408,12 @@ if [ -n "$ZSH_VERSION" ]; then
 		if ((likely_changed)); then
 			__last_vcs_info_pwd="$pwd"
 			__last_vcs_info_time=$SECONDS
-			vcs_info
+			if [[ "$OSTYPE" == *cygwin* && "$found" == 'svn' ]]; then
+				# Default behavior is too damn slow under cygwin.  Do our own, in the simplest way
+				vcs_info_msg_0_='%F{5}(%fsvn%F{5})%f '
+			else
+				vcs_info
+			fi
 		fi
 	}
 fi
