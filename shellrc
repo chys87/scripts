@@ -2,7 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013, 2014, 2015, 2016 chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2014, 2015, 2016, 2017 chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -190,11 +190,27 @@ fi
 if has_executable svn && has_executable colordiff; then
 
 	_svn_wrapper() {
-		if [[ -t 1 && "$1" =~ ^di(ff)?$ ]]; then
-			'svn' "$@" | colordiff | less -R
-		else
+		if ! [[ -t 1 ]]; then
 			'svn' "$@"
+			return
 		fi
+
+		local arg
+		for arg; do
+			case "$arg" in
+				-*)
+					;;
+				*)
+					if [[ "$arg" =~ ^di(ff)?$ ]]; then
+						'svn' "$@" | colordiff | less -R
+						return
+					elif [[ "$arg" == log ]]; then
+						'svn' "$@" | less
+						return
+					fi
+			esac
+		done
+		'svn' "$@"
 	}
 
 	alias svn=_svn_wrapper
