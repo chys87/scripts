@@ -66,6 +66,7 @@ class InstallPackages(utils.Task):
         'ipython',
         {'apt': 'ipython3'},
         'lftp',
+        'lrzsz',
         {'apt': ['manpages-dev', 'manpages-posix']},
         'p7zip',
         {'apt': ['p7zip-full', 'p7zip-rar']},
