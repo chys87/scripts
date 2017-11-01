@@ -79,12 +79,14 @@ class InstallPackages(utils.Task):
         'tmux',
         'tree',
         'unzip',
+        'valgrind',
         'zip',
         'zsh',
     ]
     _x_packages = [
         'dia',
         'gimp',
+        'kcachegrind',
         'pqiv',
     ]
 
