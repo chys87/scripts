@@ -86,6 +86,7 @@ class InstallPackages(utils.Task):
     _x_packages = [
         'dia',
         'gimp',
+        'gitk',
         'kcachegrind',
         'pqiv',
     ]
