@@ -51,7 +51,7 @@ def calculate(s):
     If something is wrong, return None.
     '''
     if len(s) == 17 and set(s).issubset('0123456789'):
-        n = sum(map(lambda a, b: a * (ord(b) - ord('0')),
+        n = sum(map(lambda a, b: a * int(b),
                 (7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2), s)) % 11
         return '10X98765432'[n]
     else:
