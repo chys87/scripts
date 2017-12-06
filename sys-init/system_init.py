@@ -60,6 +60,7 @@ class InstallPackages(utils.Task):
         'bvi',
         'ccache',
         'convmv',
+        'curl',
         'git',
         {'apt': 'glibc-doc'},
         'htop',
