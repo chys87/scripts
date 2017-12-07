@@ -78,7 +78,6 @@ grep_options='--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude-dir=.
 alias grep='grep '"$grep_options"
 alias egrep='egrep '"$grep_options"
 alias fgrep='fgrep '"$grep_options"
-alias make='make </dev/null'
 unset -v grep_options
 
 _warn_dangerous_command() {
