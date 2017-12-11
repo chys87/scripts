@@ -471,7 +471,7 @@ guess_and_set_locales() {
 	fi
 
 	# If there's no clue, but DISPLAY or SSH_TTY is set, let's guess UTF-8
-	if [[ -z "$preset" && ( -n "$DISPLAY" || -n "$SSH_TTY" ) ]]; then
+	if [[ -z "$preset" && ( -n "$DISPLAY" || -n "$SSH_TTY" || -n "$SSH2_CLIENT" ) ]]; then
 		charset='UTF-8'
 	fi
 
