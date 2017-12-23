@@ -55,6 +55,14 @@ if [[ "$CFLAGS" == *-U_FORTIFY_SOURCE* ]]; then
 	esac
 fi
 
+# Disable some patches
+case "$CATEGORY/$PN" in
+	sys-devel/gcc)
+		export EPATCH_EXCLUDE+=" 10_all_default-fortify-source.patch"
+		einfo "Disabling 10_all_default-fortify-source.patch"
+		;;
+esac
+
 if [[ -f ${ROOT}/etc/portage/x32list ]]; then
 	# Don't use fgrep. Portage warns about it.
 	while read -r x32package; do
