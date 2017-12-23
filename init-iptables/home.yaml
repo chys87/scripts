@@ -4,6 +4,7 @@ tcp:
     distcc: accept
     rsync: accept
     2554-2559: accept
+    8080: accept
     default: drop
 udp:
     0-1023: drop
