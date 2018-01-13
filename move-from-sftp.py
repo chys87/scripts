@@ -62,16 +62,16 @@ def main():
             sys.exit(f'{name} is not a directory')
 
     lftp_cmds = [
-        f'open {args.remote}',
+        f'open {args.remote} || exit 1',
     ]
     if args.rate_limit:
         lftp_cmds.append(f'set net:limit-rate {args.rate_limit}K')
     lftp_cmds += [
-        'glob --exist *',
+        'glob --exist * || exit 0',
         'mget -c -E *',
     ]
 
-    lftp_cmd = ' && '.join(lftp_cmds)
+    lftp_cmd = ' ; '.join(lftp_cmds)
     cmd = ['lftp', '-c', lftp_cmd]
     print(cmd)
 
