@@ -36,15 +36,24 @@
 import argparse
 import fcntl
 import os
+import shlex
 import subprocess
 import sys
+
+
+def fetch_dir_structure(host, src, temp):
+    dirs_str = subprocess.check_output(
+        ['ssh', host,
+         f'cd {shlex.quote(src)} && {{ find -type d -delete; find -type d -print0 }} 2>/dev/null'])
+    return list(filter(None, dirs_str.decode('utf-8').split('\0')))
 
 
 def main():
     parser = argparse.ArgumentParser(
         description='MOVE files from remote SFTP server')
     parser.add_argument('lock', help='Lock file')
-    parser.add_argument('remote', help='Remote address')
+    parser.add_argument('host', help='Remote host')
+    parser.add_argument('src', help='Remote src dir')
     parser.add_argument('temp', help='Local temporary dir')
     parser.add_argument('dest', help='Location destination dir')
     parser.add_argument('-r', '--rate-limit', type=int,
@@ -61,15 +70,28 @@ def main():
         if not os.path.isdir(name):
             sys.exit(f'{name} is not a directory')
 
+    subdirs = fetch_dir_structure(args.host, args.src, args.temp)
+
     lftp_cmds = [
-        f'open {args.remote} || exit 1',
+        f'open sftp://{args.host}{args.src} || exit 1',
     ]
     if args.rate_limit:
         lftp_cmds.append(f'set net:limit-rate {args.rate_limit}K')
-    lftp_cmds += [
-        'glob --exist * || exit 0',
-        'mget -c -E *',
-    ]
+
+    for subdir in subdirs:
+
+        subtemp = os.path.join(args.temp, subdir)
+
+        if subdir != '.':
+            os.makedirs(subtemp, exist_ok=True)
+
+        lftp_cmds += [
+            f'cd {shlex.quote(subdir)} || exit 1',
+            f'lcd {shlex.quote(subdir)} || exit 1',
+            'glob --not-exist * || mget -c -E * || exit 1',
+            'cd -',
+            'lcd -',
+        ]
 
     lftp_cmd = ' ; '.join(lftp_cmds)
     cmd = ['lftp', '-c', lftp_cmd]
