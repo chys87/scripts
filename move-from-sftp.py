@@ -41,18 +41,33 @@ import subprocess
 import sys
 
 
-def move_finished_file(args, name):
-    print(f'Moving {name} from {args.temp} to {args.dest}')
-    os.makedirs(os.path.join(args.dest, os.path.dirname(name)), exist_ok=True)
-    os.rename(name, name, src_dir_fd=args.temp_fd, dst_dir_fd=args.dest_fd)
+def ensure_dirs_for_files(base, files):
+    ensured_dirs = set()
+    for name in files:
+        dirname = os.path.dirname(name)
+        if dirname not in ensured_dirs:
+            full = os.path.join(base, dirname)
+            print(f'Mkdir {full}')
+            os.makedirs(full, exist_ok=True)
+            ensured_dirs.add(dirname)
+
+
+def move_finished_files(args, names):
+    ensure_dirs_for_files(args.dest, names)
+
+    print(f'Moving {len(names)} files from {args.temp} to {args.dest}')
+    for name in names:
+        os.rename(name, name, src_dir_fd=args.temp_fd, dst_dir_fd=args.dest_fd)
 
 
 def find_local_finished_files(args, remote_file_set):
+    res = []
     for dirpath, dirnames, filenames, dirfd in os.fwalk('.', dir_fd=args.temp_fd):
         for name in filenames:
             full = os.path.normpath(os.path.join(dirpath, name))
             if full not in remote_file_set:
-                yield full
+                res.append(full)
+    return res
 
 
 def fetch_remote_files(args):
@@ -70,7 +85,12 @@ def fetch_remote_files(args):
 
 
 def transfer(args, file_list, size):
-    print(f'Transferring {len(file_list)} files, total size {size/1048576} MiB')
+    if not file_list:
+        return
+
+    ensure_dirs_for_files(args.temp, file_list)
+
+    print(f'Downloading {len(file_list)} files, total size {size/1048576} MiB')
 
     lftp_cmds = [
         f'open sftp://{args.host}{args.src} || exit 1',
@@ -78,22 +98,14 @@ def transfer(args, file_list, size):
     if args.rate_limit:
         lftp_cmds.append(f'set net:limit-rate {args.rate_limit}K')
 
-    for filename in file_list:
-        subdir = os.path.dirname(filename)
-
-        os.makedirs(os.path.join(args.temp, subdir), exist_ok=True)
-
-        lftp_cmds += [
-            f'get -c -E {shlex.quote(filename)} -o {shlex.quote(filename)} || exit 1',
-        ]
+    lftp_cmds.append('get -c -E ' + ' '.join(f'{quoted} -o {quoted}' for quoted in map(shlex.quote, file_list)))
 
     lftp_cmd = ' ; '.join(lftp_cmds)
     cmd = ['lftp', '-c', lftp_cmd]
     # print(cmd)
     subprocess.check_call(cmd, cwd=args.temp)
 
-    for filename in file_list:
-        move_finished_file(args, filename)
+    move_finished_files(args, file_list)
 
 
 def clean_empty_temp_dirs(args):
@@ -116,9 +128,6 @@ def main():
                         help='Rate limit in KiB/s')
     args = parser.parse_args()
 
-    args.temp_fd = os.open(args.temp, os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
-    args.dest_fd = os.open(args.dest, os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
-
     f = open(args.lock, 'a')
     try:
         fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -129,11 +138,13 @@ def main():
         if not os.path.isdir(name):
             sys.exit(f'{name} is not a directory')
 
+    args.temp_fd = os.open(args.temp, os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
+    args.dest_fd = os.open(args.dest, os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
+
     files = fetch_remote_files(args)
 
     file_set = set(item[0] for item in files)
-    for filename in find_local_finished_files(args, file_set):
-        move_finished_file(args, filename)
+    move_finished_files(args, find_local_finished_files(args, file_set))
 
     trans_file_list = []
     trans_file_list_size = 0
