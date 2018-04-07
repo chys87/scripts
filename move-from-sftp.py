@@ -81,7 +81,7 @@ def transfer(args, file_list, size):
     for filename in file_list:
         subdir = os.path.dirname(filename)
 
-        os.makedirs(os.path.join(args.dest, subdir), exist_ok=True)
+        os.makedirs(os.path.join(args.temp, subdir), exist_ok=True)
 
         lftp_cmds += [
             f'get -c -E {shlex.quote(filename)} -o {shlex.quote(filename)} || exit 1',
