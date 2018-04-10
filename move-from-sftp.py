@@ -41,19 +41,24 @@ import subprocess
 import sys
 
 
-def ensure_dirs_for_files(base, files):
+def ensure_dirs_for_files(dir_fd, base, files):
     ensured_dirs = set()
     for name in files:
         dirname = os.path.dirname(name)
-        if dirname not in ensured_dirs:
+        if dirname in ensured_dirs:
+            continue
+        ensured_dirs.add(dirname)
+        if not os.access(dirname, os.F_OK, dir_fd=dir_fd):
             full = os.path.join(base, dirname)
             print(f'Mkdir {full}')
             os.makedirs(full, exist_ok=True)
-            ensured_dirs.add(dirname)
 
 
 def move_finished_files(args, names):
-    ensure_dirs_for_files(args.dest, names)
+    if not names:
+        return
+
+    ensure_dirs_for_files(args.dest_fd, args.dest, names)
 
     print(f'Moving {len(names)} files from {args.temp} to {args.dest}')
     for name in names:
@@ -62,7 +67,8 @@ def move_finished_files(args, names):
 
 def find_local_finished_files(args, remote_file_set):
     res = []
-    for dirpath, dirnames, filenames, dirfd in os.fwalk('.', dir_fd=args.temp_fd):
+    for dirpath, dirnames, filenames, dirfd in os.fwalk('.',
+                                                        dir_fd=args.temp_fd):
         for name in filenames:
             full = os.path.normpath(os.path.join(dirpath, name))
             if full not in remote_file_set:
@@ -73,24 +79,37 @@ def find_local_finished_files(args, remote_file_set):
 def fetch_remote_files(args):
     files_str = subprocess.check_output(
         ['ssh', args.host,
-         f'cd {shlex.quote(args.src)} && {{ find -type d -delete; find -type f -printf \'%p\\0%s\\0\' }} 2>/dev/null'])
+         f'cd {shlex.quote(args.src)} && ' +
+         "{ find -type d -delete; find -type f -printf \'%p\\0%s\\0\' } " +
+         '2>/dev/null'])
 
     parts = files_str.decode('utf-8').split('\0')
-    files = [
-        (os.path.normpath(filename), int(size))
-        for (filename, size) in zip(parts[::2], parts[1::2])
-    ]
-    files.sort(key=lambda item: item[1])
-    return files
+
+    res = []
+
+    for filename, size in zip(parts[::2], parts[1::2]):
+        filename = os.path.normpath(filename)
+        total_size = int(size)
+
+        try:
+            fetched_size = os.stat(filename, dir_fd=args.temp_fd).st_size
+        except FileNotFoundError:
+            fetched_size = 0
+
+        res.append((filename, total_size - fetched_size))
+
+    res.sort(key=lambda item: item[1])
+    return res
 
 
 def transfer(args, file_list, size):
     if not file_list:
         return
 
-    ensure_dirs_for_files(args.temp, file_list)
+    ensure_dirs_for_files(args.temp_fd, args.temp, file_list)
 
-    print(f'Downloading {len(file_list)} files, total size {size/1048576} MiB')
+    print(f'Downloading {len(file_list)} files, '
+          f'total size {size/1048576:.2f} MiB')
 
     lftp_cmds = [
         f'open sftp://{args.host}{args.src} || exit 1',
@@ -98,22 +117,24 @@ def transfer(args, file_list, size):
     if args.rate_limit:
         lftp_cmds.append(f'set net:limit-rate {args.rate_limit}K')
 
-    lftp_cmds.append('get -c -E ' + ' '.join(f'{quoted} -o {quoted}' for quoted in map(shlex.quote, file_list)))
+    lftp_cmds.append('get -c -E ' + ' '.join(
+        f'{quoted} -o {quoted}' for quoted in map(shlex.quote, file_list)))
 
     lftp_cmd = ' ; '.join(lftp_cmds)
     cmd = ['lftp', '-c', lftp_cmd]
-    # print(cmd)
     subprocess.check_call(cmd, cwd=args.temp)
 
     move_finished_files(args, file_list)
 
 
 def clean_empty_temp_dirs(args):
-    for dirpath, dirnames, filenames, dirfd in os.fwalk('.', topdown=False, dir_fd=args.temp_fd):
-        try:
-            os.rmdir(dirpath, dir_fd=args.temp_fd)
-        except OSError:
-            pass
+    for dirpath, dirnames, filenames, dirfd in os.fwalk('.', topdown=False,
+                                                        dir_fd=args.temp_fd):
+        if not dirnames and not filenames:
+            try:
+                os.rmdir(dirpath, dir_fd=args.temp_fd)
+            except OSError:
+                pass
 
 
 def main():
@@ -126,6 +147,13 @@ def main():
     parser.add_argument('dest', help='Location destination dir')
     parser.add_argument('-r', '--rate-limit', type=int,
                         help='Rate limit in KiB/s')
+    parser.add_argument('-M', '--max-mb-per-transfer', type=int, default=100,
+                        help='Max number of mebibytes for each transfer'
+                             ' (default: 100)')
+    parser.add_argument('-N', '--max-files-per-transfer',
+                        type=int, default=100,
+                        help='Max number of files for each transfer'
+                             ' (default: 100)')
     args = parser.parse_args()
 
     f = open(args.lock, 'a')
@@ -138,8 +166,10 @@ def main():
         if not os.path.isdir(name):
             sys.exit(f'{name} is not a directory')
 
-    args.temp_fd = os.open(args.temp, os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
-    args.dest_fd = os.open(args.dest, os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
+    args.temp_fd = os.open(args.temp,
+                           os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
+    args.dest_fd = os.open(args.dest,
+                           os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
 
     files = fetch_remote_files(args)
 
@@ -150,13 +180,17 @@ def main():
     trans_file_list_size = 0
     for filename, size in files:
 
-        trans_file_list.append(filename)
-        trans_file_list_size += size
+        if trans_file_list and (
+                len(trans_file_list) >= args.max_files_per_transfer or
+                trans_file_list_size + size >
+                args.max_mb_per_transfer * 1048576):
 
-        if trans_file_list_size >= 100*1024*1024 or len(trans_file_list) >= 100:
             transfer(args, trans_file_list, trans_file_list_size)
             trans_file_list = []
             trans_file_list_size = 0
+
+        trans_file_list.append(filename)
+        trans_file_list_size += size
 
     if trans_file_list:
         transfer(args, trans_file_list, trans_file_list_size)
