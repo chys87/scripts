@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name        Zhihu links
 // @namespace   http://chys.info
-// @description Remove link.zhihu.com
+// @description Misc zhihu improvements
 // @include     http*://*.zhihu.com/*
 // @include     http*://zhihu.com/*
 // @version     1
 // @grant       none
 // ==/UserScript==
 
+// Remove link.zhihu.com
 {
   function handler() {
     let nodes = document.querySelectorAll('a[href*="link.zhihu.com"]');
@@ -29,4 +30,11 @@
   });
 
   handler();
+}
+
+// Override fonts
+{
+  let node = document.createElement('style');
+  node.textContent = 'body { font-family: sans-serif; }';
+  document.body.appendChild(node);
 }
