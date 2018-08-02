@@ -3,7 +3,7 @@
 # vim:ts=8 sts=4 sw=4 expandtab ft=python
 
 #
-# Copyright (c) 2013, 2017, chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2017, 2018, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,20 +34,6 @@
 #
 
 '''个人所得税、社保计算器
-
-用法: salary-calc.py [选项...] <月薪> [<社保缴纳基数>]
-
-选项:
-    -c <city>, --city=<city>  选择城市
-                              (默认城市可在配置文件中指定)
-
-与网上多数计算器相比，本计算器有以下特点：
-(1) 考虑社保缴纳上限；
-(2) 考虑实际工资与社保缴纳基数不一致的问题；
-(3) 通过配置文件自行设置各项缴纳比例。
-
-配置文件 salary-calc.conf 放在本程序同一目录下，数据自行添加修改。
-格式参见示例配置文件注释
 '''
 
 import argparse
@@ -127,7 +113,7 @@ class Tax:
         item = table[i]
 
         # 年终奖：速算扣除数不乘以12（神奇的中国税务！）
-        return salary * item.pp / 100 - item.deduct
+        return salary * item.pp / 100 - item.deduct, item.pp
 
 
 class SocialSecurity:
@@ -245,7 +231,7 @@ def main():
     security_employer_sum = sum(a for (_, _, a) in security)
     security_sum = security_employee_sum + security_employer_sum
     taxable = salary - security_employee_sum
-    tax = Tax(config).calc(taxable, year_end=year_end)
+    tax, marginal_pp = Tax(config).calc(taxable, year_end=year_end)
 
     if not year_end:
         print('== 所在城市 ==')
@@ -275,6 +261,7 @@ def main():
     if not year_end:
         print('{}{:>15.2f}'.format(txtl('扣除社保后工资', 20), taxable))
     print('{}{:>15.2f}'.format(txtl('个人所得税', 20), tax))
+    print('{}{:>15.2f}%'.format(txtl('边际税率', 20), marginal_pp))
     print()
     print('== 结论 ==')
     print('{}{:>15.2f}'.format(txtl('税前工资', 20), salary))
