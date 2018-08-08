@@ -6,6 +6,9 @@
 [core]
 	pager = less -+$LESS -isR
 	quotepath = off
+[pager]
+	branch = less
+	tag = less
 [gc]
 	autoDetach = false
 [alias]
