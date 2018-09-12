@@ -377,7 +377,7 @@ if [ -n "$ZSH_VERSION" ]; then
 	__last_vcs_info_time=0
 
 	precmd_vcs_info_cmd_test() {
-		if [[ ! "$1" =~ *"$2"* ]]; then
+		if [[ ! "$1" == *"$2"* ]]; then
 			return 1
 		elif [[ "$1" =~ ^\ *(git|q?svn)\ +(blame|diff|log|status)(\ |$) ]]; then
 			return 1
