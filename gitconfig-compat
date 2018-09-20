@@ -12,6 +12,7 @@
 [gc]
 	autoDetach = false
 [alias]
+	a = add
 	br = branch
 	ci = commit
 	co = checkout
@@ -19,6 +20,7 @@
 	pl = pull
 	plr = pull --rebase
 	ps = push
+	r = rebase
 	st = status
 	fgrep = grep -F
 	egrep = grep -E
