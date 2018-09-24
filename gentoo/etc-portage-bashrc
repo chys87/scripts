@@ -90,11 +90,13 @@ if [ "$EBUILD_PHASE" != 'depend' ]; then
 	einfo "Ebuild phase: $EBUILD_PHASE"
 fi
 
-# Don't do it in prepare.
-# First, EAPI<2 has no prepare or configure phase;
-# Second. It's better to wait until all ebuild patches have been applied.
+# It's best to apply in it "prepare", however, we also need to try it again in configure and compile
+# a) EAPI<2 has no prepare or configure phase;
+# b) For some packages, it may be better to wait until all ebuild patches have been applied
+# (TODO - support configuring this behavior in inclusions.pyon)
+# We used to simply skip "prepare", but that doesn't work if we modified configure.ac
 case "$EBUILD_PHASE" in
-	configure|compile)
+	prepare|configure|compile)
 		autopatch;;
 esac
 

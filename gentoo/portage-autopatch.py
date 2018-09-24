@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 import argparse
+import ast
 import glob
 import os
 import subprocess as sp
 import sys
 
 from portage.output import EOutput
-import yaml
 
 
 class AutoPatcher:
@@ -21,14 +21,14 @@ class AutoPatcher:
         self.eerror = self._eout.eerror
 
     def _inclusions(self):
-        filename = os.path.join(self.patch_overlay, 'inclusions.yaml')
+        filename = os.path.join(self.patch_overlay, 'inclusions.pyon')
         try:
             with open(filename) as f:
-                yaml_text = f.read()
+                pyon_text = f.read()
         except FileNotFoundError:
             return {}
         else:
-            return yaml.load(yaml_text)
+            return ast.literal_eval(pyon_text)
 
     def find_patches(self, prefix):
         return (glob.glob('{}/{}.*.patch'.format(self.patch_overlay, prefix)) +
