@@ -61,7 +61,7 @@ class AutoPatcher:
 
         self.einfo('Applying patch {} to {}'.format(patch, dst_dir))
 
-        for level in ('-p1', '-p0'):
+        for level in ('-p1', '-p0', '-p2'):
             code = sp.call(['patch', '--dry-run', '-f', '-d' + dst_dir, level],
                            stdin=open(patch), stdout=sp.DEVNULL)
             if code == 0:
