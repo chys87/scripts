@@ -7,8 +7,8 @@
 	pager = less -+$LESS -isR
 	quotepath = off
 [pager]
-	branch = less -+$LESS -iSRF
-	tag = less -+$LESS -iSRF
+	branch =
+	tag =
 [gc]
 	autoDetach = false
 [alias]
