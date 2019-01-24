@@ -3,7 +3,7 @@
 # vim:ts=8 sts=4 sw=4 expandtab ft=python
 
 #
-# Copyright (c) 2013, 2017, 2018, chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2017, 2018, 2019, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -89,15 +89,11 @@ class Tax:
         '''
         if year_end:
             tax_reference = salary / 12
-            exempt = 0
         else:
+            if salary <= self._exempt:
+                return 0
+            salary -= self._exempt
             tax_reference = salary
-            exempt = self._exempt
-
-        tax = 0
-        if salary <= exempt:
-            return tax
-        salary -= exempt
 
         # [i].lo < tax_reference <= [j].lo
         table = self._table
