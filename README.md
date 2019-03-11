@@ -17,7 +17,6 @@
 * `mdqp.py` (Python 2.7/3.3): [Markdown](http://en.wikipedia.org/wiki/Markdown) 格式文档快速查看器
 * `mvln.py` (Python 3): 移动和链接文件
 * `passgen.py` (Python 2.7/3): 随机密码生成器
-* `pythondep.py` (Python 2.7/3.2+): 从 Python 文件生成 Makefile 风格的依赖
 * `salary-calc.py` (Python 3.2+): 一个简单的中国社保、个人所得税计算器
 * `shellrc`: 我的 shell 配置文件 (bash/[zsh](http://www.zsh.org) 通用)
     + 注: 这个文件不能直接作为 `.bashrc` 或 `.zshrc` 文件, 而应在 `.bashrc`/`.zshrc` 末尾 source
@@ -47,7 +46,6 @@
 * `mdqp.py` (Python 2.7/3.3): A quick previewer for [Markdown](http://en.wikipedia.org/wiki/Markdown) documentation
 * `mvln.py` (Python 3): Move and symlink file
 * `passgen.py` (Python 2.7/3): Random password generator
-* `pythondep.py` (Python 2.7/3.2+): Build Makefile-style dependency for Python
 * `salary-calc.py` (Python 3.2+): A simple Chinese social security and income tax calculator
 * `shellrc`: My shell configuration file (compatible with both bash and [zsh](http://www.zsh.org))
     - Note: This file shouldn't be directly used as `.bashrc` or `.zshrc`, but sourced at the end of them.
