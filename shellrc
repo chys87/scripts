@@ -2,7 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013, 2014, 2015, 2016, 2017 chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -624,8 +624,13 @@ if [ -n "$Shell_NoHistory" ]; then
 else
 	nohist() {
 		(
-			if [[ -d "$1" ]]; then
-				cd -- "$1"
+			if [[ -n "$1" ]]; then
+				if [[ -d "$1" ]]; then
+					cd -- "$1"
+				else
+					echo "No such file or directory: $1" >&2
+					return 1
+				fi
 			fi
 			export Shell_NoHistory=1
 			exec ${BASH_VERSION:+bash}${ZSH_VERSION:+zsh}
