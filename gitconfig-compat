@@ -25,6 +25,7 @@
 	fgrep = grep -F
 	egrep = grep -E
 	pgrep = grep -P
+	wc = whatchanged
 [fetch]
 	prune = true
 [merge]
