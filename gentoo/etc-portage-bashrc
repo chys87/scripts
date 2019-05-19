@@ -24,14 +24,6 @@ add-override-bin() {
 add-override-bin
 unset -f add-override-bin
 
-if [[ "$CATEGORY" == cross-* ]] || [[ "$PF" == gcc-4.[012].* ]] || [[ "$PF" == gcc-3.* ]]; then
-	export CFLAGS='-O2'
-	export CXXFLAGS='-O2'
-elif [[ "$PF" == gcc-4.[345].* ]]; then
-	# Doesn't support corei7. -march=native resolves to -march=core2, which doesn't work well.
-	export CFLAGS='-O2 -march=core2 -mtune=generic'
-	export CXXFLAGS='-O2 -march=core2 -mtune=generic'
-fi
 # Known to fail
 # Some packages fail if FFLAGS is set. So set it only if really needed
 case "$CATEGORY/$PN" in
