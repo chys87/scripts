@@ -31,10 +31,3 @@
 
   handler();
 }
-
-// Override fonts
-{
-  let node = document.createElement('style');
-  node.textContent = 'body { font-family: sans-serif; }';
-  document.body.appendChild(node);
-}
