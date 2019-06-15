@@ -216,7 +216,8 @@ if has_executable svn && has_executable colordiff; then
 
 fi
 
-if has_executable tmux; then
+# Keep tmuxu only for old instances
+if has_executable tmux && [ -S /tmp/tmux-$UID/utf8 ]; then
 	alias tmuxu='tmux -u -Lutf8'
 fi
 
