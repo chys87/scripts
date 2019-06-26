@@ -27,12 +27,14 @@ unset -f add-override-bin
 # Known to fail
 # Some packages fail if FFLAGS is set. So set it only if really needed
 case "$CATEGORY/$PN" in
-	sci-libs/*-reference) # Reference blas/lapack can definitely compile at O3
+	sci-libs/*-reference|sci-libs/lapack) # Reference blas/lapack can definitely compile at O3
 		export CFLAGS="${CFLAGS/-O2/-O3}"
 		export FFLAGS="${CFLAGS}"
+		export FCFLAGS="${CFLAGS}"
 		;;
 	sci-mathematics/scilab|sci-libs/*-atlas|sci-libs/fftw|dev-python/numpy)
 		export FFLAGS="${CFLAGS}"
+		export FCFLAGS="${CFLAGS}"
 		;;
 esac
 
