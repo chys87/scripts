@@ -52,8 +52,8 @@ fi
 # Disable some patches
 case "$CATEGORY/$PN" in
 	sys-devel/gcc)
-		export EPATCH_EXCLUDE+=" 10_all_default-fortify-source.patch"
-		einfo "Disabling 10_all_default-fortify-source.patch"
+		export EPATCH_USER_EXCLUDE+=" *-fortify-source.patch"
+		einfo "Disabling *-fortify-source.patch"
 		;;
 esac
 
