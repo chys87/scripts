@@ -48,7 +48,7 @@ class DebianPackageManager(PackageManager):
         return res
 
     def install(self, lst):
-        subprocess.check_call(['aptitude', 'install'] + lst)
+        subprocess.check_call(['apt', 'install'] + lst)
 
 
 class InstallPackages(utils.Task):
