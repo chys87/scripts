@@ -221,7 +221,7 @@ if has_executable tmux && [ -S /tmp/tmux-$UID/utf8 ]; then
 	alias tmuxu='tmux -u -Lutf8'
 fi
 
-if [[ -n "$TMUX" || -n "$STY" || "$TERM" == screen* ]]; then
+if [[ ! -f ~/.ssh/id_rsa && ( -n "$TMUX" || -n "$STY" || "$TERM" == screen* ) ]]; then
 	for guesser in guess-ssh-agent guess-ssh-agent.sh; do
 		if has_executable "$guesser"; then
 			alias git="$guesser git"
