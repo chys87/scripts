@@ -651,6 +651,8 @@ fi
 
 set -o emacs
 
+umask 022
+
 if [ -f ~/.shellrc.local ]; then
 	. ~/.shellrc.local
 fi
