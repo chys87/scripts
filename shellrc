@@ -609,7 +609,7 @@ if [ -n "$ZSH_VERSION" ]; then
 	# TODO?: Fix PageUp/PageDown keys
 
 	# It appears LS_COLORS is not set by default.
-	[ -z "$LS_COLORS" ] && eval "$(dircolors)"
+	has_executable dircolors && eval "$(dircolors)"
 
 fi # Zsh-specific
 
