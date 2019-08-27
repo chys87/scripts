@@ -351,7 +351,7 @@ case "$TERM" in
 			if [ "$__default_shell" != "$sh" ]; then
 				prefix="[$sh]"
 			fi
-			if [[ -z "$__DONT_SCREAM_AT_GB" && ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
+			if [[ -z "$__DONT_SCREAM_AT_GB" && ${LC_ALL:-${LC_CTYPE:-${LANG:-${LANGUAGE}}}} == *.[Gg][Bb]* ]]; then
 				prefix="[GB]$prefix"
 			fi
 			if [[ -n "$prefix" ]]; then
@@ -452,7 +452,15 @@ precmd() {
 
 # Set locales
 guess_and_set_locales() {
-	local preset="${LC_ALL:-${LC_CTYPE:-${LANG}}}"
+	local preset
+	local try_preset
+	for try_preset in "$LC_ALL" "$LC_CTYPE" "$LANG" "$LANGUAGE"; do
+		if [[ -n "$try_preset" && "$try_preset" != C && "$try_preset" != POSIX ]]; then
+			preset="$try_preset"
+			break
+		fi
+	done
+
 	local charset
 	if [[ "$preset" =~ .*\.[Uu][Tt][Ff]-?8$ ]]; then
 		charset='UTF-8'
