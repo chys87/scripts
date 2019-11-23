@@ -4,6 +4,7 @@
 
 * `android-power.sh`: 通过ADB模拟按Android的电源键
 * `android-screencap.sh`: 通过ADB对Android进行截屏
+* `daemon-run.py`: 异步执行命令
 * `gentoo`: [Gentoo](http://gentoo.org/) 专用脚本
     * `etc-portage-bashrc`: 我的 `/etc/portage/bashrc` 文件
     + `view-ebuild.sh` (bash): 快速查看 Gentoo 的 ebuild 文件
@@ -33,6 +34,7 @@
 
 * `android-power.sh`: Send the power button event to Android via ADB
 * `android-screencap.sh`: Make screenshot of Android via ADB
+* `daemon-run.py`: Run commands asynchronously
 * `gentoo`: [Gentoo](http://gentoo.org/)-specific scripts
     * `etc-portage-bashrc`: My `/etc/portage/bashrc`
     + `view-ebuild.sh` (bash): View ebuild files of Gentoo Linux
