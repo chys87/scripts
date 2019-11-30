@@ -116,6 +116,8 @@ set list listchars=tab:>\ ,trail:~,extends:>
 nmap <Tab> :tabn<CR>
 nmap <C-Tab> :tabn<CR>
 nmap <S-Tab> :tabp<CR>
+nmap < :tabp<CR>
+nmap > :tabn<CR>
 
 " Define Ctrl-\ to open definition in a new tab
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
