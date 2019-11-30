@@ -93,7 +93,7 @@ def executor(q):
                 pprint.pformat(req), str(e)))
         else:
             info('Done with request: {} ret code: {}'.format(
-                pprint.pformat(req), ret))
+                pprint.pformat(req), ret), end='\n'*5)
         finally:
             current_proc = None
 
