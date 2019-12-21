@@ -75,20 +75,27 @@ def error(*args, **kwargs):
     colorize(*args, color='31;1', **kwargs)
 
 
+current_proc = None
+
+
 def executor(q):
+    global current_proc
     while True:
         req = q.get()
         if req is None:
             break
         info('Handling request: {}'.format(pprint.pformat(req)))
         try:
-            ret = subprocess.call(req['cmd'], cwd=req['pwd'])
+            current_proc = subprocess.Popen(req['cmd'], cwd=req['pwd'])
+            ret = current_proc.wait()
         except (KeyError, TypeError, ValueError, OSError) as e:
             error('Failed to execute command {}: {}'.format(
-                req['cmd'], str(e)))
+                pprint.pformat(req), str(e)))
         else:
             info('Done with request: {} ret code: {}'.format(
                 pprint.pformat(req), ret))
+        finally:
+            current_proc = None
 
 
 def daemon_handle(q, conn):
@@ -116,7 +123,25 @@ def daemon_handle(q, conn):
         conn.close()
 
     info('Parsed request: {}'.format(pprint.pformat(req)))
-    q.put(req)
+
+    cmd = req.get('cmd', ())
+    if cmd and cmd[0] == '--kill':
+        proc = current_proc
+        if proc:
+            for i in range(20):
+                if proc.poll() is not None:
+                    break
+                else:
+                    proc.terminate()
+                    info('Sent SIGTERM to current process')
+                    time.sleep(0.1)
+            else:
+                proc.kill()
+                info('Sent SIGKILL to current process')
+        else:
+            error('No current process to kill')
+    else:
+        q.put(req)
 
 
 def daemon():
