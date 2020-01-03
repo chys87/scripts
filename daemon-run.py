@@ -85,8 +85,12 @@ def executor(q):
         if req is None:
             break
         info('Handling request: {}'.format(pprint.pformat(req)))
+        env = os.environ.copy()
+        new_env = req.get('environ')
+        if new_env:
+            env.update(new_env)
         try:
-            current_proc = subprocess.Popen(req['cmd'], cwd=req['pwd'])
+            current_proc = subprocess.Popen(req['cmd'], cwd=req['pwd'], env=env)
             ret = current_proc.wait()
         except (KeyError, TypeError, ValueError, OSError) as e:
             error('Failed to execute command {}: {}'.format(
@@ -192,6 +196,14 @@ def get_cwd():
         return real
 
 
+def select_environ():
+    env = {}
+    for key in ['PATH']:
+        if key in os.environ:
+            env[key] = os.environ[key]
+    return env
+
+
 def client():
     path = get_socket_path()
     s = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
@@ -199,6 +211,7 @@ def client():
     msg = {
         'pwd': get_cwd(),
         'cmd': sys.argv[1:],
+        'environ': select_environ(),
     }
     info(pprint.pformat(msg))
     # Force version 2 so that Python 2 and 3 can be used interchagably
