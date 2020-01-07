@@ -2,7 +2,8 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019, chys <admin@CHYS.INFO>
+# Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
+#               chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -214,11 +215,6 @@ if has_executable svn && has_executable colordiff; then
 
 	alias svn=_svn_wrapper
 
-fi
-
-# Keep tmuxu only for old instances
-if has_executable tmux && [[ -S /tmp/tmux-$UID/utf8 || -S ~/tmp/tmux-$UID/utf8 ]]; then
-	alias tmuxu='tmux -u -Lutf8'
 fi
 
 if [[ ! -f ~/.ssh/id_rsa && ( -n "$TMUX" || -n "$STY" || "$TERM" == screen* ) ]]; then
