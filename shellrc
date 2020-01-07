@@ -628,7 +628,7 @@ else # zsh
 fi
 if [ -n "$Shell_NoHistory" ]; then
 	PS1="(nohist) $PS1"
-	HISTFILE=/tmp/.nohist
+    HISTFILE=/tmp/.nohist.$USER
 else
 	nohist() {
 		(
