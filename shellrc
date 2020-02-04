@@ -75,6 +75,7 @@ alias cdp='cd -P'
 has_executable lsof && alias lsof='lsof -n'
 has_executable traceroute && alias traceroute='traceroute -n'
 has_executable netstat && alias netstat='netstat -n'
+has_executable apt && alias apt='nice ionice -c 3 apt'
 grep_options='--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude-dir=.hg'
 alias grep='grep '"$grep_options"
 alias egrep='egrep '"$grep_options"
