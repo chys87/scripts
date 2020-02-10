@@ -493,6 +493,9 @@ guess_and_set_locales() {
 				break
 			fi
 		done
+	# Also assume UTF-8 in xterm/screen
+	elif [[ ( "$TERM" == screen* || "$TERM" == 'xterm' ) && -z "$preset" && -z "$charset" ]]; then
+		charset='UTF-8'
 	fi
 
 	if [[ -n "$charset" ]]; then
