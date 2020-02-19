@@ -1,5 +1,5 @@
 "
-" Copyright (c) 2013, 2014, 2015, 2016, chys <admin@CHYS.INFO>
+" Copyright (c) 2013, 2014, 2015, 2016, 2020, chys <admin@CHYS.INFO>
 "
 " Redistribution and use in source and binary forms, with or without
 " modification, are permitted provided that the following conditions
@@ -66,9 +66,10 @@ set wildmode=full
 set mouse=a
 set backspace=indent,eol,start " More liberal use of backspace
 
-colorscheme delek
+"colorscheme delek
 "colorscheme louver
 if (has("gui_running"))
+	colorscheme evening
 	set guifont=MonoSpace\ 8
 	"set guifont=DejaVu\ Sans\ Mono\ 8
 
@@ -79,6 +80,7 @@ if (has("gui_running"))
 	set guioptions-=T "Hide toolbar
 	set guioptions-=m "Hide menu
 else
+	colorscheme default
 
 	" Reduce delay after Esc
 	set ttimeout ttimeoutlen=50
