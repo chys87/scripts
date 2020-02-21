@@ -80,7 +80,7 @@ if (has("gui_running"))
 	set guioptions-=T "Hide toolbar
 	set guioptions-=m "Hide menu
 else
-	colorscheme default
+	colorscheme delek
 
 	" Reduce delay after Esc
 	set ttimeout ttimeoutlen=50
