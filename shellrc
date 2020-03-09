@@ -458,6 +458,11 @@ precmd() {
 
 # Set locales
 guess_and_set_locales() {
+	if [[ "$OSTYPE" == darwin* ]]; then
+		# For darwin host, we trust the system's defaults
+		return
+	fi
+
 	local preset
 	local try_preset
 	for try_preset in "$LC_ALL" "$LC_CTYPE" "$LANG" "$LANGUAGE"; do
@@ -468,7 +473,7 @@ guess_and_set_locales() {
 	done
 
 	local charset
-	if [[ "$preset" =~ .*\.[Uu][Tt][Ff]-?8$ ]]; then
+	if [[ "$preset" =~ ^(.*\.)?[Uu][Tt][Ff]-?8$ ]]; then
 		charset='UTF-8'
 	elif [[ "$preset" =~ .*\.[Uu][Tt][Ff]-?8@cjknarrow$ ]]; then
 		if [[ "$OSTYPE" == *cygwin* ]]; then
