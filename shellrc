@@ -65,7 +65,11 @@ if has_function __shellrc_tweak_predefined_variables; then
 	__shellrc_tweak_predefined_variables
 fi
 
-alias ls='ls --color=auto --file-type'
+if has_executable gls; then
+	alias ls='gls --color=auto --file-type'
+else
+	alias ls='ls --color=auto --file-type'
+fi
 alias ll='ls -l --time-style=long-iso'
 #alias rm='rm -i'
 #alias cp='cp -ip'
@@ -325,6 +329,8 @@ case "$TERM" in
 	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
 		if [ -n "$TMUX" -a "$SHLVL" -eq 1 ]; then
 			__default_shell="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
+		elif [[ "$OSTYPE" = darwin* ]]; then
+			__default_shell=zsh
 		elif [ -z "$__default_shell" -a -r /etc/passwd ]; then
 			__default_shell="$(sed -n -e '/^[^:]\+:[^:]\+:'$UID':/ { s!.*/\(.*\)!\1!p; q }' /etc/passwd)"
 			if [ "$__default_shell" = sh -a -L /bin/sh ]; then
@@ -612,7 +618,11 @@ if [ -n "$ZSH_VERSION" ]; then
 	# TODO?: Fix PageUp/PageDown keys
 
 	# It appears LS_COLORS is not set by default.
-	has_executable dircolors && eval "$(dircolors)"
+	if has_executable gdircolors; then
+		eval "$(gdircolors)"
+	elif has_executable dircolors; then
+		eval "$(dircolors)"
+	fi
 
 fi # Zsh-specific
 
