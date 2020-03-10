@@ -9,6 +9,8 @@ from . import utils
 class Skel(utils.Task):
     def run(self):
         skel = '/etc/skel'
+        if not os.path.isdir(skel):
+            return
         for name in os.listdir(skel):
             if not name.startswith('.'):
                 continue
