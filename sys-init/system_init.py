@@ -89,6 +89,7 @@ class InstallPackages(utils.Task):
         'gitk',
         'kcachegrind',
         'pqiv',
+        {'apt': ['fonts-wqy-microhei', 'fonts-wqy-zenhei']},
     ]
 
     def find_package_manager(self):
