@@ -65,12 +65,20 @@ if has_function __shellrc_tweak_predefined_variables; then
 	__shellrc_tweak_predefined_variables
 fi
 
-if has_executable gls; then
+if [[ "$OSTYPE" == darwin* ]] && has_executable gls; then
 	alias ls='gls --color=auto --file-type'
 else
 	alias ls='ls --color=auto --file-type'
 fi
 alias ll='ls -l --time-style=long-iso'
+if [[ "$OSTYPE" == darwin* ]]; then
+	for v in cp find mv rm tar xargs; do
+		if has_executable g$v; then
+			alias $v=g$v
+		fi
+	done
+	unset -v v
+fi
 #alias rm='rm -i'
 #alias cp='cp -ip'
 #alias mv='mv -i'
@@ -329,7 +337,7 @@ case "$TERM" in
 	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
 		if [ -n "$TMUX" -a "$SHLVL" -eq 1 ]; then
 			__default_shell="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
-		elif [[ "$OSTYPE" = darwin* ]]; then
+		elif [[ "$OSTYPE" == darwin* ]]; then
 			__default_shell=zsh
 		elif [ -z "$__default_shell" -a -r /etc/passwd ]; then
 			__default_shell="$(sed -n -e '/^[^:]\+:[^:]\+:'$UID':/ { s!.*/\(.*\)!\1!p; q }' /etc/passwd)"
