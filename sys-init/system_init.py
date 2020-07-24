@@ -68,6 +68,7 @@ class InstallPackages(utils.Task):
         'lftp',
         'lrzsz',
         {'apt': ['manpages-dev', 'manpages-posix']},
+        {'apt': 'ninja-build', 'default': 'ninja'},
         'p7zip',
         {'apt': ['p7zip-full', 'p7zip-rar']},
         {'apt': ['python3-pip']},
