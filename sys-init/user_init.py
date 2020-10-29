@@ -145,3 +145,22 @@ class InstallScripts(utils.Task):
             target = os.path.join(self.env.base, target)
             if not os.path.exists(link):
                 utils.auto_symlink(target, link)
+
+
+class InstallBinDirs(utils.Task):
+    root = False
+
+    _dirs = {
+        'node-tools': 'node-tools/bin',
+        'git-tools': 'git-tools',
+    }
+
+    def run(self):
+        bin_dir = os.path.join(self.env.home, 'bin.d')
+        utils.mkdirp(bin_dir)
+
+        for link, target in self._dirs.items():
+            link = os.path.join(bin_dir, link)
+            target= os.path.join(self.env.base, target)
+            if not os.path.exists(link):
+                utils.auto_symlink(target, link)
