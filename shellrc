@@ -691,4 +691,9 @@ if [ -f ~/.shellrc.local ]; then
 	. ~/.shellrc.local
 fi
 
+if [ -n "$ZSH_VERSION" ]; then
+    # This doesn't work for bash
+    alias shellrc=". $0"
+fi
+
 :
