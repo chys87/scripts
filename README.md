@@ -17,6 +17,7 @@
 * `json_pprint.py` (Python 3.2+): 简单粗暴的 JSON 格式化工具，支持一部分非标准 JSON 格式
 * `mdqp.py` (Python 2.7/3.3): [Markdown](http://en.wikipedia.org/wiki/Markdown) 格式文档快速查看器
 * `mvln.py` (Python 3): 移动和链接文件
+* `node-tools`: 常用 [Node.js](https://nodejs.org/) 工具
 * `passgen.py` (Python 2.7/3): 随机密码生成器
 * `salary-calc.py` (Python 3.2+): 一个简单的中国社保、个人所得税计算器
 * `shellrc`: 我的 shell 配置文件 (bash/[zsh](http://www.zsh.org) 通用)
@@ -47,6 +48,7 @@
 * `json_pprint.py` (Python 3.2+): Quick and dirty JSON pretty printer, supporing some nonstandard JSON
 * `mdqp.py` (Python 2.7/3.3): A quick previewer for [Markdown](http://en.wikipedia.org/wiki/Markdown) documentation
 * `mvln.py` (Python 3): Move and symlink file
+* `node-tools`: Common [Node.js](https://nodejs.org/) tools
 * `passgen.py` (Python 2.7/3): Random password generator
 * `salary-calc.py` (Python 3.2+): A simple Chinese social security and income tax calculator
 * `shellrc`: My shell configuration file (compatible with both bash and [zsh](http://www.zsh.org))
