@@ -30,7 +30,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-# Purge branches that have been merged to origin/master
+# Purge branches that have been merged to origin/master and pruned from remote
 
 set -e
 
