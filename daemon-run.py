@@ -2,7 +2,7 @@
 # coding: utf-8
 
 #
-# Copyright (c) 2019, chys <admin@CHYS.INFO>
+# Copyright (c) 2019, 2020, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -56,7 +56,10 @@ except ImportError:
 
 
 def get_socket_path():
-    return '\0/tmp/daemon-run-{}'.format(pwd.getpwuid(os.getuid()).pw_name)
+    path = '/tmp/daemon-run-{}'.format(pwd.getpwuid(os.getuid()).pw_name)
+    if sys.platform.startswith('linux'):
+        path = '\0' + path
+    return path
 
 
 def colorize(*args, **kwargs):
@@ -105,7 +108,7 @@ def executor(q):
 def daemon_handle(q, conn):
     try:
         try:
-            req_s = conn.recv(16384)
+            req_s = conn.recv(16384, socket.MSG_WAITALL)
         except socket.error as e:
             error(str(e))
             return
@@ -150,7 +153,11 @@ def daemon_handle(q, conn):
 
 def daemon():
     path = get_socket_path()
-    s = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+    try:
+        os.unlink(path)
+    except FileNotFoundError:
+        pass
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(path)
     s.listen(5)
@@ -206,7 +213,7 @@ def select_environ():
 
 def client():
     path = get_socket_path()
-    s = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     s.connect(path)
     msg = {
         'pwd': get_cwd(),
@@ -216,6 +223,7 @@ def client():
     info(pprint.pformat(msg))
     # Force version 2 so that Python 2 and 3 can be used interchagably
     s.send(pickle.dumps(msg, 2))
+    s.shutdown(socket.SHUT_WR)
     info('RECEIVED FROM DAEMON:', s.recv(4096))
 
 
