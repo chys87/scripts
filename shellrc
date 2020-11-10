@@ -371,7 +371,13 @@ case "$TERM" in
 			if [[ -n "$prefix" ]]; then
 				prefix+=' '
 			fi
-			builtin echo -ne "\033]0;${prefix}${__shellrc_display_host%%.*}: ${__shellrc_display_user}: ${pwd}\007"
+			local prompt_message=""
+			if [[ "$TERM" == screen-* ]]; then
+				# In tmux, we try to change both window title and name
+				builtin echo -ne "\033]0;${prefix}${__shellrc_display_host%%.*}: ${__shellrc_display_user}: ${pwd}\007\033k${prefix}${pwd}\033\\"
+			else
+				builtin echo -ne "\033]0;${prefix}${__shellrc_display_host%%.*}: ${__shellrc_display_user}: ${pwd}\007"
+			fi
 		}
 		;;
 	*)
