@@ -211,13 +211,32 @@ def select_environ():
     return env
 
 
+def usage():
+    print('{}: Starts a daemon'.format(sys.argv[0]))
+    print('{} [-C <WORKING_DIRECTORY>] CMD [ARGS...]'.format(sys.argv[0]))
+
+
 def client():
+    if sys.argv[1] == '--help':
+        usage()
+        return
+
+    pwd = None
+
+    args = sys.argv[1:]
+    while args:
+        if args[0] == '-C' and len(args) >= 2:
+            pwd = os.path.realpath(args[1])
+            del args[:2]
+        else:
+            break
+
     path = get_socket_path()
     s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     s.connect(path)
     msg = {
-        'pwd': get_cwd(),
-        'cmd': sys.argv[1:],
+        'pwd': pwd or get_cwd(),
+        'cmd': args,
         'environ': select_environ(),
     }
     info(pprint.pformat(msg))
