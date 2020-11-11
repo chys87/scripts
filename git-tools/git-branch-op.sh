@@ -43,8 +43,8 @@ set -e
 
 echo "Current branch: $cur_branch"
 
-if [[ "$cur_branch" == "master" ]]; then
-    FATAL "Cannot operate on master"
+if [[ "$cur_branch" == "$master" ]]; then
+    FATAL "Cannot operate on $master"
 fi
 
 if ! is_my_branch "$cur_branch"; then
@@ -60,10 +60,10 @@ case "${0##*/git-}" in
         fi
         ;;
     rebase-master|reb)
-        ECHO git checkout master
+        ECHO git checkout "$master"
         ECHO git pull
         ECHO git checkout "$cur_branch"
-        ECHO git rebase master
+        ECHO git rebase "$master"
         ;;
     *)
         echo "Unrecognized command: $0" >&2
