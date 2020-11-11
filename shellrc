@@ -88,10 +88,17 @@ has_executable lsof && alias lsof='lsof -n'
 has_executable traceroute && alias traceroute='traceroute -n'
 has_executable netstat && alias netstat='netstat -n'
 has_executable apt && alias apt='nice ionice -c 3 apt'
-grep_options='--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude-dir=.hg'
+grep_options='--color=auto --exclude-dir=.{svn,git,hg}'
 alias grep='grep '"$grep_options"
 alias egrep='egrep '"$grep_options"
 alias fgrep='fgrep '"$grep_options"
+if [[ "$OSTYPE" == darwin* ]]; then
+    for v in grep egrep fgrep; do
+        if has_executable g$v; then
+            alias $v="g$v $grep_options"
+        fi
+    done
+fi
 unset -v grep_options
 
 _warn_dangerous_command() {
