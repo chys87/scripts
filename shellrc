@@ -40,17 +40,22 @@ if [ -f ~/.shellrc.pre.local ]; then
 	. ~/.shellrc.pre.local
 fi
 
-# which behaves differently on bash and zsh
-has_executable() {
-	local IFS=:
-	local p
-	for p in ${BASH_VERSION:+${PATH}}${ZSH_VERSION:+${path}}; do
-		if [[ -x "$p/$1" ]]; then
-			return 0
-		fi
-	done
-	return 1
-}
+if [[ -n "$ZSH_VERSION" ]]; then
+    has_executable() {
+        (( $+commands[$1] ))
+    }
+else
+    has_executable() {
+        local IFS=:
+        local p
+        for p in ${PATH}; do
+            if [[ -x "$p/$1" ]]; then
+                return 0
+            fi
+        done
+        return 1
+    }
+fi
 
 has_function() {
 	declare -f "$1" &>/dev/null
