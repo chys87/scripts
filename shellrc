@@ -637,19 +637,6 @@ if [ -n "$ZSH_VERSION" ]; then
 	zstyle ':completion:*' verbose yes
     zstyle ':completion:*' menu select
 
-	bindkey -e
-
-	# Fix Home/End keys
-	bindkey '\e[H' beginning-of-line
-	bindkey '\eOH' beginning-of-line
-	bindkey '\e[1~' beginning-of-line
-	bindkey '\e[F' end-of-line
-	bindkey '\eOF' end-of-line
-	bindkey '\e[4~' end-of-line
-	# Fix Delete key
-	bindkey '\e[3~' delete-char
-	# TODO?: Fix PageUp/PageDown keys
-
 	# It appears LS_COLORS is not set by default.
 	if has_executable gdircolors; then
 		eval "$(gdircolors)"
@@ -659,6 +646,12 @@ if [ -n "$ZSH_VERSION" ]; then
 
     # Use the same colors as ls
     zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+    if [[ -r ~/external/oh-my-zsh/lib/key-bindings.zsh ]]; then
+        . ~/external/oh-my-zsh/lib/key-bindings.zsh
+    else
+        echo "~/external/oh-my-zsh/lib/key-bindings.sh not found" >&2
+    fi
 
 fi # Zsh-specific
 

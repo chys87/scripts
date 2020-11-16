@@ -122,6 +122,16 @@ class Gitconfig(utils.Task):
                 print('\tpath = {}'.format(included_file), file=f)
 
 
+class ExternalRepos(utils.Task):
+    _repos = {
+        'oh-my-zsh': 'https://github.com/ohmyzsh/ohmyzsh.git',
+    }
+
+    def run(self):
+        for name, url in self._repos.items():
+            self.env.external.clone(url, name, update=self.env.git_pull)
+
+
 class InstallScripts(utils.Task):
     root = False
 
