@@ -247,6 +247,10 @@ if [[ ! -f ~/.ssh/id_rsa && ( -n "$TMUX" || -n "$STY" || "$TERM" == screen* ) ]]
 	unset -v guesser
 fi
 
+if has_executable git; then
+    alias g=git
+fi
+
 if has_executable journalctl; then
 	alias journalctl='journalctl -o short-precise'
 fi
