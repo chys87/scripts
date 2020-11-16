@@ -110,8 +110,10 @@ _warn_dangerous_command() {
 add_dangerous() {
 	local r
 	for r; do
-		r="${r##*/}"
-		alias $r="_warn_dangerous_command $r"
+        if [[ -x "$r" ]] || { [[ "$r" != */* ]] && has_executable "$r"; }; then
+            r="${r##*/}"
+            alias $r="_warn_dangerous_command $r"
+        fi
 	done
 }
 
