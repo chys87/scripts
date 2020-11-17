@@ -652,11 +652,23 @@ if [ -n "$ZSH_VERSION" ]; then
     # Use the same colors as ls
     zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
-    if [[ -r ~/external/oh-my-zsh/lib/key-bindings.zsh ]]; then
-        . ~/external/oh-my-zsh/lib/key-bindings.zsh
-    else
-        echo "~/external/oh-my-zsh/lib/key-bindings.sh not found" >&2
+    local __oh_my_zsh=$HOME/external/oh-my-zsh
+    if [[ ! -d "$__oh_my_zsh" && "$UID" = 0 ]]; then
+        for v in /home/*/external/oh-my-zsh; do
+            if [[ -d "$v" ]]; then
+                __oh_my_zsh="$v"
+            fi
+        done
+        unset -v v
     fi
+
+    if [[ -r "$__oh_my_zsh/lib/key-bindings.zsh" ]]; then
+        . "$__oh_my_zsh/lib/key-bindings.zsh"
+    else
+        echo "oh-my-zsh/lib/key-bindings.sh not found" >&2
+    fi
+
+    unset -v __oh_my_zsh
 
 fi # Zsh-specific
 
