@@ -123,6 +123,7 @@ class Gitconfig(utils.Task):
 
 
 class ExternalRepos(utils.Task):
+    root = False
     _repos = {
         'oh-my-zsh': 'https://github.com/ohmyzsh/ohmyzsh.git',
     }
