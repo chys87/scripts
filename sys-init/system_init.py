@@ -59,6 +59,7 @@ class InstallPackages(utils.Task):
         {'apt': 'build-essential'},
         'bvi',
         'ccache',
+        'colordiff',
         'convmv',
         {'apt': 'universal-ctags', 'default': 'ctags'},
         'curl',
