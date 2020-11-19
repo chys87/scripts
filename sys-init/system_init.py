@@ -61,6 +61,7 @@ class InstallPackages(utils.Task):
         'ccache',
         'convmv',
         'curl',
+        {'apt': 'g++-multilib'},
         'git',
         {'apt': 'glibc-doc'},
         'htop',
