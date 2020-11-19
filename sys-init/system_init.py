@@ -60,6 +60,7 @@ class InstallPackages(utils.Task):
         'bvi',
         'ccache',
         'convmv',
+        {'apt': 'universal-ctags', 'default': 'ctags'},
         'curl',
         {'apt': 'g++-multilib'},
         'git',
