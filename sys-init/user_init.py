@@ -66,6 +66,9 @@ class VimPlugin(utils.Task):
     _bundles = {
         'typescript-vim': 'https://github.com/leafgarland/typescript-vim.git',
         'vim-less': 'https://github.com/groenewege/vim-less.git',
+        # Another possibility is https://github.com/dcharbon/vim-flatbuffers.git
+        # but this one seems more nicely colored
+        'zchee-vim-flatbuffers': 'https://github.com/zchee/vim-flatbuffers.git',
     }
     _autoloads = {
         'vim-pathogen': {
