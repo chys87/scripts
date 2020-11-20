@@ -65,6 +65,7 @@ class InstallPackages(utils.Task):
         'curl',
         {'apt': 'g++-multilib'},
         'git',
+        {'apt': 'gcc-doc'},
         {'apt': 'glibc-doc'},
         'htop',
         {'apt': 'ipython3', 'default': 'ipython'},
