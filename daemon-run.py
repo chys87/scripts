@@ -54,6 +54,11 @@ try:
 except ImportError:
     import pickle
 
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = OSError
+
 
 def get_socket_path():
     path = '/tmp/daemon-run-{}'.format(pwd.getpwuid(os.getuid()).pw_name)
@@ -153,10 +158,11 @@ def daemon_handle(q, conn):
 
 def daemon():
     path = get_socket_path()
-    try:
-        os.unlink(path)
-    except FileNotFoundError:
-        pass
+    if not path.startswith('\0'):
+        try:
+            os.unlink(path)
+        except FileNotFoundError:
+            pass
     s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(path)
