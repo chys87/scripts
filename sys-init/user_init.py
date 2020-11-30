@@ -178,3 +178,14 @@ class InstallBinDirs(utils.Task):
             target= os.path.join(self.env.base, target)
             if not os.path.exists(link):
                 utils.auto_symlink(target, link)
+
+
+class Mkdir(utils.Task):
+    _dirs = [
+        'tmp',
+    ]
+
+    def run(self):
+        for dirname in self._dirs:
+            path = os.path.join(self.env.home, dirname)
+            utils.mkdirp(path)
