@@ -86,7 +86,6 @@ class InstallPackages(utils.Task):
         'strace',
         'tmux',
         'tree',
-        'unison',
         'unzip',
         'valgrind',
         'zip',
