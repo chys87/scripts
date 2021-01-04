@@ -57,6 +57,7 @@ class InstallPackages(utils.Task):
     _packages = [
         'autoconf',
         {'apt': 'build-essential'},
+        {'apt': 'binutils-doc'},
         'bvi',
         'ccache',
         'colordiff',
