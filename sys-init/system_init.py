@@ -91,6 +91,7 @@ class InstallPackages(utils.Task):
         'valgrind',
         'zip',
         'zsh',
+        'zstd',
     ]
     _x_packages = [
         'dia',
