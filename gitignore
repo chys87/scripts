@@ -36,7 +36,6 @@ __pycache__/
 node_modules/
 
 # General
-log/
 *.log
 .cache/
 *.bak
