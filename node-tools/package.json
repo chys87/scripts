@@ -10,7 +10,7 @@
   "private": true,
   "license": "ISC",
   "dependencies": {
-    "commitizen": "^4.2.2",
-    "npm-check-updates": "^9.2.3"
+    "commitizen": "^4.2.3",
+    "npm-check-updates": "^11.0.0"
   }
 }
