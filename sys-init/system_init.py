@@ -56,6 +56,7 @@ class InstallPackages(utils.Task):
 
     _packages = [
         'autoconf',
+        {'apt': 'bind9-dnsutils'},
         {'apt': 'build-essential'},
         {'apt': 'binutils-doc'},
         'bvi',
