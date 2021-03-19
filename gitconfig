@@ -30,8 +30,6 @@
 	prune = true
 [merge]
 	defaultToUpstream = true
-[push]
-	default = upstream
 [pull]
 	rebase = false
 [credential]
