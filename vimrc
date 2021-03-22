@@ -181,6 +181,7 @@ com Tab4 setl et ts=4 sts=4 sw=4
 " Homebrew installs it to /usr/local/share/clang/clang-format.py
 let g:clang_format_candidates = glob("/usr/{local/,}share/clang/{clang-format-*/,}clang-format.py", 1, 1)
 if !empty(g:clang_format_candidates)
+	let g:clang_format_fallback_style = "Google"
 	if has("python")
 		map <expr> <C-C><C-F> ":pyf ".g:clang_format_candidates[0]."<CR>"
 	elseif has("python3")
