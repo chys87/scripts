@@ -61,6 +61,7 @@ class InstallPackages(utils.Task):
         {'apt': 'binutils-doc'},
         'bvi',
         'ccache',
+        'clang-format',
         'colordiff',
         'convmv',
         {'apt': 'universal-ctags', 'default': 'ctags'},
@@ -90,6 +91,7 @@ class InstallPackages(utils.Task):
         'tree',
         'unzip',
         'valgrind',
+        {'apt': 'vim-nox', 'default': 'vim'},
         'zip',
         'zsh',
         'zstd',
@@ -146,7 +148,8 @@ class InstallPackages(utils.Task):
 
 class DefaultEditor(utils.Task):
     normal_user = False
-    _preferred = '/usr/bin/vim.basic'
+    _preferred = ['/usr/bin/vim.nox',
+                  '/usr/bin/vim.basic']
 
     def run(self):
         try:
@@ -157,6 +160,10 @@ class DefaultEditor(utils.Task):
         if '/vim' in editor:
             return
 
-        if os.access(self._preferred, os.X_OK):
-            subprocess.check_call(['update-alternatives', '--set',
-                                   'editor', self._preferred])
+        for name in self._preferred:
+            if os.access(name, os.X_OK):
+                subprocess.check_call(['update-alternatives', '--set',
+                                       'vim', name])
+                subprocess.check_call(['update-alternatives', '--set',
+                                       'editor', name])
+                break

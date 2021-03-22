@@ -176,6 +176,19 @@ com Tab2 setl et ts=2 sts=2 sw=2
 com Tab4 setl et ts=4 sts=4 sw=4
 
 
+" clang-format.py
+" Debian installs it to /usr/share/clang/clang-format-*/clang-format.py
+" Homebrew installs it to /usr/local/share/clang/clang-format.py
+let g:clang_format_candidates = glob("/usr/{local/,}share/clang/{clang-format-*/,}clang-format.py", 1, 1)
+if !empty(g:clang_format_candidates)
+	if has("python")
+		map <expr> <C-C><C-F> ":pyf ".g:clang_format_candidates[0]."<CR>"
+	elseif has("python3")
+		map <expr> <C-C><C-F> ":py3f ".g:clang_format_candidates[0]."<CR>"
+	endif
+endif
+
+
 " Source configurations specific to one machine
 if filereadable(expand("~/.vimrc.local"))
 	source ~/.vimrc.local
