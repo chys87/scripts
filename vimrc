@@ -177,9 +177,10 @@ com Tab4 setl et ts=4 sts=4 sw=4
 
 
 " clang-format.py
+" Gentoo installs it to /usr/lib/llvm/*/share/clang/clang-format.py
 " Debian installs it to /usr/share/clang/clang-format-*/clang-format.py
 " Homebrew installs it to /usr/local/share/clang/clang-format.py
-let g:clang_format_candidates = glob("/usr/{local/,}share/clang/{clang-format-*/,}clang-format.py", 1, 1)
+let g:clang_format_candidates = glob("/usr/{lib/llvm/*/,local/,}share/clang/{clang-format-*/,}clang-format.py", 1, 1)
 if !empty(g:clang_format_candidates)
 	let g:clang_format_fallback_style = "Google"
 	if has("python")
