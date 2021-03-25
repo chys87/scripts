@@ -156,7 +156,8 @@ com TAB2 set noet ts=2 sts=2 sw=2
 com TAB4 set noet ts=4 sts=4 sw=4
 com TAB8 set noet ts=8 sts=8 sw=8
 com SP2 set et ts=2 sts=2 sw=2
-com SP4 set et ts=4 sts=2 sw=4
+com SP24 set et ts=4 sts=2 sw=2
+com SP4 set et ts=4 sts=4 sw=4
 
 
 " localvimrc (https://github.com/embear/vim-localvimrc) config
