@@ -2,7 +2,7 @@
 # coding: utf-8
 
 #
-# Copyright (c) 2019, 2020, chys <admin@CHYS.INFO>
+# Copyright (c) 2019-2021, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -95,6 +95,7 @@ def executor(q):
         info('Handling request: {}'.format(pprint.pformat(req)))
         env = os.environ.copy()
         new_env = req.get('environ')
+        new_env['PWD'] = req['pwd']
         if new_env:
             env.update(new_env)
         try:
