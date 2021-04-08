@@ -25,6 +25,8 @@
 	fgrep = grep -F
 	egrep = grep -E
 	pgrep = grep -P
+	rs = restore
+	sw = switch
 	wc = whatchanged
 [fetch]
 	prune = true
