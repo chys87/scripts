@@ -68,6 +68,7 @@ class InstallPackages(utils.Task):
         'curl',
         {'apt': 'g++-multilib'},
         'git',
+        'git-lfs',
         {'apt': 'gcc-doc'},
         {'apt': 'glibc-doc'},
         'htop',
