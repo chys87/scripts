@@ -113,11 +113,8 @@ def executor(q):
 
 def daemon_handle(q, conn):
     try:
-        try:
-            req_s = conn.recv(16384, socket.MSG_WAITALL)
-        except socket.error as e:
-            error(str(e))
-            return
+        conn.settimeout(2)
+        req_s = conn.recv(16384, socket.MSG_WAITALL)
         info('Received {} bytes'.format(len(req_s)))
 
         try:
@@ -177,7 +174,7 @@ def daemon():
     try:
         while True:
             conn, addr = s.accept()
-            info('Accepted new conection', addr)
+            info('Accepted new connection', addr)
             daemon_handle(q, conn)
     except KeyboardInterrupt:
         import signal
