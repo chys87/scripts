@@ -54,6 +54,10 @@ case "$CATEGORY/$PN" in
 	sys-devel/gcc)
 		export EPATCH_USER_EXCLUDE+=" *-fortify-source.patch"
 		einfo "Disabling *-fortify-source.patch"
+		# Remove CET (endbr64 instruction generation)
+		if [[ -d "$S" && "$EBUILD_PHASE" == prepare ]]; then
+			find "$S" -name configure -exec sed -i -e 's/CET_FLAGS="-fcf-protection -mshstk"/CET_FLAGS=""/' {} \+
+		fi
 		;;
 esac
 
