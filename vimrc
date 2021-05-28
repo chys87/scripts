@@ -1,5 +1,5 @@
 "
-" Copyright (c) 2013, 2014, 2015, 2016, 2020, chys <admin@CHYS.INFO>
+" Copyright (c) 2013-2021, chys <admin@CHYS.INFO>
 "
 " Redistribution and use in source and binary forms, with or without
 " modification, are permitted provided that the following conditions
@@ -108,9 +108,8 @@ com NC NeoComplCache
 "let OmniCpp_NamespaceSearch = 1
 
 ""Enable folding by syntax (zc/zo/zC/zO)
-"set foldlevelstart=99 "Don't fold when a file is opened
-"set foldmethod=syntax
-"set foldcolumn=6
+set foldlevelstart=99 "Don't fold when a file is opened
+com FOLDON setl foldmethod=syntax foldcolumn=6
 
 set list listchars=tab:>\ ,trail:~,extends:>
 
