@@ -435,7 +435,8 @@ if [ -n "$ZSH_VERSION" ]; then
 		local pwd="$PWD"
 		local found=
 		while [ -n "$pwd" -a "$pwd" != '/' ]; do
-			if [ -d "$pwd/.git" ]; then
+			# .git may not necessarily be a dir.  It could be regular file in a worktree.
+			if [ -e "$pwd/.git" ]; then
 				found=git
 				break
 			elif [ -d "$pwd/.svn" ]; then
