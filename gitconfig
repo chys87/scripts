@@ -38,3 +38,25 @@
 	helper = cache --timeout=864000
 [push]
 	default = simple
+[init]
+	# New repositories will have branch "main" rather than "master".  I am
+	# not going to rename branches in existing projects.
+	#
+	# By switching from "master" to "main", I express no opinion whatsoever on
+	# politics, society, race, or morality.  It only serves to silence the
+	# warning at "git init" and for consistency with the new Github default.
+	# My ancestors and my culture have absolutely zero role in the past
+	# enslavement of people of African ancestry.  This is essentially a US-only
+	# issue.  Yet, the US-centered internet industry is imposing this change
+	# on everyone, wherever they reside and whatever background they have,
+	# taking advantage of US dominance in this area.
+	#
+	# It has developed to so strange a situation where descendants of people
+	# who once not only enslaved black people at home but also invaded *my*
+	# motherland and robbed *my* ancestors are now accusing *me* to be not
+	# respectful to descendants of *their* past slaves simply because I have
+	# not moved fast enough to cross out a word they hate so much only because
+	# of *their* own dirty history.
+	#
+	# Also, I wonder when I will have to call my master's degree something else.
+	defaultBranch = main
