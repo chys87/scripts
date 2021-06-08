@@ -179,10 +179,22 @@ let g:clang_format_candidates = glob("{/usr/{lib/llvm/*/,local/,}share/clang/{cl
 if !empty(g:clang_format_candidates)
 	let g:clang_format_fallback_style = "Google"
 	if has("python")
-		map <expr> <C-C><C-F> ":pyf ".g:clang_format_candidates[0]."<CR>"
+		map <expr> <C-C> ":pyf ".g:clang_format_candidates[0]."<CR>"
+		imap <expr> <C-C> "<C-O>:pyf ".g:clang_format_candidates[0]."<CR>"
 	elseif has("python3")
-		map <expr> <C-C><C-F> ":py3f ".g:clang_format_candidates[0]."<CR>"
+		map <expr> <C-C> ":py3f ".g:clang_format_candidates[0]."<CR>"
+		imap <expr> <C-C> "<C-O>:py3f ".g:clang_format_candidates[0]."<CR>"
 	endif
+
+	function ClangFormatFile() range
+		let l:lines="all"
+		if has('python')
+			execute 'pyf '.g:clang_format_candidates[0]
+		elseif has('python3')
+			execute 'py3f '.g:clang_format_candidates[0]
+		endif
+	endfunction
+	command CF call ClangFormatFile()
 endif
 
 
