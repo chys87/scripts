@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020, chys <admin@CHYS.INFO>
+# Copyright (c) 2020-2021, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,8 +41,7 @@ ECHO git branch --merged origin/"$master" | while read -r line; do
     if [[ "$branch" == '*'* ]]; then
         continue
     fi
-    if [[ -f "$GIT_DIR"/refs/remotes/origin/"$branch" || -f "$GIT_DIR"/logs/refs/remotes/origin/"$branch" ]]; then
-        continue
+    if git show-branch origin/"$branch" &>/dev/null; then
+        ECHO git branch -d "$branch"
     fi
-    ECHO git branch -d "$branch"
 done

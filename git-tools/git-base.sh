@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020, chys <admin@CHYS.INFO>
+# Copyright (c) 2020-2021, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -40,17 +40,10 @@ FATAL() {
     exit 1
 }
 
-if [[ -z "$GIT_WORK_TREE" ]]; then
-    export GIT_WORK_TREE="$(ECHO git rev-parse --show-toplevel)"
-fi
-if [[ -z "$GIT_DIR" ]]; then
-    export GIT_DIR="$GIT_WORK_TREE/.git"
-fi
-
 master=$(ECHO git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
 
-cur_branch="$(sed -e 's!ref: refs/heads/!!g' "$GIT_DIR/HEAD")"
-if [[ ! -f "$GIT_DIR/refs/heads/$cur_branch" ]] && [[ ! -f "$GIT_DIR/logs/refs/heads/$cur_branch" ]]; then
+cur_branch="$(ECHO git branch --show-current)"
+if [[ -z "$cur_branch" ]]; then
     FATAL "Something is wrong.  Are you not on a branch?"
 fi
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020, chys <admin@CHYS.INFO>
+# Copyright (c) 2020-2021, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ fi
 
 case "${0##*/git-}" in
     auto-push|ap)
-        if fgrep -q "[branch \"$cur_branch\"]" "$GIT_DIR/config"; then
+        if [[ "$(git config branch."$cur_branch".remote)" == origin ]]; then
             ECHO git push "$@"
         else
             ECHO git push -u origin "$cur_branch" "$@"
