@@ -41,7 +41,7 @@ ECHO git branch --merged origin/"$master" | while read -r line; do
     if [[ "$branch" == '*'* ]]; then
         continue
     fi
-    if git show-branch origin/"$branch" &>/dev/null; then
+    if ! git show-branch origin/"$branch" &>/dev/null; then
         ECHO git branch -d "$branch"
     fi
 done
