@@ -2,8 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-#               chys <admin@CHYS.INFO>
+# Copyright (c) 2013-2021, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -547,7 +546,11 @@ guess_and_set_locales() {
 		export LC_COLLATE="zh_CN.$charset" LC_CTYPE="zh_CN.$charset"
 		case "$charset" in
 			UTF-8|UTF-8@cjknarrow)
-				export LANG="en_US.$charset"
+				if [[ "$OSTYPE" == *linux* ]]; then
+					export LANG="C.UTF-8"
+				else
+					export LANG="en_US.$charset"
+				fi
 				;;
 			*)
 				export LANG="zh_CN.$charset"
