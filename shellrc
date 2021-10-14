@@ -243,7 +243,7 @@ if has_executable svn && has_executable colordiff; then
 
 fi
 
-if [[ ! -f ~/.ssh/id_rsa && ( -n "$TMUX" || -n "$STY" || "$TERM" == screen* ) ]]; then
+if [[ ! -f ~/.ssh/id_rsa && ! -f ~/.ssh/id_ed25519 && ( -n "$TMUX" || -n "$STY" || "$TERM" == screen* ) ]]; then
 	for guesser in guess-ssh-agent guess-ssh-agent.sh; do
 		if has_executable "$guesser"; then
 			alias git="$guesser git"
@@ -304,7 +304,9 @@ set_up_ssh_agent() {
 if [[ -S "${SSH_AUTH_SOCK:-${SSH2_AUTH_SOCK}}" && -r ~/.ssh/id_rsa ]] && [[ "$(<~/.ssh/id_rsa)" != *,ENCRYPTED* ]] && has_executable ssh-add; then
 	# If private key has no passphrase, always add it
 	ssh-add 2>/dev/null
-elif [[ -z "$skip_ssh_agent" && -z "$SSH_AUTH_SOCK" && -z "$SSH2_AUTH_SOCK" && -z "$SSH_CLIENT" && -z "$SSH2_CLIENT" && -r ~/.ssh/id_rsa ]] && \
+elif [[ -S "${SSH_AUTH_SOCK:-${SSH2_AUTH_SOCK}}" && -r ~/.ssh/id_ed25519 ]] && [[ "$(<~/.ssh/id_ed25519)" != *,ENCRYPTED* ]] && has_executable ssh-add; then
+	ssh-add 2>/dev/null
+elif [[ -z "$skip_ssh_agent" && -z "$SSH_AUTH_SOCK" && -z "$SSH2_AUTH_SOCK" && -z "$SSH_CLIENT" && -z "$SSH2_CLIENT" && ( -r ~/.ssh/id_rsa || -r ~/.ssh/id_ed25519 ) ]] && \
 		has_executable ssh-agent && has_executable ssh-add; then
 	set_up_ssh_agent
 fi
