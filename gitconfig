@@ -38,6 +38,9 @@
 	helper = cache --timeout=864000
 [push]
 	default = simple
+[blame]
+	markUnblamableLines = true
+	markIgnoredLines = true
 [init]
 	# New repositories will have branch "main" rather than "master".  I am
 	# not going to rename branches in existing projects.
