@@ -119,6 +119,7 @@ nmap <C-Tab> :tabn<CR>
 nmap <S-Tab> :tabp<CR>
 nmap < :tabp<CR>
 nmap > :tabn<CR>
+set switchbuf=usetab,newtab
 
 " Define Ctrl-\ to open definition in a new tab
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
