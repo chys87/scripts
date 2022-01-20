@@ -243,16 +243,6 @@ if has_executable svn && has_executable colordiff; then
 
 fi
 
-if [[ ! -f ~/.ssh/id_rsa && ! -f ~/.ssh/id_ed25519 && ( -n "$TMUX" || -n "$STY" || "$TERM" == screen* ) ]]; then
-	for guesser in guess-ssh-agent guess-ssh-agent.sh; do
-		if has_executable "$guesser"; then
-			alias git="$guesser git"
-			break
-		fi
-	done
-	unset -v guesser
-fi
-
 if has_executable git; then
     alias g=git
 fi
