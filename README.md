@@ -20,7 +20,7 @@
 * `mvln.py` (Python 3): 移动和链接文件
 * `node-tools`: 常用 [Node.js](https://nodejs.org/) 工具
 * `passgen.py` (Python 2.7/3): 随机密码生成器
-* `salary-calc.py` (Python 3.2+): 一个简单的中国社保、个人所得税计算器
+* `salary-calc.py` (Python 3.9+): 一个简单的中国社保、个人所得税计算器
 * `shellrc`: 我的 shell 配置文件 (bash/[zsh](http://www.zsh.org) 通用)
     + 注: 这个文件不能直接作为 `.bashrc` 或 `.zshrc` 文件, 而应在 `.bashrc`/`.zshrc` 末尾 source
 * `sys-init`: 我的系统初始化脚本
@@ -52,7 +52,7 @@
 * `mvln.py` (Python 3): Move and symlink file
 * `node-tools`: Common [Node.js](https://nodejs.org/) tools
 * `passgen.py` (Python 2.7/3): Random password generator
-* `salary-calc.py` (Python 3.2+): A simple Chinese social security and income tax calculator
+* `salary-calc.py` (Python 3.9+): A simple Chinese social security and income tax calculator
 * `shellrc`: My shell configuration file (compatible with both bash and [zsh](http://www.zsh.org))
     - Note: This file shouldn't be directly used as `.bashrc` or `.zshrc`, but sourced at the end of them.
 * `sys-init`: My system initialization scripts

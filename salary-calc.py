@@ -84,7 +84,7 @@ class Tax:
         except configparser.Error:
             sys.exit('配置文件错误')
 
-    def calc(self, salary, year_end=False):
+    def calc(self, salary, *, year_end=False):
         '''计算个人所得税，salary为计税额
         '''
         if year_end:
@@ -110,6 +110,19 @@ class Tax:
 
         # 年终奖：速算扣除数不乘以12（神奇的中国税务！）
         return salary * item.pp / 100 - item.deduct, item.pp
+
+    def calc_year_end_tax_avoidance(self, move_bonus, edge_rate):
+        '''根据腾挪金额move_bonus和边际税率推算原始年终奖
+        '''
+        res = []
+        for lo, pp, deduct in self._table:
+            lo *= 12
+            original_bonus = lo + move_bonus
+            year_end_tax = self.calc(original_bonus, year_end=True)[0]
+            moved_tax = \
+                self.calc(lo, year_end=True)[0] + move_bonus * edge_rate
+            res.append((original_bonus, year_end_tax, moved_tax))
+        return res
 
 
 class SocialSecurity:
@@ -192,6 +205,9 @@ def main():
                         help='城市 (默认城市可在配置文件中指定)')
     parser.add_argument('-y', '--year-end', action='store_true', default=False,
                         help='按年终奖计算')
+    parser.add_argument(
+        '--avoidance-rate', type=float,
+        help='年终奖避税反向推算时的边际税率 (此时salary为腾挪金额)')
     parser.add_argument('salary', type=float, help='税前工资')
     parser.add_argument('security_base', type=float, nargs='?',
                         help='社保基数')
@@ -206,12 +222,26 @@ def main():
     for config_file in _get_config_files():
         try:
             with open(config_file, 'r', encoding='utf-8') as f:
-                config.readfp(f)
+                config.read_file(f)
                 break
         except FileNotFoundError:
             pass
     else:
         sys.exit('找不到配置文件: {}'.format(CONFIG_FILE))
+
+    if args.avoidance_rate is not None:
+        res = Tax(config).calc_year_end_tax_avoidance(args.salary,
+                                                      args.avoidance_rate)
+        print('{}{}{}'.format(txtr('年终奖', 15),
+                              txtr('不腾挪扣税', 15),
+                              txtr('腾挪扣税', 15),
+                              txtr('节省税', 15)))
+        for original_bonus, original_tax, moved_tax in res:
+            print(f'{original_bonus:>15.2f}'
+                  f'{original_tax:>15.2f}'
+                  f'{moved_tax:>15.2f}'
+                  f'{original_tax - moved_tax:>15.2f}')
+        return
 
     if not city:
         try:
