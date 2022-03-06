@@ -1,5 +1,5 @@
 "
-" Copyright (c) 2013-2021, chys <admin@CHYS.INFO>
+" Copyright (c) 2013-2022, chys <admin@CHYS.INFO>
 "
 " Redistribution and use in source and binary forms, with or without
 " modification, are permitted provided that the following conditions
@@ -144,6 +144,7 @@ map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 set sessionoptions=sesdir,tabpages
 com SL source Session.vim
 com SX call SessionSaveAndExit()
+com SS mks!
 function SessionSaveAndExit()
 	wa
 	mks!
