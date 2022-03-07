@@ -9,8 +9,6 @@
 [pager]
 	branch =
 	tag =
-[gc]
-	autoDetach = false
 [alias]
 	a = add
 	br = branch
