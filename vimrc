@@ -202,6 +202,19 @@ if !empty(g:clang_format_candidates)
 endif
 
 
+" fzf
+" https://github.com/junegunn/fzf/blob/master/README-VIM.md
+" Homebrew installs it to /usr/local/opt/fzf/plugin/fzf.vim
+" Debian installs it to /usr/share/doc/fzf/examples/plugin/fzf.vim
+" Gentoo installs it to /usr/share/vim/vimfiles/plugin/fzf.vim (should auto load)
+let g:fzf_candidates = glob("/usr/{local/opt/fzf/plugin,share/doc/fzf/examples/plugin}/fzf.vim", 1, 1)
+if !empty(g:fzf_candidates)
+	exe "set rtp+=".fnamemodify(g:fzf_candidates[0], ":h")
+	runtime! fzf.vim
+endif
+map <C-P> :FZF<CR>
+
+
 " Source configurations specific to one machine
 if filereadable(expand("~/.vimrc.local"))
 	source ~/.vimrc.local

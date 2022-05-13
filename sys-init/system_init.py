@@ -66,6 +66,7 @@ class InstallPackages(utils.Task):
         'convmv',
         {'apt': 'universal-ctags', 'default': 'ctags'},
         'curl',
+        'fzf',
         {'apt': 'g++-multilib'},
         'git',
         'git-lfs',
