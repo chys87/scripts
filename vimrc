@@ -210,9 +210,22 @@ endif
 let g:fzf_candidates = glob("/usr/{local/opt/fzf/plugin,share/doc/fzf/examples/plugin}/fzf.vim", 1, 1)
 if !empty(g:fzf_candidates)
 	exe "set rtp+=".fnamemodify(g:fzf_candidates[0], ":h")
-	runtime! fzf.vim
+	runtime fzf.vim
 endif
-map <C-P> :FZF<CR>
+if exists('$TMUX')
+	let g:fzf_layout = { 'tmux': '-p80%,90%' }
+else
+	let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.9 } }
+endif
+function ChysFzf()
+	if executable('fd')
+		let source = 'fd --type f'
+	else
+		let source = ''
+	endif
+	call fzf#run(fzf#wrap({'source': source}))
+endfunction
+map <C-P> :call ChysFzf()<CR>
 
 
 " Source configurations specific to one machine
