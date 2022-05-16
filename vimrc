@@ -218,7 +218,9 @@ else
 	let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.9 } }
 endif
 function ChysFzf()
-	if executable('fd')
+	if executable('fdfind')  " Debian based distros
+		let source = 'fdfind --type f'
+	elseif executable('fd')
 		let source = 'fd --type f'
 	else
 		let source = ''
