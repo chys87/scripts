@@ -217,6 +217,13 @@ if exists('$TMUX')
 else
 	let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.9 } }
 endif
+" We change default to tab, and add ctrl-e for same tab editing
+let g:fzf_action = {
+			\ 'enter': 'tab split',
+			\ 'ctrl-e': 'e',
+			\ 'ctrl-t': 'tab split',
+			\ 'ctrl-x': 'split',
+			\ 'ctrl-v': 'vsplit' }
 function ChysFzf()
 	if executable('fdfind')  " Debian based distros
 		let source = 'fdfind --type f'
