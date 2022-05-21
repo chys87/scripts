@@ -172,6 +172,7 @@ let g:localvimrc_sandbox=0  " Don't run them in a sand box
 autocmd FileType markdown setl ts=8 sts=4 sw=4 expandtab
 autocmd FileType cpp setl ts=2 sts=2 sw=2 expandtab
 autocmd FileType bzl setl ts=2 sts=2 sw=2 expandtab
+autocmd FileType javascript setl ts=2 sts=2 sw=2 expandtab
 
 
 " clang-format.py
