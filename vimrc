@@ -68,6 +68,7 @@ set backspace=indent,eol,start " More liberal use of backspace
 
 "colorscheme delek
 "colorscheme louver
+set background=dark
 if (has("gui_running"))
 	colorscheme torte
 	set guifont=MonoSpace\ 8
