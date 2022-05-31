@@ -64,6 +64,8 @@ class VimPlugin(utils.Task):
         'vim-localvimrc': 'https://github.com/embear/vim-localvimrc.git',
     }
     _bundles = {
+        'molokai-dark': 'https://github.com/pR0Ps/molokai-dark.git',
+        # 'simpleblack': 'https://github.com/lucasprag/simpleblack.git',
         'typescript-vim': 'https://github.com/leafgarland/typescript-vim.git',
         'vim-less': 'https://github.com/groenewege/vim-less.git',
         # Another possibility is https://github.com/dcharbon/vim-flatbuffers.git
