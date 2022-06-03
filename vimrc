@@ -73,7 +73,7 @@ if (has("gui_running"))
 	colorscheme torte
 	set guifont=MonoSpace\ 8
 	"set guifont=DejaVu\ Sans\ Mono\ 8
-	set guiligatures=`~!@#$%^&*()-=_+[]{}\\|;:\'\",\.<>/?
+	set guiligatures=`~!@#$%^&*()-=_+[]{}\\\|;:\'\",\.<>/?
 
 	" Maximize window
 	com MX silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
