@@ -257,59 +257,6 @@ else
 	unset FZF_DEFAULT_COMMAND
 fi
 
-# Set up SSH agent
-set_up_ssh_agent_from_file() {
-	[ -r "$1" ] || return 1
-    . "$1"
-    if ! [ -S "$SSH_AUTH_SOCK" ]; then
-        unset -v SSH_AUTH_SOCK
-        unset -v SSH_AGENT_PID
-        return 1
-    fi
-	# ssh-agent uses PR_SET_DUMPABLE to protect itself and /proc/pid/exe is not readable
-	local ok=0
-    if [ -n "$SSH_AGENT_PID" ]; then
-        if [ -r /proc/$SSH_AGENT_PID/comm ]; then  # Linux
-            [[ `</proc/$SSH_AGENT_PID/comm` == 'ssh-agent' ]] && ok=1
-        elif [ -r /proc/$SSH_AGENT_PID/exename ]; then  # Cygwin
-            [[ `</proc/$SSH_AGENT_PID/exename` =~ ^(.*/)?ssh-agent$ ]] && ok=1
-		fi
-	fi
-
-	if ((ok)); then
-		return 0
-	else
-        unset -v SSH_AUTH_SOCK
-        unset -v SSH_AGENT_PID
-		return 1
-	fi
-}
-
-set_up_ssh_agent() {
-	# FIXME: This function can have race conditions
-	local savefile=/tmp/.ssh-agent.env.$USER
-	if ! set_up_ssh_agent_from_file "$savefile"; then
-		# Start a new agent
-		ssh-agent -s | sed -e 's/echo .*//' >"$savefile"
-		# Don't just source the file. I want to suppress the message
-		set_up_ssh_agent_from_file "$savefile"
-		ssh-add &>/dev/null
-	fi
-}
-
-if [[ -S "${SSH_AUTH_SOCK:-${SSH2_AUTH_SOCK}}" && -r ~/.ssh/id_rsa ]] && [[ "$(<~/.ssh/id_rsa)" != *,ENCRYPTED* ]] && has_executable ssh-add; then
-	# If private key has no passphrase, always add it
-	ssh-add 2>/dev/null
-elif [[ -S "${SSH_AUTH_SOCK:-${SSH2_AUTH_SOCK}}" && -r ~/.ssh/id_ed25519 ]] && [[ "$(<~/.ssh/id_ed25519)" != *,ENCRYPTED* ]] && has_executable ssh-add; then
-	ssh-add 2>/dev/null
-elif [[ -z "$skip_ssh_agent" && -z "$SSH_AUTH_SOCK" && -z "$SSH2_AUTH_SOCK" && -z "$SSH_CLIENT" && -z "$SSH2_CLIENT" && ( -r ~/.ssh/id_rsa || -r ~/.ssh/id_ed25519 ) ]] && \
-		has_executable ssh-agent && has_executable ssh-add; then
-	set_up_ssh_agent
-fi
-unset -f set_up_ssh_agent_from_file
-unset -f set_up_ssh_agent
-unset -v skip_ssh_agent
-
 # It's weird that I always have problems defining local arrays in zsh
 precmd_showstatus() {
 	local tmp
