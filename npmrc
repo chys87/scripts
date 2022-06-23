@@ -1,2 +1,2 @@
-registry=https://registry.npm.taobao.org
-python = /usr/bin/python2
+# npmmirror is the old taobao mirror
+registry=https://registry.npmmirror.com
