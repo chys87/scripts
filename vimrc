@@ -247,6 +247,23 @@ function ChysFzf()
 endfunction
 map <C-P> :call ChysFzf()<CR>
 
+" In some of my environments these are not set by default.
+"  1 -> blinking block
+"  2 -> solid block
+"  3 -> blinking underscore
+"  4 -> solid underscore
+"  5 -> blinking vertical bar
+"  6 -> solid vertical bar
+if empty(&t_SI)
+	let &t_SI = "\e[5 q"
+endif
+if empty(&t_SR)
+	let &t_SR = "\e[4 q"
+endif
+if empty(&t_EI)
+	let &t_EI = "\e[1 q"
+endif
+
 
 " Source configurations specific to one machine
 if filereadable(expand("~/.vimrc.local"))
