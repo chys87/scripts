@@ -248,7 +248,7 @@ if has_executable git; then
 fi
 
 if has_executable journalctl; then
-	alias journalctl='journalctl -o short-precise'
+	alias journalctl='journalctl -o short-precise --no-hostname'
 fi
 
 if has_executable fd; then
