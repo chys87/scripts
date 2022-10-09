@@ -265,6 +265,23 @@ if empty(&t_EI)
 endif
 
 
+if has("nvim")
+	" This requires ~/.local/share/nvim/site/autoload/plug.vim
+	" (https://github.com/junegunn/vim-plug)
+	call plug#begin("~/.vim/plugged")
+	" Run :PlugInstall when this section is modified
+	" Plug 'dracula/vim'
+	" Plug 'ryanoasis/vim-devicons'
+	" Plug 'SirVer/ultisnips'
+	" Plug 'honza/vim-snippets'
+	" Plug 'scrooloose/nerdtree'
+	" Plug 'preservim/nerdcommenter'
+	" Plug 'mhinz/vim-startify'
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	call plug#end()
+endif
+
+
 " Source configurations specific to one machine
 if filereadable(expand("~/.vimrc.local"))
 	source ~/.vimrc.local
