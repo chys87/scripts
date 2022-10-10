@@ -30,21 +30,10 @@
 "
 
 
-" Enable Pathogen (https://github.com/tpope/vim-pathogen) if we have it.
-" Also see my question on StackOverflow:
-" http://stackoverflow.com/questions/18576651/check-whether-pathogen-is-installed-in-vimrc
-runtime! autoload/pathogen.vim
-if exists("*pathogen#infect")
-	call pathogen#infect()
-endif
-
-
 syntax on
 set noexpandtab
 set noundofile
 
-"let Tlist_Use_Right_Window=1
-"let Tlist_File_Fold_Auto_Close=0
 "set wrap	(This is the default)"
 set fenc=utf-8 "Default coding
 set fencs=ucs-bom,utf-8,gb18030,iso-8859-15,default "Coding used to open a file
@@ -106,16 +95,8 @@ filetype plugin indent on
 
 let c_gnu=1
 let c_no_curly_error=1      " ({}) is not an error
-"let c_space_errors=1        " Mixed space and tab is error.
+let c_space_errors=1        " Mixed space and tab is error.
 let g:load_doxygen_syntax=1
-
-"Enable NeoComplCache
-"let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_auto_select = 1
-com NC NeoComplCache
-
-" OmniComplete options
-"let OmniCpp_NamespaceSearch = 1
 
 ""Enable folding by syntax (zc/zo/zC/zO)
 set foldlevelstart=99 "Don't fold when a file is opened
@@ -133,10 +114,6 @@ set switchbuf=usetab,newtab
 
 " Define Ctrl-\ to open definition in a new tab
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-
-"let g:winManagerWindowLayout='FileExplorer|TagList'
-"let g:winManagerWidth=40
-"nmap <F3> :WMToggle<cr>
 
 "if (has("gui_running"))
 "	set cursorcolumn
@@ -223,7 +200,7 @@ if !empty(g:fzf_candidates)
 	exe "set rtp+=".fnamemodify(g:fzf_candidates[0], ":h")
 	runtime fzf.vim
 endif
-if exists('$TMUX')
+if exists('$TMUX') && !has("nvim")
 	let g:fzf_layout = { 'tmux': '-p80%,90%' }
 else
 	let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.9 } }
@@ -266,24 +243,26 @@ endif
 
 
 " This requires https://github.com/junegunn/vim-plug
-call plug#begin("~/.vim/plugged")
-" Run :PlugInstall when this section is modified
-" Plug 'dracula/vim'
-" Plug 'ryanoasis/vim-devicons'
-" Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
-" Plug 'scrooloose/nerdtree'
-" Plug 'preservim/nerdcommenter'
-" Plug 'mhinz/vim-startify'
-Plug 'embear/vim-localvimrc'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-if has("nvim")
-	" Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
-	Plug 'nvim-tree/nvim-tree.lua'
+runtime! autoload/plug.vim  " This line is optional, it's purpose is to test whether plug.vim exists
+if exists("*plug#begin")
+	call plug#begin("~/.vim/plugged")
+	" Run :PlugInstall when this section is modified
+	" Plug 'ryanoasis/vim-devicons'
+	" Plug 'SirVer/ultisnips'
+	" Plug 'honza/vim-snippets'
+	" Plug 'scrooloose/nerdtree'
+	" Plug 'preservim/nerdcommenter'
+	" Plug 'mhinz/vim-startify'
+	Plug 'embear/vim-localvimrc'
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	Plug 'vim-airline/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
+	if has("nvim")
+		" Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
+		Plug 'nvim-tree/nvim-tree.lua'
+	endif
+	call plug#end()
 endif
-call plug#end()
 
 " For coc
 if exists("plugs['coc.nvim']")
