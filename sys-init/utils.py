@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function
-
 from collections import OrderedDict
 import os
 import pwd
@@ -60,13 +58,24 @@ def mkdirp(path, show=True):
         os.makedirs(path)
 
 
+def unlink(path, show=True):
+    if os.path.lexists(path):
+        if show:
+            print('Unlinking {}'.format(path))
+        os.unlink(path)
+
+
+def canonicalize_git_url(url):
+    return re.sub(r'^git@github.com:', 'https://github.com/', url)
+
+
 def git_clone(url, dst, update=True):
     if os.path.isdir(dst):
         oldurl = check_popen(['git', 'ls-remote', '--get-url', 'origin'],
                              cwd=dst)
         # "git remote get-url origin" is better, but only for git >=2.7
         oldurl = oldurl.strip().decode()
-        if url != oldurl:
+        if canonicalize_git_url(url) != canonicalize_git_url(oldurl):
             raise SysInitError('Inconsistent URL for {}\nOld: {}\nNew: {}'
                                .format(dst, oldurl, url))
         if update:

@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function
-
 import os
 import shutil
 
@@ -46,6 +44,7 @@ class DotFiles(utils.Task):
         'pip.conf': '.pip/pip.conf',
         'tmux.conf': '.tmux.conf',
         'vimrc': '.vimrc',
+        'vimrc': '.config/nvim/init.vim',
     }
 
     def run(self):
@@ -56,13 +55,41 @@ class DotFiles(utils.Task):
                 utils.auto_symlink(src, dst)
 
 
+class VimPlug(utils.Task):
+    root = False
+
+    def __init__(self, env):
+        super(VimPlug, self).__init__(env)
+
+    def run(self):
+        # Install vim-plug
+        clone_dir = self.env.external.clone(
+            'https://github.com/junegunn/vim-plug.git',
+            'vim-plug', update=self.env.git_pull)
+
+        for inst_path in ['.local/share/nvim/site/autoload/plug.vim',
+                          '.vim/autoload/plug.vim']:
+            plug_vim = os.path.join(self.env.home, inst_path)
+            if not os.path.exists(plug_vim):
+                utils.auto_symlink(os.path.join(clone_dir, 'plug.vim'),
+                                   plug_vim)
+
+        # Remove old files installed for VIM and loadable by Pathogen
+        for name in ['vim-localvimrc']:
+            for dirname in 'bundle', 'plugin':
+                path = os.path.join(self.env.home, '.vim', dirname, name)
+                if os.path.islink(path):
+                    utils.unlink(path)
+
+        path = os.path.join(self.env.home, '.vim', 'autoload', 'pathogen.vim')
+        if os.path.islink(path):
+            utils.unlink(path)
+
+
+'''
 class VimPlugin(utils.Task):
     root = False
 
-    _plugins = {
-        'vim-neatstatus': 'https://github.com/maciakl/vim-neatstatus.git',
-        'vim-localvimrc': 'https://github.com/embear/vim-localvimrc.git',
-    }
     _bundles = {
         'molokai-dark': 'https://github.com/pR0Ps/molokai-dark.git',
         # 'simpleblack': 'https://github.com/lucasprag/simpleblack.git',
@@ -71,12 +98,13 @@ class VimPlugin(utils.Task):
         # Another possibility is https://github.com/dcharbon/vim-flatbuffers.git
         # but this one seems more nicely colored
         'zchee-vim-flatbuffers': 'https://github.com/zchee/vim-flatbuffers.git',
+        #'vim-neatstatus': 'https://github.com/maciakl/vim-neatstatus.git',
     }
     _autoloads = {
         'vim-pathogen': {
             'url': 'https://github.com/tpope/vim-pathogen.git',
             'file': 'autoload/pathogen.vim',
-        },
+        }
     }
 
     def __init__(self, env):
@@ -87,14 +115,11 @@ class VimPlugin(utils.Task):
 
     def run(self):
         utils.mkdirp(self.autoloaddir)
-        utils.mkdirp(self.plugindir)
         utils.mkdirp(self.bundledir)
 
         for name, conf in self._autoloads.items():
             self.run_item(self.autoloaddir, conf['url'], name, conf['file'])
 
-        for name, url in self._plugins.items():
-            self.run_item(self.plugindir, url, name)
         for name, url in self._bundles.items():
             self.run_item(self.bundledir, url, name)
 
@@ -105,6 +130,12 @@ class VimPlugin(utils.Task):
         link_target = os.path.normpath(os.path.join(clone_dir, link_file))
         link = os.path.join(link_dir, os.path.basename(link_target))
         utils.auto_symlink(link_target, link)
+
+        # Remove old files in plugin dir
+        old_link = os.path.join(self.plugindir, os.path.basename(link_target))
+        if os.path.islink(old_link):
+            utils.unlink(old_link)
+'''
 
 
 class Gitconfig(utils.Task):

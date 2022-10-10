@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function
-
 import os
 import subprocess
 import sys
@@ -80,6 +78,7 @@ class InstallPackages(utils.Task):
         'lrzsz',
         {'apt': 'make-doc'},
         {'apt': ['manpages-dev', 'manpages-posix']},
+        'neovim',
         {'apt': 'ninja-build', 'default': 'ninja'},
         'p7zip',
         {'apt': ['p7zip-full', 'p7zip-rar']},
@@ -88,6 +87,7 @@ class InstallPackages(utils.Task):
         {'apt': 'pkg-config'},
         {'apt': ['pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
+        {'apt': 'python3-pynvim', 'default': 'pynvim'},
         ['rar', 'unrar'],
         'strace',
         'tmux',

@@ -265,20 +265,49 @@ if empty(&t_EI)
 endif
 
 
+" This requires https://github.com/junegunn/vim-plug
+call plug#begin("~/.vim/plugged")
+" Run :PlugInstall when this section is modified
+" Plug 'dracula/vim'
+" Plug 'ryanoasis/vim-devicons'
+" Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
+" Plug 'scrooloose/nerdtree'
+" Plug 'preservim/nerdcommenter'
+" Plug 'mhinz/vim-startify'
+Plug 'embear/vim-localvimrc'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 if has("nvim")
-	" This requires ~/.local/share/nvim/site/autoload/plug.vim
-	" (https://github.com/junegunn/vim-plug)
-	call plug#begin("~/.vim/plugged")
-	" Run :PlugInstall when this section is modified
-	" Plug 'dracula/vim'
-	" Plug 'ryanoasis/vim-devicons'
-	" Plug 'SirVer/ultisnips'
-	" Plug 'honza/vim-snippets'
-	" Plug 'scrooloose/nerdtree'
-	" Plug 'preservim/nerdcommenter'
-	" Plug 'mhinz/vim-startify'
-	Plug 'neoclide/coc.nvim', {'branch': 'release'}
-	call plug#end()
+	" Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
+	Plug 'nvim-tree/nvim-tree.lua'
+endif
+call plug#end()
+
+" Initialize nvim-tree.lua.  Use :NvimTreeToggle to open
+if has("nvim")
+	lua<<EOF
+vim.g.loaded = 1
+vim.g.loaded_netrwPlugin = 1
+require("nvim-tree").setup({
+	view = {
+		adaptive_size = true,
+	},
+	renderer = {
+		icons = {
+			show = {
+				file = false,
+				folder = false,
+				folder_arrow = false,
+			},
+		},
+	},
+	filters = {
+		dotfiles = true,
+	},
+})
+EOF
 endif
 
 
