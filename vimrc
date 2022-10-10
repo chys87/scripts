@@ -269,11 +269,18 @@ if exists("plugs['coc.nvim']")
 	inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 endif
 
+" VIM has satisfactory file-change monitoring.  So add this only for neovim
+if has("nvim")
+	" https://vi.stackexchange.com/questions/13692/prevent-focusgained-autocmd-running-in-command-line-editing-mode
+	autocmd FocusGained,BufEnter,CursorHold,CursorHoldI,VimResume * if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif
+endif
+
 " Initialize nvim-tree.lua.  Use :NvimTreeToggle to open
 if has("nvim")
+	" nvim-tree document sugggests disableing netrw, but I suspect that.
+	" vim.g.loaded = 1
+	" vim.g.loaded_netrwPlugin = 1
 	lua<<EOF
-vim.g.loaded = 1
-vim.g.loaded_netrwPlugin = 1
 require("nvim-tree").setup({
 	view = {
 		adaptive_size = true,
