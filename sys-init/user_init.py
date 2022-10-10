@@ -75,7 +75,7 @@ class VimPlug(utils.Task):
                                    plug_vim)
 
         # Remove old files installed for VIM and loadable by Pathogen
-        for name in ['vim-localvimrc']:
+        for name in ['vim-localvimrc', 'vim-neatstatus']:
             for dirname in 'bundle', 'plugin':
                 path = os.path.join(self.env.home, '.vim', dirname, name)
                 if os.path.islink(path):
