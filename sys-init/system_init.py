@@ -62,7 +62,6 @@ class InstallPackages(utils.Task):
         'clang-format',
         'colordiff',
         'convmv',
-        {'apt': 'universal-ctags', 'default': 'ctags'},
         'curl',
         {'apt': 'fd-find', 'default': 'fd'},
         'fzf',
