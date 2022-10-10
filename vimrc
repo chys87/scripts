@@ -285,6 +285,11 @@ if has("nvim")
 endif
 call plug#end()
 
+" For coc
+if exists("plugs['coc.nvim']")
+	inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+endif
+
 " Initialize nvim-tree.lua.  Use :NvimTreeToggle to open
 if has("nvim")
 	lua<<EOF
