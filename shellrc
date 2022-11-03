@@ -2,7 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013-2021, chys <admin@CHYS.INFO>
+# Copyright (c) 2013-2022, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -437,88 +437,28 @@ precmd() {
 [ -n "$BASH_VERSION" ] && PROMPT_COMMAND='precmd'
 
 # Set locales
-guess_and_set_locales() {
-	if [[ "$OSTYPE" == darwin* ]]; then
-		# For darwin host, we trust the system's defaults
-		return
-	fi
+# For darwin host, we trust the system's defaults
+if [[ "$OSTYPE" != darwin* ]]; then
+    charset='UTF-8'
+    if [[ "$OSTYPE" == *cygwin* ]]; then
+        charset='UTF-8@cjknarrow'
+    fi
 
-	local preset
-	local try_preset
-	for try_preset in "$LC_ALL" "$LC_CTYPE" "$LANG" "$LANGUAGE"; do
-		if [[ -n "$try_preset" && "$try_preset" != C && "$try_preset" != POSIX ]]; then
-			preset="$try_preset"
-			break
-		fi
-	done
-
-	local charset
-	if [[ "$preset" =~ ^(.*\.)?[Uu][Tt][Ff]-?8$ ]]; then
-		charset='UTF-8'
-	elif [[ "$preset" =~ .*\.[Uu][Tt][Ff]-?8@cjknarrow$ ]]; then
-		if [[ "$OSTYPE" == *cygwin* ]]; then
-			charset='UTF-8@cjknarrow'
-		else
-			charset='UTF-8'
-		fi
-	elif [[ "$preset" =~ .*\.[Gg][Bb]([Kk]|2312|18030)(@cjknarrow)?$ ]]; then
-		charset="${preset##*.}"
-		if [[ "$OSTYPE" != *cygwin* ]]; then
-			charset="${charset%@cjknarrow}"
-		fi
-	elif [[ "$preset" == zh_CN ]]; then
-		charset='GBK'
-	fi
-
-	# If there's no clue, but DISPLAY or SSH_TTY is set, let's guess UTF-8
-	if [[ -z "$preset" && ( -n "$DISPLAY" || -n "$SSH_TTY" || -n "$SSH2_CLIENT" ) ]]; then
-		charset='UTF-8'
-	fi
-
-	# Modern Linux consoles assume UTF-8.
-	if [[ "$TERM" == 'linux' && -z "$preset" && -z "$charset" ]]; then
-		local try_tty
-		for try_tty in /dev/tty*; do
-			if [ /proc/self/fd/0 -ef "$try_tty" ]; then
-				charset='UTF-8'
-				break
-			fi
-		done
-	# Also assume UTF-8 in xterm/screen
-	elif [[ ( "$TERM" == screen* || "$TERM" == 'xterm' ) && -z "$preset" && -z "$charset" ]]; then
-		charset='UTF-8'
-	fi
-
-	if [[ -n "$charset" ]]; then
-		unset -v LC_ALL LC_MESSAGES
-		export LC_COLLATE="zh_CN.$charset" LC_CTYPE="zh_CN.$charset"
-		case "$charset" in
-			UTF-8|UTF-8@cjknarrow)
-				if [[ "$OSTYPE" == *linux* ]]; then
-					export LANG="C.UTF-8"
-				else
-					export LANG="en_US.$charset"
-				fi
-				;;
-			*)
-				export LANG="zh_CN.$charset"
-				;;
-		esac
-		if [[ "$TERM" = "linux" || ! "$charset" =~ UTF-8 ]]; then
-			export LC_MESSAGES=C LC_NUMERIC=C LC_MONETARY=C
-		fi
-	fi
-
-}
-
-guess_and_set_locales
-unset -f guess_and_set_locales
+    unset -v LC_ALL LC_MESSAGES LC_NUMERIC LC_MONETARY LC_TIME
+    export LC_COLLATE="zh_CN.$charset" LC_CTYPE="zh_CN.$charset"
+    if [[ "$OSTYPE" == *linux* ]]; then
+        export LANG="C.UTF-8"
+    else
+        export LANG="en_US.$charset"
+    fi
+    unset -v charset
+fi
 
 # Assert my terminal emulator supports 256 colors
 if [[ "$TERM" == 'xterm' ]]; then
 	export TERM=xterm-256color
 elif [[ "$TERM" == 'screen' && -n "$DISPLAY" ]]; then
-	# Screen and tmux support 256 colors at least when it's running within
+    # Screen and tmux support 256 colors at least when they're running within
 	# a modern X terminal emulator
 	export TERM=screen-256color
 fi
