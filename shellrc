@@ -257,6 +257,10 @@ else
 	unset FZF_DEFAULT_COMMAND
 fi
 
+if [[ -n "$ZSH_VERSION" && "$USER" != root ]]; then
+	alias root='su - -s /bin/zsh'
+fi
+
 # It's weird that I always have problems defining local arrays in zsh
 precmd_showstatus() {
 	local tmp
