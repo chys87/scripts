@@ -144,6 +144,14 @@ path_removedup() {
 		if [[ "$p" != /* ]]; then
 			continue
 		fi
+		# Most Linux distributions have done the /usr merge.
+		# Let's drop /bin and /sbin as duplicates if possible.
+		if [[ "$p" =~ ^/s?bin$ && "$p" -ef "/usr$p" ]]; then
+			p="/usr$p"
+		fi
+		if [[ "$p" == /usr/sbin && /usr/sbin -ef /usr/bin ]]; then
+			p=/usr/bin
+		fi
 		case "$newpath" in
 			$p|$p:*|*:$p|*:$p:*);;
 			?*) newpath+=":$p";;
