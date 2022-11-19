@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# We no longer set LC_ALL=C. Normally portage handles this.
-# Some packages actually want UTF-8 and fail strangely if we force C locale.
-#export LC_ALL=C
+export LC_ALL=C.UTF-8
 
 # Some packages (such as xmlto) use $BASH
 # We explicitly set this so that they use "/bin/bash" instead of "/bin/sh"
@@ -61,21 +59,12 @@ case "$CATEGORY/$PN" in
 		;;
 esac
 
-if [[ -f ${ROOT}/etc/portage/x32list ]]; then
-	# Don't use fgrep. Portage warns about it.
-	while read -r x32package; do
-		case "$x32package" in
-			"$CATEGORY/$PN")
-				export CC="${CHOST}-gcc -mx32"
-				export CXX="${CHOST}-g++ -mx32"
-				export DEFAULT_ABI="x32"
-				export ABI="x32"
-				break
-				;;
-		esac
-	done < ${ROOT}/etc/portage/x32list
-	unset -v x32package
-fi
+# MIN_KERN_VER in make.conf no longer works.  We set it via EXTRA_ECONF
+case "$CATEGORY/$PN" in
+	sys-libs/glibc)
+		export EXTRA_ECONF="--enable-kernel=5.10.0"
+		;;
+esac
 
 autopatch() {
 	local patcher="${ROOT%/}/etc/portage/portage-autopatch.py"
