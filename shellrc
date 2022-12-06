@@ -152,6 +152,9 @@ path_removedup() {
 		if [[ "$p" == /usr/sbin && /usr/sbin -ef /usr/bin ]]; then
 			p=/usr/bin
 		fi
+		if [[ "$p" == /usr/local/sbin && /usr/local/sbin -ef /usr/local/bin ]]; then
+			p=/usr/local/bin
+		fi
 		case "$newpath" in
 			$p|$p:*|*:$p|*:$p:*);;
 			?*) newpath+=":$p";;
