@@ -157,9 +157,6 @@ class Gitconfig(utils.Task):
                 print('[include]', file=f)
                 print('\tpath = {}'.format(included_file), file=f)
 
-        utils.auto_symlink(os.path.join(self.env.base, 'gitignore'),
-                           os.path.join(self.env.home, '.config', 'git', 'ignore'))
-
 
 class ExternalRepos(utils.Task):
     root = False
