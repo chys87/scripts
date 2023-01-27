@@ -57,6 +57,12 @@ case "$CATEGORY/$PN" in
 			find "$S" -name configure -exec sed -i -e 's/CET_FLAGS="-fcf-protection -mshstk"/CET_FLAGS=""/' {} \+
 		fi
 		;;
+	sys-devel/clang-common)
+		if [[ -d "$ED" && -f "$ED/etc/clang/gentoo-common.cfg" ]]; then
+			einfo "Undo gentoo-hardened.cfg"
+			sed -i -e 's/^@gentoo-hardened.cfg/# &/g' "$ED/etc/clang/gentoo-common.cfg"
+		fi
+		;;
 esac
 
 # MIN_KERN_VER in make.conf no longer works.  We set it via EXTRA_ECONF
