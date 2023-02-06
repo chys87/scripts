@@ -53,19 +53,20 @@ class InstallPackages(utils.Task):
     normal_user = False
 
     _packages = [
+        {'apt': 'libabsl-dev', 'default': 'abseil-cpp'},
         'autoconf',
         {'apt': 'bind9-dnsutils'},
         {'apt': 'build-essential'},
         {'apt': 'binutils-doc'},
         'bvi',
         'ccache',
-        'clang-format',
+        ['clang', 'clang-format', 'lld'],
         'colordiff',
         'convmv',
         'curl',
+        {'apt': 'cython3', 'default': 'cython'},
         {'apt': 'fd-find', 'default': 'fd'},
         'fzf',
-        {'apt': 'g++-multilib'},
         'git',
         'git-lfs',
         {'apt': 'gcc-doc'},
@@ -87,16 +88,21 @@ class InstallPackages(utils.Task):
         {'apt': ['pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
         {'apt': 'python3-pynvim', 'default': 'pynvim'},
-        ['rar', 'unrar'],
+        'rsync',
         'strace',
         'tmux',
         'tree',
+        'unrar',
         'unzip',
         'valgrind',
         {'apt': 'vim-nox', 'default': 'vim'},
         'zip',
         'zsh',
         'zstd',
+    ]
+    _x86_packages = [
+        {'apt': 'g++-multilib'},
+        'rar',
     ]
     _x_packages = [
         'dia',
@@ -124,6 +130,8 @@ class InstallPackages(utils.Task):
         packages = self._packages
         if self.env.X:
             packages = packages + self._x_packages
+        if os.uname().machine == 'x86_64':
+            packages = packages + self._x86_packages
 
         to_install = []
         for conf in packages:
