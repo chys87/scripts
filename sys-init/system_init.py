@@ -57,7 +57,7 @@ class InstallPackages(utils.Task):
         'autoconf',
         {'apt': 'bind9-dnsutils'},
         {'apt': 'build-essential'},
-        {'apt': 'binutils-doc'},
+        {'apt': ['binutils-doc', 'binutils-multiarch']},
         'bvi',
         'ccache',
         ['clang', 'clang-format', 'lld'],
