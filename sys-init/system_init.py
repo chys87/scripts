@@ -102,7 +102,11 @@ class InstallPackages(utils.Task):
     ]
     _x86_packages = [
         {'apt': 'g++-multilib'},
+        {'apt': 'g++-aarch64-linux-gnu'},
         'rar',
+    ]
+    _aarch64_packages = [
+        {'apt': 'g++-multilib-x86-64-linux-gnu'},
     ]
     _x_packages = [
         'dia',
@@ -132,6 +136,8 @@ class InstallPackages(utils.Task):
             packages = packages + self._x_packages
         if os.uname().machine == 'x86_64':
             packages = packages + self._x86_packages
+        elif os.uname().machine == 'aarch64':
+            packages = packages + self._aarch64_packages
 
         to_install = []
         for conf in packages:
