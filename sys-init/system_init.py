@@ -82,6 +82,7 @@ class InstallPackages(utils.Task):
         {'apt': 'ninja-build', 'default': 'ninja'},
         'p7zip',
         {'apt': ['p7zip-full', 'p7zip-rar']},
+        'patchutils',
         {'apt': 'pax-utils'},
         {'apt': ['python3-pip']},
         {'apt': 'pkg-config'},
