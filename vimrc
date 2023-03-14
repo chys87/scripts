@@ -165,9 +165,9 @@ autocmd FileType javascript setl ts=2 sts=2 sw=2 expandtab
 " clang-format.py
 " Gentoo installs it to /usr/lib/llvm/*/share/clang/clang-format.py
 " Debian installs it to /usr/share/clang/clang-format-*/clang-format.py
-" Homebrew installs it to /usr/local/share/clang/clang-format.py
+" Homebrew installs it to /usr/local/share/clang/clang-format.py or /opt/homebrew/Cellar/clang-format/*/share/clang/clang-format.py
 " If your distribution fails to install one, link the one in external to ~/bin2
-let g:clang_format_candidates = glob("{/usr/{lib/llvm/*/,local/,}share/clang/{clang-format-*/,},~/bin2/}clang-format.py", 1, 1)
+let g:clang_format_candidates = glob("{/usr/{lib/llvm/*/,local/,}share/clang/{clang-format-*/,},/opt/homebrew/Cellar/clang-format/*/share/clang/,~/bin2/}clang-format.py", 1, 1)
 if !empty(g:clang_format_candidates)
 	let g:clang_format_fallback_style = "Google"
 	if has("python")

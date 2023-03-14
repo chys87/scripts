@@ -69,12 +69,18 @@ if has_function __shellrc_tweak_predefined_variables; then
 	__shellrc_tweak_predefined_variables
 fi
 
-if [[ "$OSTYPE" == darwin* ]] && has_executable gls; then
-	alias ls='gls --color=auto --file-type'
+if [[ "$OSTYPE" == darwin* ]]; then
+	if has_executable gls; then
+		alias ls='gls --color=auto --file-type'
+		alias ll='ls -l --time-style=long-iso'
+	else
+		alias ls='ls --color=auto'
+		alias ll='ls -l'
+	fi
 else
 	alias ls='ls --color=auto --file-type'
+	alias ll='ls -l --time-style=long-iso'
 fi
-alias ll='ls -l --time-style=long-iso'
 if [[ "$OSTYPE" == darwin* ]]; then
 	for v in cp date find mv readlink rm sed stat tar xargs; do
 		if has_executable g$v; then
@@ -102,6 +108,12 @@ if [[ "$OSTYPE" == darwin* ]]; then
             alias $v="g$v $grep_options"
         fi
     done
+    if ! has_executable brew && [[ -x /opt/homebrew/bin/brew ]]; then
+        if [[ ! -f ~/.shellrc.homebrew_shellenv_cache ]]; then
+            /opt/homebrew/bin/brew shellenv > ~/.shellrc.homebrew_shellenv_cache
+        fi
+        . ~/.shellrc.homebrew_shellenv_cache
+    fi
 fi
 unset -v grep_options
 

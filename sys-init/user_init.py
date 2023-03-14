@@ -43,16 +43,18 @@ class DotFiles(utils.Task):
         'npmrc': '.npmrc',
         'pip.conf': '.pip/pip.conf',
         'tmux.conf': '.tmux.conf',
-        'vimrc': '.vimrc',
-        'vimrc': '.config/nvim/init.vim',
+        'vimrc': ['.vimrc', '.config/nvim/init.vim'],
     }
 
     def run(self):
-        for name, target in self._files.items():
-            dst = os.path.join(self.env.home, target)
+        for name, targets in self._files.items():
+            if isinstance(targets, str):
+                targets = [targets]
             src = os.path.join(self.env.base, name)
-            if not os.path.exists(dst):
-                utils.auto_symlink(src, dst)
+            for target in targets:
+                dst = os.path.join(self.env.home, target)
+                if not os.path.exists(dst):
+                    utils.auto_symlink(src, dst)
 
 
 class VimPlug(utils.Task):
