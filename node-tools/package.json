@@ -10,8 +10,8 @@
   "private": true,
   "license": "ISC",
   "dependencies": {
-    "commitizen": "^4.2.6",
-    "npm-check-updates": "^16.6.2",
+    "commitizen": "^4.3.0",
+    "npm-check-updates": "^16.7.12",
     "uglify-js": "^3.17.4"
   }
 }
