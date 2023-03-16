@@ -108,10 +108,11 @@ if [[ "$OSTYPE" == darwin* ]]; then
             alias $v="g$v $grep_options"
         fi
     done
-    if ! has_executable brew && [[ -x /opt/homebrew/bin/brew ]]; then
+    if [[ -x /opt/homebrew/bin/brew ]]; then
         if [[ ! -f ~/.shellrc.homebrew_shellenv_cache ]]; then
             /opt/homebrew/bin/brew shellenv > ~/.shellrc.homebrew_shellenv_cache
         fi
+        # Source it even if it's already in path, to ensure that brew path goes first
         . ~/.shellrc.homebrew_shellenv_cache
     fi
 fi
