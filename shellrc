@@ -70,6 +70,14 @@ if has_function __shellrc_tweak_predefined_variables; then
 fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
+    if [[ -x /opt/homebrew/bin/brew ]]; then
+        if [[ ! -f ~/.shellrc.homebrew_shellenv_cache ]]; then
+            /opt/homebrew/bin/brew shellenv > ~/.shellrc.homebrew_shellenv_cache
+        fi
+        # Source it even if it's already in path, to ensure that brew path goes first
+        . ~/.shellrc.homebrew_shellenv_cache
+    fi
+
 	if has_executable gls; then
 		alias ls='gls --color=auto --file-type'
 		alias ll='ls -l --time-style=long-iso'
@@ -108,13 +116,6 @@ if [[ "$OSTYPE" == darwin* ]]; then
             alias $v="g$v $grep_options"
         fi
     done
-    if [[ -x /opt/homebrew/bin/brew ]]; then
-        if [[ ! -f ~/.shellrc.homebrew_shellenv_cache ]]; then
-            /opt/homebrew/bin/brew shellenv > ~/.shellrc.homebrew_shellenv_cache
-        fi
-        # Source it even if it's already in path, to ensure that brew path goes first
-        . ~/.shellrc.homebrew_shellenv_cache
-    fi
 fi
 unset -v grep_options
 
