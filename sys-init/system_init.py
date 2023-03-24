@@ -84,7 +84,7 @@ class InstallPackages(utils.Task):
         {'apt': ['p7zip-full', 'p7zip-rar']},
         'patchutils',
         {'apt': 'pax-utils'},
-        {'apt': ['python3-pip']},
+        {'apt': ['python3-pip', 'python3-venv']},
         {'apt': 'pkg-config'},
         {'apt': ['pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
