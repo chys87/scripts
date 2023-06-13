@@ -55,6 +55,7 @@ class InstallPackages(utils.Task):
     _packages = [
         {'apt': 'libabsl-dev', 'default': 'abseil-cpp'},
         'autoconf',
+        'autoconf-archive',
         {'apt': 'bind9-dnsutils'},
         {'apt': 'build-essential'},
         {'apt': ['binutils-doc', 'binutils-multiarch']},
