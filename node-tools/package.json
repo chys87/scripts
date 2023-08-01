@@ -12,7 +12,7 @@
   "dependencies": {
     "commitizen": "^4.3.0",
     "html-minifier": "^4.0.0",
-    "npm-check-updates": "^16.7.12",
+    "npm-check-updates": "^16.10.17",
     "uglify-js": "^3.17.4"
   }
 }
