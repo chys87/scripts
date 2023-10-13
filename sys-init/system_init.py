@@ -77,6 +77,7 @@ class InstallPackages(utils.Task):
         {'apt': 'ipython3', 'default': 'ipython'},
         'lftp',
         'lrzsz',
+        'lsof',
         {'apt': 'make-doc'},
         {'apt': ['manpages-dev', 'manpages-posix']},
         'neovim',
