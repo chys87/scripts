@@ -80,6 +80,7 @@ class InstallPackages(utils.Task):
         'lsof',
         {'apt': 'make-doc'},
         {'apt': ['manpages-dev', 'manpages-posix']},
+        'moreutils',
         'neovim',
         {'apt': 'ninja-build', 'default': 'ninja'},
         'p7zip',
