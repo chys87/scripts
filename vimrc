@@ -167,7 +167,11 @@ autocmd FileType javascript setl ts=2 sts=2 sw=2 expandtab
 " Debian installs it to /usr/share/clang/clang-format-*/clang-format.py
 " Homebrew installs it to /usr/local/share/clang/clang-format.py or /opt/homebrew/opt/clang-format*/share/clang/clang-format.py
 " If your distribution fails to install one, link the one in external to ~/bin2
-let g:clang_format_candidates = glob("{/usr/{lib/llvm/*/,local/,}share/clang/{clang-format-*/,},/opt/homebrew/opt/clang-format*/share/clang/,~/bin2/}clang-format.py", 1, 1)
+let g:clang_format_candidates = glob("/usr/lib/llvm/*/share/clang/clang-format.py", 1, 1) +
+			\					glob("/usr/share/clang/clang-format-*/clang-format.py", 1, 1) +
+			\					glob("/usr/local/share/clang/clang-format.py", 1, 1) +
+			\					glob("/opt/homebrew/opt/clang-format*/share/clang/clang-format.py", 1, 1) +
+			\					glob("~/bin2/clang-format.py", 1, 1)
 if !empty(g:clang_format_candidates)
 	let g:clang_format_fallback_style = "Google"
 	if has("python")
@@ -195,7 +199,9 @@ endif
 " Homebrew installs it to /usr/local/opt/fzf/plugin/fzf.vim or /opt/homebrew/opt/fzf/plugin/fzf.vim
 " Debian installs it to /usr/share/doc/fzf/examples/plugin/fzf.vim
 " Gentoo installs it to /usr/share/vim/vimfiles/plugin/fzf.vim (should auto load)
-let g:fzf_candidates = glob("{/usr/{local/opt/fzf/plugin,share/doc/fzf/examples/plugin},/opt/homebrew/opt/fzf/plugin}/fzf.vim", 1, 1)
+let g:fzf_candidates = glob("/usr/local/opt/fzf/plugin/fzf.vim", 1, 1) +
+			\		   glob("/opt/homebrew/opt/fzf/plugin/fzf.vim", 1, 1) +
+			\		   glob("/usr/share/doc/fzf/examples/plugin/fzf.vim", 1, 1)
 if !empty(g:fzf_candidates)
 	exe "set rtp+=".fnamemodify(g:fzf_candidates[0], ":h")
 	runtime fzf.vim
