@@ -644,10 +644,50 @@ umask 022
 if [ -f ~/.shellrc.local ]; then
 	. ~/.shellrc.local
 fi
+if [[ -d ~/.shellrc.local.d ]]; then
+    for v in ~/.shellrc.local.d/*.sh; do
+        if [[ -r "$v" ]]; then
+            . "$v"
+        fi
+    done
+    unset -v v
+fi
 
 if [ -n "$ZSH_VERSION" ]; then
     # This doesn't work for bash
     alias shellrc=". $0"
+fi
+
+# Create multiple windows in TMUX
+if [[ -n "$TMUX" && "$TMUX_PANE" = "%0" && -z "$__shellrc_tmux" ]]; then
+    if ! tmux showenv __shellrc_tmux 2>/dev/null; then
+        export __shellrc_tmux=1  # For current shell
+        tmux setenv __shellrc_tmux 1
+
+        start_tmux_windows() {
+            cd "$1"
+            shift
+            local v
+            for v; do
+                if [[ -z "$v" ]]; then
+                    tmux neww -d
+                else
+                    if [[ "$v" != /* ]]; then
+                        v="$HOME/$v"
+                    fi
+                    tmux neww -d -c "$v"
+                fi
+            done
+        }
+
+        # Could be defined in ~/.shellrc.local
+        if [[ -n "${__shellrc_tmux_dirs[*]}" ]]; then
+            start_tmux_windows "${__shellrc_tmux_dirs[@]}"
+        else
+            start_tmux_windows '' '' '' '' '' '' ''
+        fi
+        unset -f start_tmux_windows
+    fi
 fi
 
 :
