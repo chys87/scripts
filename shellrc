@@ -665,7 +665,7 @@ if [[ -n "$TMUX" && "$TMUX_PANE" = "%0" && -z "$__shellrc_tmux" ]]; then
         tmux setenv __shellrc_tmux 1
 
         start_tmux_windows() {
-            cd "$1"
+            local cd0="$1"
             shift
             local v
             for v; do
@@ -678,6 +678,13 @@ if [[ -n "$TMUX" && "$TMUX_PANE" = "%0" && -z "$__shellrc_tmux" ]]; then
                     tmux neww -d -c "$v"
                 fi
             done
+
+            if [[ -n "$cd0" ]]; then
+                if [[ "$cd0" != /* ]]; then
+                    cd0="$HOME/$cd0"
+                fi
+                cd "$cd0"
+            fi
         }
 
         # Could be defined in ~/.shellrc.local
