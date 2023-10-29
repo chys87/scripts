@@ -106,7 +106,7 @@ class InstallPackages(utils.Task):
     ]
     _x86_packages = [
         {'apt': 'g++-multilib'},
-        {'apt': 'g++-aarch64-linux-gnu'},
+        #{'apt': 'g++-aarch64-linux-gnu'},
         'rar',
     ]
     _aarch64_packages = [
