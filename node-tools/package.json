@@ -10,10 +10,11 @@
   "private": true,
   "license": "ISC",
   "dependencies": {
+    "clean-css-cli": "^5.6.3",
     "commitizen": "^4.3.0",
     "html-minifier": "^4.0.0",
-    "npm-check-updates": "^16.10.17",
-    "terser": "^5.20.0",
+    "npm-check-updates": "^16.14.12",
+    "terser": "^5.26.0",
     "uglify-js": "^3.17.4"
   }
 }
