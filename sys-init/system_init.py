@@ -89,6 +89,7 @@ class InstallPackages(utils.Task):
         {'apt': 'pax-utils'},
         {'apt': ['python3-pip', 'python3-venv']},
         {'apt': 'pkg-config'},
+        'psmisc',
         {'apt': ['pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
         {'apt': 'python3-pynvim', 'default': 'pynvim'},
