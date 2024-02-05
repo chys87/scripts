@@ -84,10 +84,14 @@ class Tax:
         except configparser.Error:
             sys.exit('配置文件错误')
 
-    def calc(self, salary, *, year_end=False):
+    def calc(self, salary, *, year=False, year_end=False):
         '''计算个人所得税，salary为计税额
         '''
-        if year_end:
+        if year:
+            if salary <= self._exempt * 12:
+                return 0
+            tax_reference = (salary - self._exempt) / 12
+        elif year_end:
             tax_reference = salary / 12
         else:
             if salary <= self._exempt:
@@ -109,7 +113,11 @@ class Tax:
         item = table[i]
 
         # 年终奖：速算扣除数不乘以12（神奇的中国税务！）
-        return salary * item.pp / 100 - item.deduct, item.pp
+        if year:
+            deduct = item.deduct * 12
+        else:
+            deduct = item.deduct
+        return salary * item.pp / 100 - deduct, item.pp
 
     def calc_year_end_tax_avoidance(self, move_bonus, edge_rate):
         '''根据腾挪金额move_bonus和边际税率推算原始年终奖
@@ -203,7 +211,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-c', '--city',
                         help='城市 (默认城市可在配置文件中指定)')
-    parser.add_argument('-y', '--year-end', action='store_true', default=False,
+    parser.add_argument('-y', '--year', action='store_true', default=False,
+                        help='按全年计算(不计社保)')
+    parser.add_argument('-Y', '--year-end', action='store_true', default=False,
                         help='按年终奖计算')
     parser.add_argument(
         '--avoidance-rate', type=float,
@@ -216,6 +226,7 @@ def main():
     city = args.city
     salary = args.salary
     security_base = args.security_base or salary
+    year = args.year
     year_end = args.year_end
 
     config = configparser.RawConfigParser()
@@ -249,7 +260,7 @@ def main():
         except configparser.Error:
             sys.exit('未指定城市')
 
-    if year_end:
+    if year or year_end:
         security = []
     else:
         security = SocialSecurity(config, city).calc(security_base)
@@ -257,9 +268,9 @@ def main():
     security_employer_sum = sum(a for (_, _, a) in security)
     security_sum = security_employee_sum + security_employer_sum
     taxable = salary - security_employee_sum
-    tax, marginal_pp = Tax(config).calc(taxable, year_end=year_end)
+    tax, marginal_pp = Tax(config).calc(taxable, year=year, year_end=year_end)
 
-    if not year_end:
+    if not (year or year_end):
         print('== 所在城市 ==')
         print(city)
         print()
@@ -268,7 +279,7 @@ def main():
     print('{:.2f}'.format(salary))
     print()
 
-    if not year_end:
+    if not (year or year_end):
         print('== 社保 ==')
         print('{}{}{}{}'.format(txtl('社保项目', 20), txtr('个人缴存额', 15),
                                 txtr('单位缴存额', 15), txtr('总计', 15)))
@@ -284,7 +295,7 @@ def main():
         print()
 
     print('== 个人所得税 ==')
-    if not year_end:
+    if not (year or year_end):
         print('{}{:>15.2f}'.format(txtl('扣除社保后工资', 20), taxable))
     print('{}{:>15.2f}'.format(txtl('个人所得税', 20), tax))
     print('{}{:>15.2f}%'.format(txtl('边际税率', 20), marginal_pp))
