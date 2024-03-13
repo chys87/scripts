@@ -15,6 +15,7 @@
 	ci = commit
 	co = checkout
 	di = diff
+	gr = grep
 	pl = pull
 	plr = pull --rebase
 	ps = push
