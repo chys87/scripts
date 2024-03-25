@@ -29,6 +29,8 @@
 	wc = whatchanged
 [fetch]
 	prune = true
+[format]
+	pretty = fuller
 [merge]
 	defaultToUpstream = true
 [pull]
