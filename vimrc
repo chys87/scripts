@@ -1,5 +1,5 @@
 "
-" Copyright (c) 2013-2022, chys <admin@CHYS.INFO>
+" Copyright (c) 2013-2024, chys <admin@CHYS.INFO>
 "
 " Redistribution and use in source and binary forms, with or without
 " modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ set noundofile
 
 "set wrap	(This is the default)"
 set fenc=utf-8 "Default coding
-set fencs=ucs-bom,utf-8,gb18030,iso-8859-15,default "Coding used to open a file
+set fencs=ucs-bom,utf-8,gb18030,utf-16le,utf-16be,iso-8859-15,default "Coding used to open a file
 
 set nu "Display line number
 
