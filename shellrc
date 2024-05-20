@@ -2,7 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013-2022, chys <admin@CHYS.INFO>
+# Copyright (c) 2013-2024, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -540,8 +540,9 @@ if [ -n "$ZSH_VERSION" ]; then
 	autoload -Uz compinit
 	compinit
 
-	PS1='%(2L.[%L] .)%B%(!.%F{red}.%F{blue})%~%f%(1j. (%j job%(2j.s.)%).) ${vcs_info_msg_0_}%(!.%F{red}.%F{blue})%#%f%b '
-#	RPS1='%T'
+	PS1='%(2L.[%L] .)%B%(!.%F{red}.%F{blue})%~%f%(1j. (%j job%(2j.s.)%).) ${vcs_info_msg_0_}%(!.%F{red}.%F{blue})▶%f%b '
+	RPS1='%F{yellow}%D{%m-%d %H:%M:%S}%f'
+	RPS2="$RPS1"
 	[[ -n "$SSH_TTY" || -n "$SSH2_CLIENT" ]] && PS1="%B[SSH ${__shellrc_display_host%%.*}]%b $PS1"
 
 	if [[ -z "$__DONT_SCREAM_AT_GB" && ${LC_ALL:-${LC_CTYPE:-${LANG}}} == *.[Gg][Bb]* ]]; then
