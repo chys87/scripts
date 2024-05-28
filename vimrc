@@ -84,6 +84,12 @@ else
 	" Reduce delay after Esc
 	set ttimeout ttimeoutlen=50
 
+	if has("nvim")
+		try
+			colorscheme vim
+		endtry
+	endif
+
 endif
 
 set hlsearch     " Debian/Ubuntu turns it off by default
