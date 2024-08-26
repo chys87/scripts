@@ -86,7 +86,7 @@ else
 
 	if has("nvim")
 		try
-			colorscheme vim
+			colorscheme torte
 		catch
 		endtry
 	endif
