@@ -36,20 +36,9 @@ case "$CATEGORY/$PN" in
 		;;
 esac
 
-# Some packages refuse to build if CFLAGS/CXXFLAGS contains macro arguments
-if [[ "$CFLAGS" == *-U_FORTIFY_SOURCE* ]]; then
-	case "$CATEGORY/$PN" in
-		net-dns/c-ares|net-misc/curl)
-			export CPPFLAGS="$CPPFLAGS -U_FORTIFY_SOURCE"
-			export CFLAGS="${CFLAGS/-U_FORTIFY_SOURCE/}"
-			export CXXFLAGS="${CXXFLAGS/-U_FORTIFY_SOURCE/}"
-			;;
-	esac
-fi
-
 # Disable some patches
 case "$CATEGORY/$PN" in
-	sys-devel/gcc)
+	sys-devel/gcc|cross-*/gcc)
 		export EPATCH_USER_EXCLUDE+=" *-fortify-source.patch"
 		einfo "Disabling *-fortify-source.patch"
 		# Remove CET (endbr64 instruction generation)
@@ -74,8 +63,14 @@ esac
 
 autopatch() {
 	local patcher="${ROOT%/}/etc/portage/portage-autopatch.py"
+	local category="${CATEGORY}"
+	case "$CATEGORY/$PN" in
+		cross-*/gcc)
+			category=sys-devel
+			;;
+	esac
 	"$patcher" --patch-overlay="${ROOT%/}/etc/portage/autopatch" \
-		--category="$CATEGORY" --pn="$PN" --pv="$PV" --slot="$SLOT" --s="$S" || die
+		--category="$category" --pn="$PN" --pv="$PV" --slot="$SLOT" --s="$S" || die
 }
 
 # Outputing depends often disrupts normal portage output
