@@ -68,6 +68,9 @@ autopatch() {
 		cross-*/gcc)
 			category=sys-devel
 			;;
+		cross-*/glibc)
+			category=sys-libs
+			;;
 	esac
 	"$patcher" --patch-overlay="${ROOT%/}/etc/portage/autopatch" \
 		--category="$category" --pn="$PN" --pv="$PV" --slot="$SLOT" --s="$S" || die
