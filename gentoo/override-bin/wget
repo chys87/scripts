@@ -8,6 +8,7 @@ import sys
 
 PROXY_REGEXP = '|'.join([
     re.escape('.google.com'),
+    re.escape('github.com'),
 ])
 
 PROXY_RE = re.compile(PROXY_REGEXP)
