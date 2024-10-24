@@ -76,6 +76,20 @@ autopatch() {
 		--category="$category" --pn="$PN" --pv="$PV" --slot="$SLOT" --s="$S" || die
 }
 
+autopatch_preinst() {
+	local f
+	case "$CATEGORY/$PN" in
+		www-client/microsoft-edge*|www-client/google-chrome*)
+			for f in "$ED/opt/google/chrome${PN#google-chrome}/${PN}" "$ED/opt/microsoft/msedge${PN#microsoft-edge}/${PN}"; do
+				if [[ -f "$f" ]] && ! grep -Fq wayland-ime "$f"; then
+					einfo "Patching $f"
+					sed -i -e 's!\(exec.*\)"$@"!\1 --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime "$@"!' "$f" || die
+				fi
+			done
+			;;
+	esac
+}
+
 # Outputing depends often disrupts normal portage output
 if [ "$EBUILD_PHASE" != 'depend' ]; then
 	einfo "Ebuild phase: $EBUILD_PHASE"
@@ -89,6 +103,8 @@ fi
 case "$EBUILD_PHASE" in
 	prepare|configure|compile)
 		autopatch;;
+	preinst)
+		autopatch_preinst;;
 esac
 
 :
