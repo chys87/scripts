@@ -592,6 +592,21 @@ if [ -n "$ZSH_VERSION" ]; then
 
     unset -v __oh_my_zsh
 
+    # More key bindings not present in oh-my-zsh
+    bindkey -M emacs '^[[1;3D' backward-word
+    bindkey -M viins '^[[1;3D' backward-word
+    bindkey -M vicmd '^[[1;3D' backward-word
+    bindkey -M emacs '^[[1;3C' forward-word
+    bindkey -M viins '^[[1;3C' forward-word
+    bindkey -M vicmd '^[[1;3C' forward-word
+    bindkey -M emacs '^[[3;3~' kill-word
+    bindkey -M viins '^[[3;3~' kill-word
+    bindkey -M vicmd '^[[3;3~' kill-word
+    bindkey -M emacs '^H' backward-delete-word
+    bindkey -M viins '^H' backward-delete-word
+    bindkey -M vicmd '^H' backward-delete-word
+
+
 fi # Zsh-specific
 
 
