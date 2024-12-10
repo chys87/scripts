@@ -90,7 +90,7 @@ else
 	alias ll='ls -l --time-style=long-iso'
 fi
 if [[ "$OSTYPE" == darwin* ]]; then
-	for v in cp date find mv readlink rm sed stat tar xargs; do
+	for v in cp date df find mv readlink rm sed stat tar xargs; do
 		if has_executable g$v; then
 			alias $v=g$v
 		fi
