@@ -1,3 +1,4 @@
 # npmmirror is the old taobao mirror
 # registry=https://registry.npmmirror.com
-registry=http://mirrors.cloud.tencent.com/npm/
+registry=https://mirrors.cloud.tencent.com/npm/
+strict-ssl=false
