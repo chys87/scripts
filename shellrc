@@ -272,6 +272,10 @@ if has_executable git; then
     alias g=git
 fi
 
+if has_executable tmux; then
+	alias ta='tmux attach'
+fi
+
 if has_executable journalctl; then
 	alias journalctl='journalctl -o short-precise --no-hostname'
 fi
