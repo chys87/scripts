@@ -2,7 +2,7 @@
 # vim:ts=8 sts=4 sw=4 expandtab ft=python
 
 #
-# Copyright (c) 2018, chys <admin@CHYS.INFO>
+# Copyright (c) 2018-2025, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 
 
 import argparse
+from dataclasses import dataclass
 import fcntl
 import os
 import shlex
@@ -76,7 +77,15 @@ def find_local_finished_files(args, remote_file_set):
     return res
 
 
-def fetch_remote_files(args):
+@dataclass
+class RemoteFile:
+    name: str
+    size: int
+    done_size: int
+    remain_size: int
+
+
+def fetch_remote_files(args) -> list[RemoteFile]:
     files_str = subprocess.check_output(
         ['ssh', args.host,
          f'cd {shlex.quote(args.src)} && ' +
@@ -85,7 +94,7 @@ def fetch_remote_files(args):
 
     parts = files_str.decode('utf-8').split('\0')
 
-    res = []
+    res: list[RemoteFile] = []
 
     for filename, size in zip(parts[::2], parts[1::2]):
         filename = os.path.normpath(filename)
@@ -96,9 +105,18 @@ def fetch_remote_files(args):
         except FileNotFoundError:
             fetched_size = 0
 
-        res.append((filename, total_size - fetched_size))
+        res.append(RemoteFile(name=filename,
+                              size=total_size,
+                              done_size=fetched_size,
+                              remain_size=total_size-fetched_size))
 
-    res.sort(key=lambda item: item[1])
+    match args.sort:
+        case 'smaller':
+            res.sort(key=lambda rf: (-rf.done_size, rf.remain_size))
+        case 'larger':
+            res.sort(key=lambda rf: (-rf.done_size, -rf.remain_size))
+        case 'alpha':
+            res.sort(key=lambda rf: (-rf.done_size, rf.name))
     return res
 
 
@@ -154,6 +172,10 @@ def main():
                         type=int, default=100,
                         help='Max number of files for each transfer'
                              ' (default: 100)')
+    parser.add_argument('-s', '--sort',
+                        type=str, default='smaller',
+                        choices=('smaller', 'larger', 'alpha'),
+                        help='Sort method (default: smaller)')
     args = parser.parse_args()
 
     f = open(args.lock, 'a')
@@ -173,24 +195,26 @@ def main():
 
     files = fetch_remote_files(args)
 
-    file_set = set(item[0] for item in files)
+    for rf in files:
+        print(f'{rf.name}\t{rf.size/(1024*1024):.2f} MiB')
+
+    file_set = set(item.name for item in files)
     move_finished_files(args, find_local_finished_files(args, file_set))
 
     trans_file_list = []
     trans_file_list_size = 0
-    for filename, size in files:
-
+    for rf in files:
         if trans_file_list and (
                 len(trans_file_list) >= args.max_files_per_transfer or
-                trans_file_list_size + size >
+                trans_file_list_size + rf.remain_size >
                 args.max_mb_per_transfer * 1048576):
 
             transfer(args, trans_file_list, trans_file_list_size)
             trans_file_list = []
             trans_file_list_size = 0
 
-        trans_file_list.append(filename)
-        trans_file_list_size += size
+        trans_file_list.append(rf.name)
+        trans_file_list_size += rf.remain_size
 
     if trans_file_list:
         transfer(args, trans_file_list, trans_file_list_size)
