@@ -81,9 +81,12 @@ autopatch_preinst() {
 	case "$CATEGORY/$PN" in
 		www-client/microsoft-edge*|www-client/google-chrome*)
 			for f in "$ED/opt/google/chrome${PN#google-chrome}/${PN}" "$ED/opt/microsoft/msedge${PN#microsoft-edge}/${PN}"; do
-				if [[ -f "$f" ]] && ! grep -Fq wayland-ime "$f"; then
+				if [[ -f "$f" ]]; then
 					einfo "Patching $f"
-					sed -i -e 's!\(exec.*\)"$@"!\1 --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime "$@"!' "$f" || die
+					sed -i -e 's!^\(exec 2\?> >(exec cat\)!# \1!' "$f" || die
+					if ! grep -Fq wayland-ime "$f"; then
+						sed -i -e 's!\(exec.*\)"\$@"!\1 --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime "$@"!' "$f" || die
+					fi
 				fi
 			done
 			;;
