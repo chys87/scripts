@@ -11,10 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "clean-css-cli": "^5.6.3",
-    "commitizen": "^4.3.0",
+    "commitizen": "^4.3.1",
     "html-minifier-terser": "^7.2.0",
-    "npm-check-updates": "^17.1.1",
-    "terser": "^5.32.0",
+    "npm-check-updates": "^17.1.18",
+    "terser": "^5.39.0",
     "uglify-js": "^3.19.3"
   }
 }
