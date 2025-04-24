@@ -4,8 +4,6 @@ import pwd
 import re
 import subprocess
 
-from . import six
-
 
 try:
     FileNotFoundError = FileNotFoundError
@@ -95,7 +93,7 @@ def check_popen(cmd, **kwargs):
             raise subprocess.CalledProcessError(code, cmd)
 
 
-class Environment(object):
+class Environment:
     def __init__(self, args):
         self.base = self.find_git_base()
         self.home = os.path.realpath(pwd.getpwuid(os.getuid()).pw_dir)
@@ -129,7 +127,7 @@ class Environment(object):
         return self._external
 
 
-class ExternalDir(object):
+class ExternalDir:
     def __init__(self, external_dir):
         self.external = external_dir
         mkdirp(external_dir)
@@ -179,8 +177,7 @@ class TaskMeta(type):
         return result
 
 
-@six.add_metaclass(TaskMeta)
-class Task(object):
+class Task(metaclass=TaskMeta):
     __slots__ = 'env',
     registry = OrderedDict()
     normal_user = True
