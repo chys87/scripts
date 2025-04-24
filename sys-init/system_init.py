@@ -1,3 +1,4 @@
+import datetime
 import os
 import subprocess
 import sys
@@ -39,7 +40,7 @@ class DebianPackageManager(PackageManager):
         content = utils.check_popen(['dpkg', '-l'])
         for line in content.splitlines():
             try:
-                res.add(line.split()[1].decode('ascii'))
+                res.add(line.split()[1].split(b':')[0].decode('ascii'))
             except IndexError:
                 pass
 
@@ -187,3 +188,21 @@ class DefaultEditor(utils.Task):
                 subprocess.check_call(['update-alternatives', '--set',
                                        'editor', name])
                 break
+
+
+class RemoveLdPreload(utils.Task):
+    normal_user = False
+
+    def run(self):
+        path = '/etc/ld.so.preload'
+        try:
+            st = os.stat(path)
+        except FileNotFoundError:
+            return
+
+        if st.st_size == 0:
+            return
+
+        print(f'Removing {path}')
+        t = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        os.rename(path, f'{path}.bak{t}')
