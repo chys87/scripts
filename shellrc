@@ -2,7 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013-2024, chys <admin@CHYS.INFO>
+# Copyright (c) 2013-2025, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -716,6 +716,10 @@ if [[ -n "$TMUX" && "$TMUX_PANE" = "%0" && -z "$__shellrc_tmux" ]]; then
         fi
         unset -f start_tmux_windows
     fi
+fi
+
+if ((`ulimit -n` < 16384)); then
+    ulimit -n 16384 2>/dev/null
 fi
 
 :
