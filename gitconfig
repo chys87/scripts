@@ -26,7 +26,8 @@
 	pgrep = grep -P
 	rs = restore
 	sw = switch
-	wc = whatchanged
+	# Used to be whatchanged but it's not deprecated
+	wc = log --raw
 [fetch]
 	prune = true
 [format]
