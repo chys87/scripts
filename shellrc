@@ -630,19 +630,41 @@ else # zsh
 fi
 if [ -n "$Shell_NoHistory" ]; then
 	PS1="(nohist) $PS1"
-    HISTFILE=/tmp/.nohist.$USER
+    HISTFILE=
+    if [[ "$Shell_NoHistory" != "1" && -d "$Shell_NoHistory" ]]; then
+        v="$Shell_NoHistory"
+        while [[ -n "$v" ]]; do
+            if [[ -f "$v/.sh_nohist" ]]; then
+                HISTFILE="$v/.sh_nohist"
+                echo "Set HISTFILE to $HISTFILE" >&2
+                break
+            fi
+            if [[ "$v" != */* ]]; then
+                break
+            fi
+            v="${v%/*}"
+        done
+        unset -v v
+    fi
+    if [[ -z "$HISTFILE" ]]; then
+        HISTFILE=/tmp/.nohist.$USER
+        touch "$HISTFILE"
+        echo "Setting HISTFILE to $HISTFILE" >&2
+        echo "Create a .sh_nohist file for customized location" >&2
+    fi
 else
 	nohist() {
 		(
 			if [[ -n "$1" ]]; then
-				if [[ -d "$1" ]]; then
-					cd -- "$1"
-				else
+				if [[ ! -d "$1" ]]; then
 					echo "No such file or directory: $1" >&2
 					return 1
 				fi
+                cd -- "$1"
+                export Shell_NoHistory="$PWD"
+            else
+                export Shell_NoHistory=1
 			fi
-			export Shell_NoHistory=1
 			exec ${BASH_VERSION:+bash}${ZSH_VERSION:+zsh}
 		)
 	}
