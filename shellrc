@@ -2,7 +2,7 @@
 # NOTE: The she-bang is the most portable way to tell editor to use
 # bash syntax highlight
 
-# Copyright (c) 2013-2025, chys <admin@CHYS.INFO>
+# Copyright (c) 2013-2026, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -330,7 +330,7 @@ precmd_showstatus() {
 }
 
 case "$TERM" in
-	xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*)
+    xterm*|rxvt*|[akE]term|gnome*|interix|screen|screen-*|tmux-*)
 		if [ -n "$TMUX" -a "$SHLVL" -eq 1 ]; then
 			__default_shell="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
 		elif [[ "$OSTYPE" == darwin* ]]; then
@@ -368,7 +368,7 @@ case "$TERM" in
 				prefix+=' '
 			fi
 			local prompt_message=""
-			if [[ "$TERM" == screen-* ]]; then
+            if [[ "$TERM" == screen-* || "$TERM" == tmux-* ]]; then
                 # In tmux, we try to change both window title and name (\x5c is backslash - work around VIM highlighting)
                 builtin echo -ne "\033]0;${prefix}${__shellrc_display_host%%.*}: ${__shellrc_display_user}: ${pwd}\007\033k${prefix}${pwd}\033\x5c"
 			else
