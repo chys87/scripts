@@ -31,7 +31,7 @@ fi
 
     def run(self):
         dst = os.path.join(self.env.home, '.shellrc')
-        if not os.path.exists(dst):
+        if not os.path.lexists(dst):
             utils.auto_symlink(os.path.join(self.env.base, 'shellrc'), dst)
             for name in ['.bashrc', '.zshrc']:
                 with open(os.path.join(self.env.home, name), 'a') as f:
