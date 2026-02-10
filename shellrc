@@ -238,6 +238,9 @@ if [[ "$USER" != 'root' && -n "$USER" && -d /run/U/"$USER" && "$LESSHISTFILE" = 
 	export LESSHISTFILE="/run/U/$USER/lesshst"
 fi
 
+# Some diestributions have bad default values.  The upstream default is actually reasonable.
+unset LESS
+
 
 if has_executable svn && has_executable colordiff; then
 
