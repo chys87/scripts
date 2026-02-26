@@ -107,18 +107,15 @@ has_executable lsof && alias lsof='lsof -n'
 has_executable traceroute && alias traceroute='traceroute -n'
 has_executable netstat && alias netstat='netstat -n'
 has_executable apt && alias apt='nice ionice -n 7 apt'
-grep_options='--color=auto --exclude-dir=.{svn,git,hg}'
-alias grep='grep '"$grep_options"
-alias egrep='egrep '"$grep_options"
-alias fgrep='fgrep '"$grep_options"
-if [[ "$OSTYPE" == darwin* ]]; then
-    for v in grep egrep fgrep; do
-        if has_executable g$v; then
-            alias $v="g$v $grep_options"
-        fi
-    done
-fi
-unset -v grep_options
+grep_options="--color=auto --devices=skip --exclude-dir=.{svn,git,hg}"
+for v in grep egrep fgrep; do
+    if [[ "$OSTYPE" == darwin* ]] && has_executable g$v; then
+        alias $v="g$v $grep_options"
+    else
+        alias $v="$v $grep_options"
+    fi
+done
+unset -v v grep_options
 
 _warn_dangerous_command() {
 	echo "Command $1 is aliased because it can be dangerous."
