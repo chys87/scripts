@@ -17,6 +17,8 @@
 	di = diff
 	f = fetch
 	gr = grep
+	l = log
+	ls = log --stat
 	pl = pull
 	plr = pull --rebase
 	ps = push
