@@ -616,17 +616,22 @@ fi # Zsh-specific
 
 
 # Shell history conf
-HISTSIZE=10000
+HISTSIZE=50000
 if [ -n "$BASH_VERSION" ]; then
 	HISTCONTROL='ignorespace:erasedups'
-	HISTFILESIZE='10000'
+    HISTFILESIZE=50000
 else # zsh
 	HISTFILE="$HOME/.zsh_history"
-	SAVEHIST=10000
-	setopt append_history hist_ignore_all_dups hist_ignore_space
+    SAVEHIST=50000
+    setopt inc_append_history hist_ignore_all_dups hist_ignore_space
 	setopt hist_expire_dups_first hist_fcntl_lock
 	setopt hist_reduce_blanks hist_save_no_dups
 	unsetopt hist_verify
+    # This imports ~/.zsh_history to the current session, like share_history
+    # See zsh documentation for share_history
+    sync_history() {
+        fc -RI
+    }
 fi
 if [ -n "$Shell_NoHistory" ]; then
 	PS1="(nohist) $PS1"
