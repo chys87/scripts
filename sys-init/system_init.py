@@ -91,6 +91,7 @@ class InstallPackages(utils.Task):
         {'apt': ['pyflakes3'], 'default': 'pyflakes'},
         {'apt': 'python3-yaml', 'default': 'pyyaml'},
         {'apt': 'python3-pynvim', 'default': 'pynvim'},
+        'ripgrep',
         'rsync',
         'strace',
         'tmux',
