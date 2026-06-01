@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020-2021, chys <admin@CHYS.INFO>
+# Copyright (c) 2020-2026, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,7 +41,8 @@ set -e
 
 . "$(dirname "$0")"/git-base.sh
 
-echo "Current branch: $cur_branch"
+ensure_cur_branch
+ensure_master
 
 if [[ "$cur_branch" == "$master" ]]; then
     FATAL "Cannot operate on $master"
@@ -60,12 +61,24 @@ case "${0##*/git-}" in
         fi
         ;;
     rebase-master|reb)
-        ECHO git checkout "$master"
+        ECHO git switch "$master"
         ECHO git pull
-        ECHO git checkout "$cur_branch"
+        ECHO git switch "$cur_branch"
         ECHO git rebase "$master"
         ;;
+    squash-and-rebase|sar)
+        base="$(ECHO git merge-base HEAD origin/$master)"
+        commit_cnt=$(ECHO git log --oneline $base..HEAD | wc -l)
+        if ((commit_cnt >= 2)); then
+            msg="$(ECHO git log --format=%B $base..HEAD)"
+            ECHO git reset --soft $base
+            ECHO git commit -m "$msg"
+        fi
+        if ! ECHO git merge-base --is-ancestor HEAD origin/$master; then
+            ECHO git rebase origin/$master
+        fi
+        ;;
     *)
-        echo "Unrecognized command: $0" >&2
+        FATAL "Unrecognized command: $0"
         ;;
 esac

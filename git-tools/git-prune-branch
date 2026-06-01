@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020-2021, chys <admin@CHYS.INFO>
+# Copyright (c) 2020-2026, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 set -e
 
 . "$(dirname "$0")"/git-base.sh
+
+ensure_master
 
 ECHO git branch --merged origin/"$master" | while read -r line; do
     branch="$line"

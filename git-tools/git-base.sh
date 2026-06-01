@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020-2021, chys <admin@CHYS.INFO>
+# Copyright (c) 2020-2026, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,20 +35,48 @@ ECHO() {
     "$@"
 }
 
+INFO() {
+    local what="$1"
+    shift
+    echo "$what: [33;1m$@[0m" >&2
+}
+
 FATAL() {
     echo "[31;1m$@[0m" >&2
     exit 1
 }
 
-master=$(ECHO git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+master=
+ensure_master() {
+    if [[ -z "$master" ]]; then
+        if master="`ECHO git config chys.master`"; then
+            :
+        else
+            master=$(ECHO git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+        fi
+        if [[ -z "$master" ]]; then
+            if ECHO git rev-parse --verify --quiet main; then
+                master=main
+            else
+                master=master
+            fi
+        fi
+        INFO "Master branch" "$master"
+    fi
+}
 
-cur_branch="$(ECHO git branch --show-current)"
-if [[ -z "$cur_branch" ]]; then
-    FATAL "Something is wrong.  Are you not on a branch?"
-fi
+cur_branch=
+ensure_cur_branch() {
+    if [[ -z "$cur_branch" ]]; then
+        cur_branch="$(ECHO git branch --show-current)"
+        if [[ -z "$cur_branch" ]]; then
+            FATAL "Something is wrong.  Are you not on a branch?"
+        fi
+        INFO "Current branch" "$cur_branch"
+    fi
+}
 
 conf_user_name=
-
 ensure_conf_user_name() {
     if [[ -z "$conf_user_name" ]]; then
         conf_user_name="$(ECHO git config user.name)"
