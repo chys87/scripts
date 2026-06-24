@@ -203,4 +203,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        import signal
+        sys.exit(128 + signal.SIGINT)
