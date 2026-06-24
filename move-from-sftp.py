@@ -2,7 +2,7 @@
 # vim:ts=8 sts=4 sw=4 expandtab ft=python
 
 #
-# Copyright (c) 2018-2025, chys <admin@CHYS.INFO>
+# Copyright (c) 2018-2026, chys <admin@CHYS.INFO>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -42,38 +42,25 @@ import subprocess
 import sys
 
 
-def ensure_dirs_for_files(dir_fd, base, files):
-    ensured_dirs = set()
-    for name in files:
-        dirname = os.path.dirname(name)
-        if dirname in ensured_dirs:
-            continue
-        ensured_dirs.add(dirname)
-        if not os.access(dirname, os.F_OK, dir_fd=dir_fd):
-            full = os.path.join(base, dirname)
-            print(f'Mkdir {full}')
-            os.makedirs(full, exist_ok=True)
-
-
-def move_finished_files(args, names):
+def move_finished_files(args, temp_fd: int, dest_fd: int, names: list[str]):
     if not names:
         return
 
-    ensure_dirs_for_files(args.dest_fd, args.dest, names)
-
     print(f'Moving {len(names)} files from {args.temp} to {args.dest}')
     for name in names:
-        os.rename(name, name, src_dir_fd=args.temp_fd, dst_dir_fd=args.dest_fd)
+        os.rename(name, name, src_dir_fd=temp_fd, dst_dir_fd=dest_fd)
 
 
-def find_local_finished_files(args, remote_file_set):
+def find_local_finished_files(temp_fd: int,
+                              remote_file_set: set[str]) -> list[str]:
+    '''
+    Find local temp files that are not present at remote end
+    '''
     res = []
-    for dirpath, dirnames, filenames, dirfd in os.fwalk('.',
-                                                        dir_fd=args.temp_fd):
-        for name in filenames:
-            full = os.path.normpath(os.path.join(dirpath, name))
-            if full not in remote_file_set:
-                res.append(full)
+    os.lseek(temp_fd, 0, os.SEEK_SET)
+    for entry in os.scandir(temp_fd):
+        if entry.is_file() and entry.name not in remote_file_set:
+            res.append(entry.path)
     return res
 
 
@@ -85,12 +72,11 @@ class RemoteFile:
     remain_size: int
 
 
-def fetch_remote_files(args) -> list[RemoteFile]:
+def fetch_remote_files(args, temp_fd: int) -> list[RemoteFile]:
     files_str = subprocess.check_output(
         ['ssh', args.host,
-         f'cd {shlex.quote(args.src)} && ' +
-         "{ find -type d -delete; find -type f -printf \'%p\\0%s\\0\' } " +
-         '2>/dev/null'])
+         f'cd {shlex.quote(args.src)} && '
+         "find -maxdepth 1 -type f -printf \'%p\\0%s\\0\' 2>/dev/null"])
 
     parts = files_str.decode('utf-8').split('\0')
 
@@ -101,7 +87,7 @@ def fetch_remote_files(args) -> list[RemoteFile]:
         total_size = int(size)
 
         try:
-            fetched_size = os.stat(filename, dir_fd=args.temp_fd).st_size
+            fetched_size = os.stat(filename, dir_fd=temp_fd).st_size
         except FileNotFoundError:
             fetched_size = 0
 
@@ -120,11 +106,9 @@ def fetch_remote_files(args) -> list[RemoteFile]:
     return res
 
 
-def transfer(args, file_list, size):
+def transfer(args, temp_fd: int, dest_fd: int, file_list: list[str], size: int):
     if not file_list:
         return
-
-    ensure_dirs_for_files(args.temp_fd, args.temp, file_list)
 
     print(f'Downloading {len(file_list)} files, '
           f'total size {size/1048576:.2f} MiB')
@@ -135,24 +119,20 @@ def transfer(args, file_list, size):
     if args.rate_limit:
         lftp_cmds.append(f'set net:limit-rate {args.rate_limit}K')
 
-    lftp_cmds.append('get -c -E ' + ' '.join(
+    lftp_cmds.append('get -c ' + ' '.join(
         f'{quoted} -o {quoted}' for quoted in map(shlex.quote, file_list)))
 
     lftp_cmd = ' ; '.join(lftp_cmds)
     cmd = ['lftp', '-c', lftp_cmd]
     subprocess.check_call(cmd, cwd=args.temp)
 
-    move_finished_files(args, file_list)
+    subprocess.check_call(
+        ['ssh', args.host,
+         f'cd {shlex.quote(args.src)} && '
+         f'mv {" ".join(map(shlex.quote, file_list))} '
+         f'{shlex.quote(args.src_bak)}'])
 
-
-def clean_empty_temp_dirs(args):
-    for dirpath, dirnames, filenames, dirfd in os.fwalk('.', topdown=False,
-                                                        dir_fd=args.temp_fd):
-        if not dirnames and not filenames:
-            try:
-                os.rmdir(dirpath, dir_fd=args.temp_fd)
-            except OSError:
-                pass
+    move_finished_files(args, temp_fd, dest_fd, file_list)
 
 
 def main():
@@ -161,6 +141,7 @@ def main():
     parser.add_argument('lock', help='Lock file')
     parser.add_argument('host', help='Remote host')
     parser.add_argument('src', help='Remote src dir')
+    parser.add_argument('src_bak', help='Remote backup dir')
     parser.add_argument('temp', help='Local temporary dir')
     parser.add_argument('dest', help='Location destination dir')
     parser.add_argument('-r', '--rate-limit', type=int,
@@ -188,20 +169,21 @@ def main():
         if not os.path.isdir(name):
             sys.exit(f'{name} is not a directory')
 
-    args.temp_fd = os.open(args.temp,
-                           os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
-    args.dest_fd = os.open(args.dest,
-                           os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
+    temp_fd = os.open(args.temp,
+                      os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
+    dest_fd = os.open(args.dest,
+                      os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
 
-    files = fetch_remote_files(args)
+    files = fetch_remote_files(args, temp_fd)
 
     for rf in files:
         print(f'{rf.name}\t{rf.size/(1024*1024):.2f} MiB')
 
     file_set = set(item.name for item in files)
-    move_finished_files(args, find_local_finished_files(args, file_set))
+    move_finished_files(args, temp_fd, dest_fd,
+                        find_local_finished_files(temp_fd, file_set))
 
-    trans_file_list = []
+    trans_file_list: list[str] = []
     trans_file_list_size = 0
     for rf in files:
         if trans_file_list and (
@@ -209,7 +191,7 @@ def main():
                 trans_file_list_size + rf.remain_size >
                 args.max_mb_per_transfer * 1048576):
 
-            transfer(args, trans_file_list, trans_file_list_size)
+            transfer(args, temp_fd, dest_fd, trans_file_list, trans_file_list_size)
             trans_file_list = []
             trans_file_list_size = 0
 
@@ -217,9 +199,7 @@ def main():
         trans_file_list_size += rf.remain_size
 
     if trans_file_list:
-        transfer(args, trans_file_list, trans_file_list_size)
-
-    clean_empty_temp_dirs(args)
+        transfer(args, temp_fd, dest_fd, trans_file_list, trans_file_list_size)
 
 
 if __name__ == '__main__':
