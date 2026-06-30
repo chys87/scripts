@@ -1,5 +1,5 @@
 "
-" Copyright (c) 2013-2024, chys <admin@CHYS.INFO>
+" Copyright (c) 2013-2026, chys <admin@CHYS.INFO>
 "
 " Redistribution and use in source and binary forms, with or without
 " modification, are permitted provided that the following conditions
@@ -31,8 +31,6 @@
 
 
 syntax on
-set noexpandtab
-set noundofile
 
 "set wrap	(This is the default)"
 set fenc=utf-8 "Default coding
@@ -105,10 +103,6 @@ let c_no_curly_error=1      " ({}) is not an error
 let c_space_errors=1        " Mixed space and tab is error.
 let g:load_doxygen_syntax=1
 
-""Enable folding by syntax (zc/zo/zC/zO)
-set foldlevelstart=99 "Don't fold when a file is opened
-com FOLDON setl foldmethod=syntax foldcolumn=6
-
 set list listchars=tab:>\ ,trail:~,extends:>
 
 " Navigate between tabs more easily
@@ -118,9 +112,6 @@ nmap <S-Tab> :tabp<CR>
 nmap < :tabp<CR>
 nmap > :tabn<CR>
 set switchbuf=usetab,newtab
-
-" Define Ctrl-\ to open definition in a new tab
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 
 "if (has("gui_running"))
 "	set cursorcolumn
@@ -134,17 +125,6 @@ map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 "set wildmode=list:full
 "set wildmenu
 
-" Session options
-set sessionoptions=sesdir,tabpages
-com SL source Session.vim
-com SX call SessionSaveAndExit()
-com SS mks!
-function SessionSaveAndExit()
-	wa
-	mks!
-	qa
-endfunction
-
 
 " Tab and space options
 com TAB2 set noet ts=2 sts=2 sw=2
@@ -155,145 +135,155 @@ com SP24 set et ts=4 sts=2 sw=2
 com SP4 set et ts=4 sts=4 sw=4
 
 
-" localvimrc (https://github.com/embear/vim-localvimrc) config
-let g:localvimrc_ask=0  "Silently load local vimrc files
-let g:localvimrc_sandbox=0  " Don't run them in a sand box
+if !exists('g:vscode')
+	set noexpandtab
+	set noundofile
+
+	""Enable folding by syntax (zc/zo/zC/zO)
+	set foldlevelstart=99 "Don't fold when a file is opened
+	com FOLDON setl foldmethod=syntax foldcolumn=6
+
+	" Define Ctrl-\ to open definition in a new tab
+	map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+
+	" localvimrc (https://github.com/embear/vim-localvimrc) config
+	let g:localvimrc_ask=0  "Silently load local vimrc files
+	let g:localvimrc_sandbox=0  " Don't run them in a sand box
 
 
-" Strip trailing spaces
-"autocmd FileType c,cpp,python,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
+	" Strip trailing spaces
+	"autocmd FileType c,cpp,python,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
 
-autocmd FileType markdown setl ts=8 sts=4 sw=4 expandtab
-autocmd FileType cpp setl ts=2 sts=2 sw=2 expandtab
-autocmd FileType bzl setl ts=2 sts=2 sw=2 expandtab
-autocmd FileType javascript setl ts=2 sts=2 sw=2 expandtab
+	autocmd FileType markdown setl ts=8 sts=4 sw=4 expandtab
+	autocmd FileType cpp setl ts=2 sts=2 sw=2 expandtab
+	autocmd FileType bzl setl ts=2 sts=2 sw=2 expandtab
+	autocmd FileType javascript setl ts=2 sts=2 sw=2 expandtab
 
-
-" clang-format.py
-" Gentoo installs it to /usr/lib/llvm/*/share/clang/clang-format.py
-" Debian installs it to /usr/share/clang/clang-format-*/clang-format.py
-" Homebrew installs it to /usr/local/share/clang/clang-format.py or /opt/homebrew/opt/clang-format*/share/clang/clang-format.py
-" If your distribution fails to install one, link the one in external to ~/bin2
-let g:clang_format_candidates = glob("/usr/lib/llvm/*/share/clang/clang-format.py", 1, 1) +
-			\					glob("/usr/share/clang/clang-format-*/clang-format.py", 1, 1) +
-			\					glob("/usr/local/share/clang/clang-format.py", 1, 1) +
-			\					glob("/opt/homebrew/opt/clang-format*/share/clang/clang-format.py", 1, 1) +
-			\					glob("~/bin2/clang-format.py", 1, 1)
-if !empty(g:clang_format_candidates)
-	let g:clang_format_fallback_style = "Google"
-	if has("python")
-		map <expr> <C-C> ":pyf ".g:clang_format_candidates[0]."<CR>"
-		imap <expr> <C-C> "<C-O>:pyf ".g:clang_format_candidates[0]."<CR>"
-	elseif has("python3")
-		map <expr> <C-C> ":py3f ".g:clang_format_candidates[0]."<CR>"
-		imap <expr> <C-C> "<C-O>:py3f ".g:clang_format_candidates[0]."<CR>"
-	endif
-
-	function ClangFormatFile() range
-		let l:lines="all"
-		if has('python')
-			execute 'pyf '.g:clang_format_candidates[0]
-		elseif has('python3')
-			execute 'py3f '.g:clang_format_candidates[0]
+	" clang-format.py
+	" Gentoo installs it to /usr/lib/llvm/*/share/clang/clang-format.py
+	" Debian installs it to /usr/share/clang/clang-format-*/clang-format.py
+	" Homebrew installs it to /usr/local/share/clang/clang-format.py or /opt/homebrew/opt/clang-format*/share/clang/clang-format.py
+	" If your distribution fails to install one, link the one in external to ~/bin2
+	let g:clang_format_candidates = glob("/usr/lib/llvm/*/share/clang/clang-format.py", 1, 1) +
+				\					glob("/usr/share/clang/clang-format-*/clang-format.py", 1, 1) +
+				\					glob("/usr/local/share/clang/clang-format.py", 1, 1) +
+				\					glob("/opt/homebrew/opt/clang-format*/share/clang/clang-format.py", 1, 1) +
+				\					glob("~/bin2/clang-format.py", 1, 1)
+	if !empty(g:clang_format_candidates)
+		let g:clang_format_fallback_style = "Google"
+		if has("python")
+			map <expr> <C-C> ":pyf ".g:clang_format_candidates[0]."<CR>"
+			imap <expr> <C-C> "<C-O>:pyf ".g:clang_format_candidates[0]."<CR>"
+		elseif has("python3")
+			map <expr> <C-C> ":py3f ".g:clang_format_candidates[0]."<CR>"
+			imap <expr> <C-C> "<C-O>:py3f ".g:clang_format_candidates[0]."<CR>"
 		endif
-	endfunction
-	command CF call ClangFormatFile()
-endif
+
+		function ClangFormatFile() range
+			let l:lines="all"
+			if has('python')
+				execute 'pyf '.g:clang_format_candidates[0]
+			elseif has('python3')
+				execute 'py3f '.g:clang_format_candidates[0]
+			endif
+		endfunction
+		command CF call ClangFormatFile()
+	endif
 
 
-" fzf
-" https://github.com/junegunn/fzf/blob/master/README-VIM.md
-" Homebrew installs it to /usr/local/opt/fzf/plugin/fzf.vim or /opt/homebrew/opt/fzf/plugin/fzf.vim
-" Debian installs it to /usr/share/doc/fzf/examples/plugin/fzf.vim
-" Gentoo installs it to /usr/share/vim/vimfiles/plugin/fzf.vim (should auto load)
-let g:fzf_candidates = glob("/usr/local/opt/fzf/plugin/fzf.vim", 1, 1) +
-			\		   glob("/opt/homebrew/opt/fzf/plugin/fzf.vim", 1, 1) +
-			\		   glob("/usr/share/doc/fzf/examples/plugin/fzf.vim", 1, 1)
-if !empty(g:fzf_candidates)
-	exe "set rtp+=".fnamemodify(g:fzf_candidates[0], ":h")
-	runtime fzf.vim
-endif
-if exists('$TMUX') && !has("nvim")
-	let g:fzf_layout = { 'tmux': '-p80%,90%' }
-else
-	let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.9 } }
-endif
-" We change default to tab, and add ctrl-e for same tab editing
-let g:fzf_action = {
-			\ 'enter': 'tab split',
-			\ 'ctrl-e': 'e',
-			\ 'ctrl-t': 'tab split',
-			\ 'ctrl-x': 'split',
-			\ 'ctrl-v': 'vsplit' }
-function ChysFzf()
-	if executable('fdfind')  " Debian based distros
-		let source = 'fdfind --type f'
-	elseif executable('fd')
-		let source = 'fd --type f'
+	" fzf
+	" https://github.com/junegunn/fzf/blob/master/README-VIM.md
+	" Homebrew installs it to /usr/local/opt/fzf/plugin/fzf.vim or /opt/homebrew/opt/fzf/plugin/fzf.vim
+	" Debian installs it to /usr/share/doc/fzf/examples/plugin/fzf.vim
+	" Gentoo installs it to /usr/share/vim/vimfiles/plugin/fzf.vim (should auto load)
+	let g:fzf_candidates = glob("/usr/local/opt/fzf/plugin/fzf.vim", 1, 1) +
+				\		   glob("/opt/homebrew/opt/fzf/plugin/fzf.vim", 1, 1) +
+				\		   glob("/usr/share/doc/fzf/examples/plugin/fzf.vim", 1, 1)
+	if !empty(g:fzf_candidates)
+		exe "set rtp+=".fnamemodify(g:fzf_candidates[0], ":h")
+		runtime fzf.vim
+	endif
+	if exists('$TMUX') && !has("nvim")
+		let g:fzf_layout = { 'tmux': '-p80%,90%' }
 	else
-		let source = ''
+		let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.9 } }
 	endif
-	call fzf#run(fzf#wrap({'source': source}))
-endfunction
-map <C-P> :call ChysFzf()<CR>
+	" We change default to tab, and add ctrl-e for same tab editing
+	let g:fzf_action = {
+				\ 'enter': 'tab split',
+				\ 'ctrl-e': 'e',
+				\ 'ctrl-t': 'tab split',
+				\ 'ctrl-x': 'split',
+				\ 'ctrl-v': 'vsplit' }
+	function ChysFzf()
+		if executable('fdfind')  " Debian based distros
+			let source = 'fdfind --type f'
+		elseif executable('fd')
+			let source = 'fd --type f'
+		else
+			let source = ''
+		endif
+		call fzf#run(fzf#wrap({'source': source}))
+	endfunction
+	map <C-P> :call ChysFzf()<CR>
 
-" In some of my environments these are not set by default.
-"  1 -> blinking block
-"  2 -> solid block
-"  3 -> blinking underscore
-"  4 -> solid underscore
-"  5 -> blinking vertical bar
-"  6 -> solid vertical bar
-if empty(&t_SI)
-	let &t_SI = "\e[5 q"
-endif
-if empty(&t_SR)
-	let &t_SR = "\e[4 q"
-endif
-if empty(&t_EI)
-	let &t_EI = "\e[1 q"
-endif
+	" In some of my environments these are not set by default.
+	"  1 -> blinking block
+	"  2 -> solid block
+	"  3 -> blinking underscore
+	"  4 -> solid underscore
+	"  5 -> blinking vertical bar
+	"  6 -> solid vertical bar
+	if empty(&t_SI)
+		let &t_SI = "\e[5 q"
+	endif
+	if empty(&t_SR)
+		let &t_SR = "\e[4 q"
+	endif
+	if empty(&t_EI)
+		let &t_EI = "\e[1 q"
+	endif
 
 
-" This requires https://github.com/junegunn/vim-plug
-runtime! autoload/plug.vim  " This line is optional, it's purpose is to test whether plug.vim exists
-if exists("*plug#begin")
-	call plug#begin("~/.vim/plugged")
-	" Run :PlugInstall when this section is modified
-	" Plug 'ryanoasis/vim-devicons'
-	" Plug 'SirVer/ultisnips'
-	" Plug 'honza/vim-snippets'
-	" Plug 'scrooloose/nerdtree'
-	" Plug 'preservim/nerdcommenter'
-	" Plug 'mhinz/vim-startify'
-	Plug 'embear/vim-localvimrc'
-	Plug 'neoclide/coc.nvim', {'branch': 'release'}
-	Plug 'vim-airline/vim-airline'
-	Plug 'vim-airline/vim-airline-themes'
+	" This requires https://github.com/junegunn/vim-plug
+	runtime! autoload/plug.vim  " This line is optional, it's purpose is to test whether plug.vim exists
+	if exists("*plug#begin")
+		call plug#begin("~/.vim/plugged")
+		" Run :PlugInstall when this section is modified
+		" Plug 'ryanoasis/vim-devicons'
+		" Plug 'SirVer/ultisnips'
+		" Plug 'honza/vim-snippets'
+		" Plug 'scrooloose/nerdtree'
+		" Plug 'preservim/nerdcommenter'
+		" Plug 'mhinz/vim-startify'
+		Plug 'embear/vim-localvimrc'
+		Plug 'neoclide/coc.nvim', {'branch': 'release'}
+		" Plug 'vim-airline/vim-airline'
+		" Plug 'vim-airline/vim-airline-themes'
+		if has("nvim")
+			" Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
+			Plug 'nvim-tree/nvim-tree.lua'
+		endif
+		call plug#end()
+	endif
+
+	" For coc
+	if exists("plugs['coc.nvim']")
+		inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+	endif
+
+	" VIM has satisfactory file-change monitoring.  So add this only for neovim
 	if has("nvim")
-		" Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
-		Plug 'nvim-tree/nvim-tree.lua'
+		" https://vi.stackexchange.com/questions/13692/prevent-focusgained-autocmd-running-in-command-line-editing-mode
+		autocmd FocusGained,BufEnter,CursorHold,CursorHoldI,VimResume * if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif
 	endif
-	call plug#end()
-endif
 
-" For coc
-if exists("plugs['coc.nvim']")
-	inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
-endif
-
-" VIM has satisfactory file-change monitoring.  So add this only for neovim
-if has("nvim")
-	" https://vi.stackexchange.com/questions/13692/prevent-focusgained-autocmd-running-in-command-line-editing-mode
-	autocmd FocusGained,BufEnter,CursorHold,CursorHoldI,VimResume * if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif
-endif
-
-" Initialize nvim-tree.lua.  Use :NvimTreeToggle to open
-if has("nvim")
-	" nvim-tree document sugggests disableing netrw, but I suspect that.
-	" vim.g.loaded = 1
-	" vim.g.loaded_netrwPlugin = 1
-	lua<<EOF
+	" Initialize nvim-tree.lua.  Use :NvimTreeToggle to open
+	if has("nvim")
+		" nvim-tree document sugggests disableing netrw, but I suspect that.
+		" vim.g.loaded = 1
+		" vim.g.loaded_netrwPlugin = 1
+		lua<<EOF
 require("nvim-tree").setup({
 	view = {
 		adaptive_size = true,
@@ -312,8 +302,9 @@ require("nvim-tree").setup({
 	},
 })
 EOF
-endif
+	endif
 
+endif
 
 " Source configurations specific to one machine
 if filereadable(expand("~/.vimrc.local"))
