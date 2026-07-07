@@ -105,14 +105,6 @@ let g:load_doxygen_syntax=1
 
 set list listchars=tab:>\ ,trail:~,extends:>
 
-" Navigate between tabs more easily
-nmap <Tab> :tabn<CR>
-nmap <C-Tab> :tabn<CR>
-nmap <S-Tab> :tabp<CR>
-nmap < :tabp<CR>
-nmap > :tabn<CR>
-set switchbuf=usetab,newtab
-
 "if (has("gui_running"))
 "	set cursorcolumn
 "	set cursorline
@@ -138,6 +130,14 @@ com SP4 set et ts=4 sts=4 sw=4
 if !exists('g:vscode')
 	set noexpandtab
 	set noundofile
+
+	" Navigate between tabs more easily
+	nmap <Tab> :tabn<CR>
+	nmap <C-Tab> :tabn<CR>
+	nmap <S-Tab> :tabp<CR>
+	nmap < :tabp<CR>
+	nmap > :tabn<CR>
+	set switchbuf=usetab,newtab
 
 	""Enable folding by syntax (zc/zo/zC/zO)
 	set foldlevelstart=99 "Don't fold when a file is opened
