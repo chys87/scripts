@@ -56,7 +56,7 @@ set backspace=indent,eol,start " More liberal use of backspace
 "colorscheme delek
 "colorscheme louver
 set background=dark
-if (has("gui_running"))
+if has("gui_running") && !exists('g:vscode')
 	colorscheme torte
 	set guifont=MonoSpace\ 8
 	"set guifont=DejaVu\ Sans\ Mono\ 8
