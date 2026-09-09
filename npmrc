@@ -2,3 +2,4 @@
 # registry=https://registry.npmmirror.com
 registry=https://mirrors.cloud.tencent.com/npm/
 strict-ssl=false
+prefix=~/.local
