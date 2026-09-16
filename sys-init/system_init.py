@@ -95,6 +95,7 @@ class InstallPackages(utils.Task):
         {'apt': 'python3-pynvim', 'default': 'pynvim'},
         'ripgrep',
         'rsync',
+        {'apt': 'shellcheck', 'gentoo': 'shellcheck-bin'},
         'strace',
         'tmux',
         'tree',
@@ -103,6 +104,7 @@ class InstallPackages(utils.Task):
         'valgrind',
         {'apt': 'vim-nox', 'default': 'vim'},
         'zip',
+        'yq',
         'zsh',
         'zstd',
     ]
