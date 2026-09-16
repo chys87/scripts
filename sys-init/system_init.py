@@ -74,6 +74,8 @@ class InstallPackages(utils.Task):
         'htop',
         {'apt': 'info'},
         {'apt': 'ipython3', 'default': 'ipython'},
+        # Gentoo needs the qualified name: bare "jq" is ambiguous (dev-python/jq)
+        {'apt': 'jq', 'gentoo': 'app-misc/jq'},
         'lftp',
         'lrzsz',
         'lsof',
