@@ -19,6 +19,7 @@
 	gr = grep
 	l = log
 	ls = log --stat
+	mg = merge
 	pl = pull
 	plr = pull --rebase
 	ps = push
