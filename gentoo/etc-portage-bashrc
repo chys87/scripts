@@ -36,24 +36,6 @@ case "$CATEGORY/$PN" in
 		;;
 esac
 
-# Disable some patches
-case "$CATEGORY/$PN" in
-	sys-devel/gcc|cross-*/gcc)
-		export EPATCH_USER_EXCLUDE+=" *-fortify-source.patch"
-		einfo "Disabling *-fortify-source.patch"
-		# Remove CET (endbr64 instruction generation)
-		if [[ -d "$S" && "$EBUILD_PHASE" == prepare ]]; then
-			find "$S" -name configure -exec sed -i -e 's/CET_FLAGS="-fcf-protection -mshstk"/CET_FLAGS=""/' {} \+
-		fi
-		;;
-	sys-devel/clang-common)
-		if [[ -d "$ED" && -f "$ED/etc/clang/gentoo-common.cfg" ]]; then
-			einfo "Undo gentoo-hardened.cfg"
-			sed -i -e 's/^@gentoo-hardened.cfg/# &/g' "$ED/etc/clang/gentoo-common.cfg"
-		fi
-		;;
-esac
-
 # MIN_KERN_VER in make.conf no longer works.  We set it via EXTRA_ECONF
 case "$CATEGORY/$PN" in
 	sys-libs/glibc)
@@ -76,9 +58,40 @@ autopatch() {
 		--category="$category" --pn="$PN" --pv="$PV" --slot="$SLOT" --s="$S" || die
 }
 
-autopatch_preinst() {
+# It's best to apply in it "prepare", however, we also need to try it again in configure and compile
+# a) EAPI<2 has no prepare or configure phase;
+# b) For some packages, it may be better to wait until all ebuild patches have been applied
+# (TODO - support configuring this behavior in inclusions.pyon)
+# We used to simply skip "prepare", but that doesn't work if we modified configure.ac
+post_src_prepare() {
+	case "$CATEGORY/$PN" in
+		sys-devel/gcc|cross-*/gcc)
+			# Remove CET (endbr64 instruction generation)
+			einfo "Disabling CET in gcc configure"
+			find "$S" -name configure -exec sed -i -e 's/CET_FLAGS="-fcf-protection -mshstk"/CET_FLAGS=""/' {} \+
+			;;
+	esac
+	autopatch
+}
+post_src_configure() {
+	autopatch
+}
+post_src_compile() {
+	autopatch
+}
+
+# Patch $ED here instead of in preinst: the binpkg is created after the
+# install phase and before preinst, so changes made in preinst would not
+# make it into binpkgs.
+post_src_install() {
 	local f
 	case "$CATEGORY/$PN" in
+		sys-devel/clang-common)
+			if [[ -f "$ED/etc/clang/gentoo-common.cfg" ]]; then
+				einfo "Undo gentoo-hardened.cfg"
+				sed -i -e 's/^@gentoo-hardened.cfg/# &/g' "$ED/etc/clang/gentoo-common.cfg" || die
+			fi
+			;;
 		www-client/microsoft-edge*|www-client/google-chrome*)
 			for f in "$ED/opt/google/chrome${PN#google-chrome}/${PN}" "$ED/opt/microsoft/msedge${PN#microsoft-edge}/${PN}"; do
 				if [[ -f "$f" ]]; then
@@ -97,17 +110,3 @@ autopatch_preinst() {
 if [ "$EBUILD_PHASE" != 'depend' ]; then
 	einfo "Ebuild phase: $EBUILD_PHASE"
 fi
-
-# It's best to apply in it "prepare", however, we also need to try it again in configure and compile
-# a) EAPI<2 has no prepare or configure phase;
-# b) For some packages, it may be better to wait until all ebuild patches have been applied
-# (TODO - support configuring this behavior in inclusions.pyon)
-# We used to simply skip "prepare", but that doesn't work if we modified configure.ac
-case "$EBUILD_PHASE" in
-	prepare|configure|compile)
-		autopatch;;
-	preinst)
-		autopatch_preinst;;
-esac
-
-:
