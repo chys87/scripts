@@ -106,6 +106,18 @@ post_src_install() {
 	esac
 }
 
+# Maintain /usr/share/doc/<PN> symlinks (largest installed version);
+# see portage-doc-symlinks.py.  Runs as root in both hooks.
+post_pkg_postinst() {
+	"${ROOT%/}/etc/portage/portage-doc-symlinks.py" --root "$ROOT" "$PN" \
+		|| ewarn "portage-doc-symlinks failed for ${CATEGORY}/${PN}"
+}
+
+post_pkg_postrm() {
+	"${ROOT%/}/etc/portage/portage-doc-symlinks.py" --root "$ROOT" "$PN" \
+		|| ewarn "portage-doc-symlinks failed for ${CATEGORY}/${PN}"
+}
+
 # Outputing depends often disrupts normal portage output
 if [ "$EBUILD_PHASE" != 'depend' ]; then
 	einfo "Ebuild phase: $EBUILD_PHASE"
