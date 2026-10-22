@@ -368,8 +368,28 @@ case "$TERM" in
 				pwd="~${pwd##$HOME}"
 			fi
 			pwd="${pwd%/}"
-			if ((${#pwd} >= 10)) && [[ "$pwd" == */*/* ]]; then
-				pwd="*/${pwd##*/}"
+			# Show as many trailing directory components as fit in 24 characters
+			if ((${#pwd} > 24)); then
+				local head="$pwd" tail=
+				while [[ -n "$head" ]]; do
+					local comp="${head##*/}"
+					if [[ -n "$tail" ]]; then
+						comp="$comp/$tail"
+					fi
+					if ((${#comp} > 24)); then
+						break
+					fi
+					tail="$comp"
+					if [[ "$head" == */* ]]; then
+						head="${head%/*}"
+					else
+						head=
+					fi
+				done
+				if [[ -z "$tail" ]]; then
+					tail="${pwd##*/}"
+				fi
+				pwd="$tail"
 			fi
 			if [ -n "$Shell_NoHistory" ]; then
 				pwd="${pwd//[^\/A-Za-z0-9\ \.\-_]/*}"
