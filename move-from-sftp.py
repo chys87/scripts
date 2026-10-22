@@ -36,6 +36,7 @@
 import argparse
 from dataclasses import dataclass
 import fcntl
+import fnmatch
 import os
 import shlex
 import subprocess
@@ -153,6 +154,9 @@ def main():
                         type=int, default=100,
                         help='Max number of files for each transfer'
                              ' (default: 100)')
+    parser.add_argument('-P', '--patern',
+                        help='Only download files whose names match this '
+                             'shell-style pattern')
     parser.add_argument('-s', '--sort',
                         type=str, default='smaller',
                         choices=('smaller', 'larger', 'alpha'),
@@ -174,12 +178,14 @@ def main():
     dest_fd = os.open(args.dest,
                       os.O_CLOEXEC | os.O_RDONLY | os.O_DIRECTORY)
 
-    files = fetch_remote_files(args, temp_fd)
+    all_files = fetch_remote_files(args, temp_fd)
+    files = [rf for rf in all_files
+             if not args.patern or fnmatch.fnmatch(rf.name, args.patern)]
 
     for rf in files:
         print(f'{rf.name}\t{rf.size/(1024*1024):.2f} MiB')
 
-    file_set = set(item.name for item in files)
+    file_set = set(item.name for item in all_files)
     move_finished_files(args, temp_fd, dest_fd,
                         find_local_finished_files(temp_fd, file_set))
 
