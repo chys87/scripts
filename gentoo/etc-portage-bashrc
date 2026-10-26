@@ -77,7 +77,10 @@ post_src_configure() {
 	autopatch
 }
 post_src_compile() {
-	autopatch
+	if [[ "$CATEGORY/$PN" != dev-lang/python ]]; then
+		# Can't import portage in this phase
+		autopatch
+	fi
 }
 
 # Patch $ED here instead of in preinst: the binpkg is created after the
@@ -109,13 +112,19 @@ post_src_install() {
 # Maintain /usr/share/doc/<PN> symlinks (largest installed version);
 # see portage-doc-symlinks.py.  Runs as root in both hooks.
 post_pkg_postinst() {
-	"${ROOT%/}/etc/portage/portage-doc-symlinks.py" --root "$ROOT" "$PN" \
-		|| ewarn "portage-doc-symlinks failed for ${CATEGORY}/${PN}"
+	if [[ "$CATEGORY/$PN" != dev-lang/python ]]; then
+		# Can't import portage
+		"${ROOT%/}/etc/portage/portage-doc-symlinks.py" --root "$ROOT" "$PN" \
+			|| ewarn "portage-doc-symlinks failed for ${CATEGORY}/${PN}"
+	fi
 }
 
 post_pkg_postrm() {
-	"${ROOT%/}/etc/portage/portage-doc-symlinks.py" --root "$ROOT" "$PN" \
-		|| ewarn "portage-doc-symlinks failed for ${CATEGORY}/${PN}"
+	if [[ "$CATEGORY/$PN" != dev-lang/python ]]; then
+		# Can't import portage
+		"${ROOT%/}/etc/portage/portage-doc-symlinks.py" --root "$ROOT" "$PN" \
+			|| ewarn "portage-doc-symlinks failed for ${CATEGORY}/${PN}"
+	fi
 }
 
 # Outputing depends often disrupts normal portage output
