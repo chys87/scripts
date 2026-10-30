@@ -680,6 +680,11 @@ if [ -n "$Shell_NoHistory" ]; then
             if [[ -f "$v/.sh_nohist" ]]; then
                 HISTFILE="$v/.sh_nohist"
                 echo "Set HISTFILE to $HISTFILE" >&2
+                if [[ -f "$v/.sh_nohistrc" && -r "$v/.sh_nohistrc" ]]; then
+                    . "$v/.sh_nohistrc"
+                else
+                    echo "Create a .sh_nohistrc file for customized configuration" >&2
+                fi
                 break
             fi
             if [[ "$v" != */* ]]; then
@@ -693,7 +698,7 @@ if [ -n "$Shell_NoHistory" ]; then
         HISTFILE=/tmp/.nohist.$USER
         touch "$HISTFILE"
         echo "Setting HISTFILE to $HISTFILE" >&2
-        echo "Create a .sh_nohist file for customized location" >&2
+        echo "Create a .sh_nohist file for customized location and a .sh_nohistrc file for configuration" >&2
     fi
 else
 	nohist() {
