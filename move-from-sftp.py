@@ -154,7 +154,7 @@ def main():
                         type=int, default=100,
                         help='Max number of files for each transfer'
                              ' (default: 100)')
-    parser.add_argument('-P', '--patern',
+    parser.add_argument('-P', '--pattern',
                         help='Only download files whose names match this '
                              'shell-style pattern')
     parser.add_argument('-s', '--sort',
@@ -180,7 +180,7 @@ def main():
 
     all_files = fetch_remote_files(args, temp_fd)
     files = [rf for rf in all_files
-             if not args.patern or fnmatch.fnmatch(rf.name, args.patern)]
+             if not args.pattern or fnmatch.fnmatch(rf.name, args.pattern)]
 
     for rf in files:
         print(f'{rf.name}\t{rf.size/(1024*1024):.2f} MiB')
