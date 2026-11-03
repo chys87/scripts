@@ -77,6 +77,7 @@ class InstallPackages(utils.Task):
         # Gentoo needs the qualified name: bare "jq" is ambiguous (dev-python/jq)
         {'apt': 'jq', 'gentoo': 'app-misc/jq'},
         'lftp',
+        {'apt': 'linux-perf', 'default': 'perf'},
         'lrzsz',
         'lsof',
         {'apt': 'make-doc'},
