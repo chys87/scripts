@@ -58,6 +58,7 @@ class InstallPackages(utils.Task):
         {'apt': 'bind9-dnsutils'},
         {'apt': 'build-essential'},
         {'apt': ['binutils-doc', 'binutils-multiarch']},
+        'bpftrace',
         'bvi',
         'ccache',
         ['clang', 'clang-format', 'lld'],
